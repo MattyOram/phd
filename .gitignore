@@ -1,0 +1,44 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+.env
+
+# Conda
+conda-meta/
+.python-version
+
+# Jupyter
+*.nbconvert.ipynb
+
+# vscode 
+.vscode/*
+!.vscode/settings.json
+
+# OSCD ~ 6BG
+data/*
+!data/.gitkeep
+
+# 3Dprints
+CADmodels/*
+
+# inputs / outputs - usually full of potentially large mesh files
+**/outputs/
+**/inputs/
+
+# mesh files
+*.obj
+*.stl
+*.off
+*.iv
+*.vtk
+*.vtu
+*.vtp
+*.msh
+*.mesh
+*.ply
+*.inp

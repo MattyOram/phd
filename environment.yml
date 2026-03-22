@@ -1,0 +1,24 @@
+name: phd
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12.7
+  - trame-vuetify
+  - scikit-learn
+  - scipy
+  - numpy
+  - trame
+  - tqdm
+  - trame-vtk
+  - pandas
+  - pyvista
+  - matplotlib
+  - jupyter
+  - trimesh
+  - meshio
+  - pymeshfix
+  - vtk
+pip:
+  - nest_asyncio2
+  - tvb-gdist
