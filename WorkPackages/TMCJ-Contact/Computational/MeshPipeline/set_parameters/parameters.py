@@ -70,7 +70,7 @@ params_sub['bone_arbone']   = ['tpm-mc1'] # target_bone - articulating_bone
 # ••••••••••••••••••••• 2DMESH ••••••••••••••••••••• #
 params_2D = params['2Dmesh']
 
-params_2D['overwrite']          = False # overwrite output meshes if they already exist (if params_glob['allow_overwrite'])
+params_2D['overwrite']          = True # overwrite output meshes if they already exist (if params_glob['allow_overwrite'])
 
 params_2D['input_bone_mesh']    = None # filepath
 params_2D['input_arbone_mesh']  = None # filepath
@@ -111,7 +111,7 @@ params_2D['remesh_iters']       = 10  # n isotropic remeshing iterations
 # ••••••••••••••••••••• CARTILAGE ••••••••••••••••••••• #
 params_cart = params['cartilage']
 
-params_cart['overwrite']          = False # overwrite output mesh it already exists (if params_glob['allow_overwrite'])
+params_cart['overwrite']          = True # overwrite output mesh it already exists (if params_glob['allow_overwrite'])
 
 params_cart['input_bone_mesh']    = None # filepath
 params_cart['input_arbone_mesh']  = None # filepath

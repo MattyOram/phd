@@ -24,7 +24,7 @@ import time
 import itertools
 import json
 
-from steps.MeshPrep import get_list, write_param_files, run_subprocess
+from steps.MeshPrep import get_list, write_param_files, run_subprocess, write_runtime_log
 
 
 
@@ -98,6 +98,8 @@ from steps.MeshPrep import get_run_id
 #[(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 0, 3), ... ] - run all step 3 run_ids
 # ...
 
+log_dir = root_dir / 'reports'
+log_dir.mkdir(parents=True, exist_ok=True)
 for subject_sideL in subject_sideLs:
     print(f"\nSUBJECT: {subject_sideL}")
     
@@ -114,16 +116,20 @@ for subject_sideL in subject_sideLs:
 
                 out_dir = root_dir / f"meshes/{subject_sideL}/{bone_pair}"
                 out_dir.mkdir(parents=True, exist_ok=True)
+                input_json = step_param_dir/step/f'{run_id[-1]}.json'
                 ok = run_subprocess([
+                    log_dir, # dir for reports
                     full_param_path.name, # pass full params filename for reports
-                    'python', '-u',
+                    'python', 
+                    '-u',
                     f'steps/main_{step}.py', 
-                    step_param_dir/step/f'{run_id[-1]}.json', 
+                    input_json, 
                     out_dir, # used to determine subject-sideL and bone-arbone in each step
                     *[str(x) for x in run_id]
                 ], timeout=params_glob['step_timeout'])
 
                 dt = time.perf_counter() - t0
+                write_runtime_log(log_dir, "runtimes.jsonl", dt, subject_sideL, bone_pair, step, input_json, run_id, full_param_path.name)
                 print(f"\t\t\tRuntime: {dt:.3f}s - {ok}")
 
 

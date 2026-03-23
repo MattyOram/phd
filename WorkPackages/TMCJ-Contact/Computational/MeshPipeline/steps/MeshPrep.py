@@ -178,13 +178,29 @@ def to_text(x):
         return x.decode("utf-8", errors="replace")
     return str(x)
 
-def write_failure_log(log_dir, filename, subject, bones, stdout, stderr, input_json, run_ids, full_params_file):
-    log_dir.mkdir(parents=True, exist_ok=True)
+def write_runtime_log(log_dir, filename, runtime, subject, bones, step, input_json, run_ids, full_params_file):
     info = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
         "full_params": full_params_file,
         "subject": subject,
         "bones": bones,
+        "step": step,
+        "input_json": str(input_json), 
+        "run_ids": run_ids,  
+        "runtime": runtime
+    }
+
+    with open(log_dir / filename, "a", encoding="utf-8") as f:
+        f.write(json.dumps(info, ensure_ascii=False))
+        f.write("\n")
+
+def write_failure_log(log_dir, filename, subject, bones, stdout, stderr, step, input_json, run_ids, full_params_file):
+    info = {
+        "timestamp": datetime.now().isoformat(timespec="seconds"),
+        "full_params": full_params_file,
+        "subject": subject,
+        "bones": bones,
+        "step": step,
         "input_json": str(input_json), 
         "run_ids": run_ids,  
         "stdout": to_text(stdout),
@@ -195,10 +211,7 @@ def write_failure_log(log_dir, filename, subject, bones, stdout, stderr, input_j
         f.write(json.dumps(info, ensure_ascii=False))
         f.write("\n")
 
-def write_captured_lines(log_dir, subject, bones, input_json, run_ids, stdout, full_params_file):
-    log_dir = Path(log_dir)
-    log_dir.mkdir(parents=True, exist_ok=True)
-
+def write_captured_lines(log_dir, subject, bones, step, input_json, run_ids, stdout, full_params_file):
     out_file = log_dir / "info_3Dmesh.jsonl"
 
     info = {
@@ -206,6 +219,7 @@ def write_captured_lines(log_dir, subject, bones, input_json, run_ids, stdout, f
         "full_params": full_params_file,
         "subject": subject,
         "bones": bones,
+        "step": step,
         "input_json": str(input_json), 
         "run_ids": run_ids, 
         "outputs": {}
@@ -223,17 +237,17 @@ def write_captured_lines(log_dir, subject, bones, input_json, run_ids, stdout, f
 
 
 def run_subprocess(args, timeout=300):
-    out_dir = args[5]
-    subject = out_dir.parent.name
-    bones = out_dir.name
-    log_dir = out_dir.parent.parent.parent / 'reports'
-    step = args[4].parent.name
+    out_dir = args[6] # Path
+    subject = str(out_dir.parent.name)
+    bones = str(out_dir.name)
+    log_dir = args[0] # Path
+    step = str(args[5].parent.name)
 
-    full_params_file = args[0]
-    args_str = [str(a) for a in args][1:] # exclude full_params_file from args passed to subprocess
-
-    input_json = args_str[4]
-    run_ids = args_str[6:]
+    full_params_file = str(args[1])
+    args_str = [str(a) for a in args][2:] # exclude full_params_file from args passed to subprocess
+    # args_str starts at 1 so index from there
+    input_json = args_str[3]
+    run_ids = args_str[5:] 
 
     proc = subprocess.Popen(
         args_str,
@@ -246,7 +260,7 @@ def run_subprocess(args, timeout=300):
     try:
         stdout, stderr = proc.communicate(timeout=timeout)
         if step == '3Dmesh':
-            write_captured_lines(log_dir, subject, bones, input_json, run_ids, stdout, full_params_file)
+            write_captured_lines(log_dir, subject, bones, step, input_json, run_ids, stdout, full_params_file)
 
         if proc.returncode != 0:
             stderr_text = to_text(stderr)
@@ -266,6 +280,7 @@ def run_subprocess(args, timeout=300):
                         bones=bones,
                         stdout='',
                         stderr=cartilage_height_check,
+                        step=step,
                         input_json=input_json,
                         run_ids=run_ids,
                         full_params_file=full_params_file
@@ -280,6 +295,7 @@ def run_subprocess(args, timeout=300):
                 bones=bones,
                 stdout=stdout,
                 stderr=stderr,
+                step=step,
                 input_json=input_json,
                 run_ids=run_ids,
                 full_params_file=full_params_file

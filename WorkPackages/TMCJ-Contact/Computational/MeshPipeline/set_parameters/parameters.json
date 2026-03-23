@@ -19,7 +19,7 @@
     ]
   },
   "2Dmesh": {
-    "overwrite": false,
+    "overwrite": true,
     "input_bone_mesh": null,
     "input_arbone_mesh": null,
     "output_filename": null,
@@ -48,7 +48,7 @@
     "remesh_iters": 10
   },
   "cartilage": {
-    "overwrite": false,
+    "overwrite": true,
     "input_bone_mesh": null,
     "input_arbone_mesh": null,
     "output_filename": null,
