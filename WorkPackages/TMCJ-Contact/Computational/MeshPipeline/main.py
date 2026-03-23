@@ -26,6 +26,8 @@ import json
 
 from steps.MeshPrep import get_list, write_param_files, run_subprocess, write_runtime_log
 
+from phd_helpers.paths import get_project_root
+
 
 
 
@@ -33,9 +35,9 @@ from steps.MeshPrep import get_list, write_param_files, run_subprocess, write_ru
 print('\nUpdating parameters.json')
 
 # run parameters.py to update parameters.json with any changes in parameters.py, then load parameters.json
-param_path = "set_parameters/parameters.json"
+param_path = get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/set_parameters/parameters.json'
 result = subprocess.run(
-    ["python", param_path.replace(".json", ".py"), param_path],
+    ["python", param_path.with_suffix(".py"), param_path],
     capture_output=True, 
     text=True
     )
