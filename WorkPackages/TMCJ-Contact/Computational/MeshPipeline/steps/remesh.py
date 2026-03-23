@@ -1,26 +1,28 @@
 import numpy as np
 import pandas as pd
 import gdist
+from scipy.spatial.distance import cdist
 import subprocess
-from pathlib import Path
+
+from phd_helpers.paths import get_boundary
 
 def remesh_surface(bone_mesh, min_df, fine_edge_length, coarse_edge_length, grad_width, remesh_input_path, n_iters=5, adjacent_cells=False):
 
     print('Computing target edge lengths')
     bone_mesh.point_data['bone_id'] = np.arange(bone_mesh.n_points)
     ar_mesh = bone_mesh.extract_points(min_df['bone_id'], adjacent_cells=adjacent_cells).extract_geometry()
-    source_ids = ar_mesh.extract_feature_edges(
-                            boundary_edges=True, 
-                            non_manifold_edges=False, 
-                            feature_edges=False, 
-                            manifold_edges=False
-                            ).point_data['bone_id']
+    source_ids = get_boundary(ar_mesh).point_data['bone_id']
 
-    dists = gdist.compute_gdist(
-        bone_mesh.points.astype(np.float64),
-        bone_mesh.faces.reshape(-1, 4)[:, 1:].astype(np.int32),
-        source_indices=source_ids.astype(np.int32),
-    )
+    #dists = gdist.compute_gdist(
+    #    bone_mesh.points.astype(np.float64),
+    #    bone_mesh.faces.reshape(-1, 4)[:, 1:].astype(np.int32),
+    #    source_indices=source_ids.astype(np.int32),
+    #)
+
+    # -------- swtiching to euclidean distance so that grad region covers 3Dmesh grad region -------- #
+    dists = cdist(bone_mesh.points, bone_mesh.points[source_ids]).min(axis=1)
+
+
     not_ar_mask = ~np.isin(bone_mesh.point_data['bone_id'], min_df['bone_id'])
     grad_mask = dists < grad_width
     grad_ids = bone_mesh.point_data['bone_id'][not_ar_mask & grad_mask]
