@@ -60,7 +60,7 @@ bone_arbone = output_dir.name
 bone, ar_bone = bone_arbone.split('-')[0], bone_arbone.split('-')[1]
 poses = params_cart['poses']
 
-remesh_cartilage = params_cart['remesh_cartilge']
+remesh_cartilage = params_cart['remesh_cartilage']
 compute_quality = params_cart['compute_quality'] 
 
 use_remeshed_arbone = params_cart['use_remeshed_arbone']
