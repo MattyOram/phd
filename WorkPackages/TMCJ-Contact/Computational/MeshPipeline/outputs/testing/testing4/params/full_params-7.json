@@ -1,6 +1,6 @@
 {
   "global": {
-    "output_root": "outputs/testing/testing5",
+    "output_root": "outputs/testing/testing4",
     "allow_overwrite": true,
     "step_timeout": 330,
     "steps": {
@@ -12,48 +12,14 @@
   },
   "subjects": {
     "subject_sideL": [
-      "14818R",
-      "14874R",
-      "22306R",
-      "50000R",
-      "50049R",
-      "50034R",
-      "15006R",
-      "50017L",
-      "15441R",
-      "14827L",
-      "14726R",
-      "15294R",
-      "50021R",
-      "50027L",
-      "50008L",
-      "14548R",
-      "14873R",
-      "15737R",
-      "14685R",
-      "50045R",
-      "50006R",
-      "50029R",
-      "50020R",
-      "50018L",
-      "50037L",
-      "14727R",
-      "50014R",
-      "50019R",
-      "50053R",
-      "50016L",
-      "50024R",
-      "50007L",
-      "50001R",
-      "14819R",
-      "15283R"
+      "14548R"
     ],
     "bone_arbone": [
       "tpm-mc1"
     ]
   },
   "2Dmesh": {
-    "overwrite": true,
+    "overwrite": false,
     "input_bone_mesh": null,
     "input_arbone_mesh": null,
     "output_filename": null,
@@ -82,7 +48,7 @@
     "remesh_iters": 10
   },
   "cartilage": {
-    "overwrite": true,
+    "overwrite": false,
     "input_bone_mesh": null,
     "input_arbone_mesh": null,
     "output_filename": null,

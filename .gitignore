@@ -27,8 +27,14 @@ data/*
 CADmodels/*
 
 # inputs / outputs - usually full of potentially large mesh files
-**/outputs/
-**/inputs/
+**/MeshPipeline/cpp/**/inputs/*
+**/MeshPipeline/cpp/**/outputs/*
+
+# ignore all outputs except for full param files from previous runs
+**/MeshPipeline/**/outputs/**/meshes/*
+**/MeshPipeline/**/outputs/**/reports/*
+**/MeshPipeline/**/outputs/**/params/*
+!**/MeshPipeline/**/params/*.json
 
 # mesh files
 *.obj

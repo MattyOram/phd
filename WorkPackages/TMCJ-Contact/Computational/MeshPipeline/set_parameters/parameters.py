@@ -29,7 +29,7 @@ params = {
 params_glob = params['global']
 
 # root directory for outputs and save loc of params file - if relative will be relative to current directory!
-params_glob['output_root']     = 'outputs/testing/testing4' 
+params_glob['output_root']     = 'outputs/testing/testing5' 
 
 params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
@@ -52,15 +52,15 @@ params_glob['steps'] = {
 # ••••••••••••••••••••• SUBJECTS ••••••••••••••••••••• #
 params_sub = params['subjects']
 
-params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side 
+#params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side 
 
 # these are all subjects without interference for params in testing 3
-"""params_sub['subject_sideL'] = ['14818R', '14874R', '22306R', '50000R', '50049R', '50034R',
+params_sub['subject_sideL'] = ['14818R', '14874R', '22306R', '50000R', '50049R', '50034R',
                                 '15006R', '50017L', '15441R', '14827L', '14726R', '15294R', 
                                 '50021R', '50027L', '50008L', '14548R', '14873R', '15737R', 
                                 '14685R', '50045R', '50006R', '50029R', '50020R', '50018L', 
                                 '50037L', '14727R', '50014R', '50019R', '50053R', '50016L', 
-                                '50024R', '50007L', '50001R', '14819R', '15283R']"""
+                                '50024R', '50007L', '50001R', '14819R', '15283R']
 
 params_sub['bone_arbone']   = ['tpm-mc1'] # target_bone - articulating_bone
 
