@@ -29,13 +29,13 @@ from steps.MeshPrep import get_list, write_param_files, run_subprocess, write_ru
 from phd_helpers.paths import get_project_root
 
 
-
+MeshPipeline_root = get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline'
 
 # LOAD PARAMETERS #
 print('\nUpdating parameters.json')
 
 # run parameters.py to update parameters.json with any changes in parameters.py, then load parameters.json
-param_path = get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/set_parameters/parameters.json'
+param_path = MeshPipeline_root / 'set_parameters/parameters.json'
 result = subprocess.run(
     ["python", param_path.with_suffix(".py"), param_path],
     capture_output=True, 
@@ -124,7 +124,7 @@ for subject_sideL in subject_sideLs:
                     full_param_path.name, # pass full params filename for reports
                     'python', 
                     '-u',
-                    f'steps/main_{step}.py', 
+                    MeshPipeline_root / f'steps/main_{step}.py', 
                     input_json, 
                     out_dir, # used to determine subject-sideL and bone-arbone in each step
                     *[str(x) for x in run_id]
