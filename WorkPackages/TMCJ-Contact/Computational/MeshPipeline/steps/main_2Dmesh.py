@@ -146,7 +146,7 @@ for (bone, ar_bone), (bone_mesh, arbone_mesh) in zip(bones[:i], meshes[:i]):
         bone_mesh_smooth = smooth(bone_mesh, taubin_iters)
         arbone_mesh_smooth = smooth(arbone_mesh, taubin_iters)
         if save_smoothed_mesh:
-            bone_mesh_smooth.save('bone_smooth.obj')
+            bone_mesh_smooth.save(output_path / 'bone_smooth.obj')
 
         print('Complete\n')
 
