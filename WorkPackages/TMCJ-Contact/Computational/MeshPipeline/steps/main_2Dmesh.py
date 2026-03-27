@@ -83,9 +83,9 @@ save_smoothed_mesh = params_2D['save_smoothed_mesh']
 max_gap_remesh = params_2D['max_gap_remesh']
 adjacent_cells = params_2D['adjacent_cells']
 
-fine_edge_length = params_2D['fine_edge_length']
-coarse_edge_length = params_2D['coarse_edge_length']
-grad_width = params_2D['grad_width']
+fine_edge_length = float(params_2D['fine_edge_length'])
+coarse_edge_length = float(params_2D['coarse_edge_length'])
+grad_width = float(params_2D['grad_width'])
 remesh_iters = params_2D['remesh_iters']
 
 print('Complete\n')
