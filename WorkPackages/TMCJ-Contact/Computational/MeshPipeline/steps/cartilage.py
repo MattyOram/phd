@@ -158,6 +158,7 @@ def articular_gap(
     start_face = inner_mesh.find_closest_cell(np.mean(inner_mesh.points, axis=0))
     inner_cells = flood_fill_cells(inner_mesh, start_face, inner_edge.lines.reshape(-1, 3)[:, 1:], adjacency)
     inner_mesh_clean = pv.PolyData(inner_mesh.points, inner_mesh.faces.reshape(-1, 4)[inner_cells])
+    # should maybe be calling remove unused points here, lines bring their own points that are left behind?
     ################# MESH INNER REGION #################
 
     ################# COMBINE INNER MESH AND TAPER MESH #################
@@ -302,7 +303,7 @@ def articular_gap(
         # measure cartilage height and store in mesh
         cartilage_remesh_height = cartilage_remesh.compute_implicit_distance(bone_mesh)['implicit_distance']
         if (cartilage_remesh_height < 0).any():
-            raise AssertionError('Not all cartilage points above bone surface')
+            raise AssertionError('Not all cartilage points above bone surface') # detect interference
 
         # add cartilge taper/inner region array
         cartilage_remesh['inner_cells'] = cartilage_cap['inner_cells'][cartilage_cap.find_closest_cell(cartilage_remesh.cell_centers().points)]
