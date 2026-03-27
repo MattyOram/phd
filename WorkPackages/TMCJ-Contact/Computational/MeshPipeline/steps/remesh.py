@@ -32,9 +32,9 @@ def remesh_surface(bone_mesh, min_df, fine_edge_length, coarse_edge_length, grad
 
 
     # Output csv of per vertex edge lengths
-    df = pd.Series(np.full(bone_mesh.n_points, coarse_edge_length))
-    df.iloc[grad_ids] = grad_edge_length
-    df.iloc[min_df['bone_id']] = fine_edge_length
+    df = pd.Series(np.full(bone_mesh.n_points, coarse_edge_length, dtype=float))
+    df.iloc[grad_ids] = float(grad_edge_length)
+    df.iloc[min_df['bone_id']] = float(fine_edge_length)
 
     print('Writing mesh and target edge lengths to remeshing input directory')
     csv_path = remesh_input_path.with_suffix('.csv')
