@@ -60,6 +60,7 @@ input_bone_mesh = params_2D['input_bone_mesh']
 input_arbone_mesh = params_2D['input_arbone_mesh']
 
 output_filename = params_2D['output_filename']
+output_filename_smooth = params_2D['output_filename_smooth']
 cgal_input_name = params_2D['cgal_input_name']
 cgal_path = Path(params_2D['cgal_path'])
 
@@ -106,6 +107,9 @@ else: bone2_mesh = get_mesh(stl_path, bone2)
 if    output_filename: remesh_file = output_filename
 else: remesh_file = f'bone_remesh{run_id}.obj'
 
+if    output_filename_smooth: smooth_file = output_filename_smooth
+else: smooth_file = f'bone_smooth{run_id}.obj'
+
 print('Complete\n')
 
 # logic for remeshing either just bone or both - (for cartilage generation better to have both)
@@ -146,7 +150,7 @@ for (bone, ar_bone), (bone_mesh, arbone_mesh) in zip(bones[:i], meshes[:i]):
         bone_mesh_smooth = smooth(bone_mesh, taubin_iters)
         arbone_mesh_smooth = smooth(arbone_mesh, taubin_iters)
         if save_smoothed_mesh:
-            bone_mesh_smooth.save(output_path / 'bone_smooth.obj')
+            bone_mesh_smooth.save(output_path / smooth_file)
 
         print('Complete\n')
 
