@@ -77,6 +77,7 @@ compute_quality = params_2D['compute_quality']
 remesh_arbone = params_2D['remesh_arbone']
 
 taubin_iters = params_2D['taubin_iters']
+save_smoothed_mesh = params_2D['save_smoothed_mesh']
 
 max_gap_remesh = params_2D['max_gap_remesh']
 adjacent_cells = params_2D['adjacent_cells']
@@ -144,6 +145,8 @@ for (bone, ar_bone), (bone_mesh, arbone_mesh) in zip(bones[:i], meshes[:i]):
 
         bone_mesh_smooth = smooth(bone_mesh, taubin_iters)
         arbone_mesh_smooth = smooth(arbone_mesh, taubin_iters)
+        if save_smoothed_mesh:
+            bone_mesh_smooth.save('bone_smooth.obj')
 
         print('Complete\n')
 
