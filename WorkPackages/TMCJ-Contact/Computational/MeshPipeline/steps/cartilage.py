@@ -149,7 +149,7 @@ def articular_gap(
     inner_mesh = pv.PolyData(np.vstack( (inner_edge.points, midpoints[~taper_mask]) ), lines=inner_edge.lines)
 
     # alpha changed from 0.9 -> 0.85 on 28/03/26 - cos of remesh-box.ipynb cases
-    inner_mesh = inner_mesh.delaunay_2d(edge_source=inner_edge, alpha=0.85).triangulate().remove_unused_points()
+    inner_mesh = inner_mesh.delaunay_2d(edge_source=inner_edge, alpha=0.9).triangulate()
     inner_mesh = inner_mesh.fill_holes(inner_mesh.area/20)
     #inner_mesh.lines = inner_edge.lines # reset edge lines to remove delaunay leftover lines
     inner_mesh.lines = np.empty(0, dtype='int64') # remove all lines for now cos they show up in mesh.faces
@@ -159,7 +159,7 @@ def articular_gap(
     #start_face = inner_mesh.find_closest_cell(np.mean(inner_mesh.points, axis=0))
     start_face = inner_mesh.find_closest_cell(inner_mesh.center) # new 28/03/26
     inner_cells = flood_fill_cells(inner_mesh, start_face, inner_edge.lines.reshape(-1, 3)[:, 1:], adjacency)
-    inner_mesh_clean = pv.PolyData(inner_mesh.points, inner_mesh.faces.reshape(-1, 4)[inner_cells]).remove_unused_points()
+    inner_mesh_clean = pv.PolyData(inner_mesh.points, inner_mesh.faces.reshape(-1, 4)[inner_cells])
     # should maybe be calling remove unused points here, lines bring their own points that are left behind?
     ################# MESH INNER REGION #################
 
