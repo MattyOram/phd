@@ -156,7 +156,8 @@ def articular_gap(
 
     # remove cells that lie outside of the inner region boundary
     edge_map, adjacency = get_triangle_adjacency(inner_mesh)
-    start_face = inner_mesh.find_closest_cell(np.mean(inner_mesh.points, axis=0))
+    #start_face = inner_mesh.find_closest_cell(np.mean(inner_mesh.points, axis=0))
+    start_face = inner_mesh.find_closest_cell(inner_mesh.center) # new 28/03/26
     inner_cells = flood_fill_cells(inner_mesh, start_face, inner_edge.lines.reshape(-1, 3)[:, 1:], adjacency)
     inner_mesh_clean = pv.PolyData(inner_mesh.points, inner_mesh.faces.reshape(-1, 4)[inner_cells]).remove_unused_points()
     # should maybe be calling remove unused points here, lines bring their own points that are left behind?
