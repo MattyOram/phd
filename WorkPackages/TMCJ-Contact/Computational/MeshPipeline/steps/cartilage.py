@@ -148,7 +148,8 @@ def articular_gap(
     #inner_points = pv.PolyData(midpoints[~taper_mask])
     inner_mesh = pv.PolyData(np.vstack( (inner_edge.points, midpoints[~taper_mask]) ), lines=inner_edge.lines)
 
-    inner_mesh = inner_mesh.delaunay_2d(edge_source=inner_edge, alpha=0.9).triangulate().remove_unused_points()
+    # alpha changed from 0.9 -> 0.85 on 28/03/26 - cos of remesh-box.ipynb cases
+    inner_mesh = inner_mesh.delaunay_2d(edge_source=inner_edge, alpha=0.85).triangulate().remove_unused_points()
     inner_mesh = inner_mesh.fill_holes(inner_mesh.area/20)
     #inner_mesh.lines = inner_edge.lines # reset edge lines to remove delaunay leftover lines
     inner_mesh.lines = np.empty(0, dtype='int64') # remove all lines for now cos they show up in mesh.faces
