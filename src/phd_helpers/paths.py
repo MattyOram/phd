@@ -182,7 +182,7 @@ def avg_edge_length(mesh):
     line_points = edges.points[edges.lines.reshape(-1, 3)[:, 1:]] # (N, 2) coords
     return np.mean(np.linalg.norm(line_points[:, 1] - line_points[:, 0], axis=1))
 
-def get_edge_lengths(mesh):
+def compute_edge_lengths(mesh):
     edges = mesh.extract_all_edges()
     line_points = edges.points[edges.lines.reshape(-1, 3)[:, 1:]] # (N, 2) coords
     return np.linalg.norm(line_points[:, 1] - line_points[:, 0], axis=1)
@@ -398,3 +398,30 @@ def get_intercepts(surface, start_points, vectors, ray_length=100, offset=0):
 
     intercept_mask = intercept_mask.astype('bool')
     return surface_intercepts[intercept_mask], start_points[intercept_mask], intercept_mask
+
+########################################  intersection ##########################################
+def bone_pair_intersection(bone_pairs, bone_pair_counts, n=0):
+    """Return subjects that have interferences in n or less poses for the given bone pair"""
+    mask = np.ones(len(bone_pair_counts.columns),dtype=bool)
+    for bone_pair in bone_pairs:
+        mask = mask & (bone_pair_counts[np.isin(bone_pair_counts.reset_index()['bone_pairs'], bone_pair)].values[0] <= n)
+    return pd.Series(bone_pair_counts.columns)[mask].reset_index(drop=True)
+
+def subject_intersection_poses(intersection_path, subjectL, bone_pair='tpm-mc1'):
+    """returns list of poses that have intersections for the given bone pair and subject """
+    subject_intersections = pd.read_csv(os.path.join(intersection_path, f'{subjectL}.csv'), index_col=0)
+    return subject_intersections.columns[subject_intersections.loc[bone_pair].values].to_list()
+
+def bone_pair_pose_intersection(bone_pairs, poses, intersection_path):
+    """returns subjects with no interfernce for list of bone pairs and poses"""
+    bone_pairs = np.array(bone_pairs) 
+    poses = np.array(poses)
+    paths = [os.path.join(intersection_path, x) for x in os.listdir(intersection_path) if x[:-5].isnumeric()]
+
+    no_intersection = []
+    for path in paths:
+        subject_df = pd.read_csv(path, index_col=0)
+        if (subject_df.loc[bone_pairs, poses] == False).values.all():
+            no_intersection.append(path.split(os.path.sep)[-1].replace('.csv', ''))
+    return pd.Series(no_intersection)
+########################################  intersection ##########################################
