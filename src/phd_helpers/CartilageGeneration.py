@@ -17,7 +17,7 @@ def get_volume_seed(mesh, instep=0.01):
     seed = central_point - instep*central_normal
     # check its inside
     probe = pv.PolyData(seed)
-    if not bool(probe.select_enclosed_points(mesh, tolerance=0, check_surface=True)['SelectedPoints'][0]):
+    if not bool(probe.select_interior_points(mesh, check_surface=True)['selected_points'][0]):
         print('Warning: seed not inside. Can try reducing offset')
     return seed
 
@@ -42,7 +42,7 @@ def outward_normals(mesh, eps=1e-5, return_check=False):
     normals = mesh.compute_normals().cell_data['Normals'] # face normals
     centres = mesh.cell_centers().points
     point_cloud = pv.PolyData(centres - normals * eps)
-    check = point_cloud.select_enclosed_points(mesh, tolerance=0, check_surface=True)['SelectedPoints'].all()
+    check = point_cloud.select_interior_points(mesh, check_surface=True)['selected_points'].all()
     print(
         'All normals point outwards:     ', 
         check
@@ -181,7 +181,7 @@ def remove_normals(mesh):
 
 def get_outward_normal_mask(centres, normals, mesh, eps=1e-5): 
     point_cloud = pv.PolyData(centres - normals * eps)
-    return point_cloud.select_enclosed_points(mesh, tolerance=0, check_surface=True)['SelectedPoints'].astype(bool)
+    return point_cloud.select_interior_points(mesh, check_surface=True)['selected_points'].astype(bool)
 
 
 def flip_faces(mesh, flip_ids):
