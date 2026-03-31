@@ -315,6 +315,7 @@ def run_subprocess(args, timeout=300):
             bones=bones,
             stdout=stdout,
             stderr=stderr,
+            step=step,
             input_json=input_json,
             run_ids=run_ids,
             full_params_file=full_params_file
