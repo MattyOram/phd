@@ -68,7 +68,7 @@ use_remeshed_arbone = params_cart['use_remeshed_arbone']
 max_gap_cartilage = params_cart['max_gap_cartilage']
 
 taper_width = params_cart['taper_width']
-max_height = params_cart['max_height']
+#max_height = params_cart['max_height']
 p_h = params_cart['p_h'] 
 p_v = params_cart['p_v']
 cartilage_smooth_iters = params_cart['smooth_iters']
@@ -182,8 +182,8 @@ if not mesh_exists or overwrite:
         quality_path, # where to save cartilage mesh distance data (to measure effect of smoothing/remeshing)
         remesh_cartilage,
         cgal_input_path, # input path for CGAL C++ remeshing
-        taper_width, # width of cartilage taper region (limit - only tapers if above taper curve)
-        max_height, # max height of cartilage in taper region
+        taper_width, # width of cartilage taper region 
+        #max_height, # max height of cartilage in taper region
         p_h, # shape of taper height (1 = linear , higher = steeper taper)
         p_v, # shape of vector ratio (1 = linear)
         cartilage_smooth_iters, # need to look at this, currently uses laplacian  ##################### check this #############

@@ -10,7 +10,7 @@ from pathlib import Path
 import subprocess
 
 from phd_helpers.CartilageGeneration import (
-    mesh_checks, bone_cartilage_checks, get_outward_normal_mask, flip_faces, taper_f, get_nearest_boundary, 
+    mesh_checks, bone_cartilage_checks, get_outward_normal_mask, flip_faces, taper_f, #get_nearest_boundary, 
     interp_vecs, get_triangle_adjacency, flood_fill_cells, remove_normals, fill_holes_pmf
 )
 from phd_helpers.paths import find_corresponding_cells, identical_points_count, get_boundary
@@ -22,8 +22,8 @@ def articular_gap(
     quality_path, # where to save cartilage mesh distance data (to measure effect of smoothing/remeshing)
     remesh_cartilage,
     cgal_input_path, # path to c++ fixed boundary input
-    taper_width = 2, # width of cartilage taper region (limit - only tapers if above taper curve)
-    max_height = 1, # max height of cartilage in taper region
+    taper_width = 2, # width of cartilage taper region
+    #max_height = 1, # max height of cartilage in taper region
     p_h = 2, # shape of taper height (1 = linear , higher = steeper taper)
     p_v = 1, # shape of vector ratio (1 = linear)
     cartilage_smooth_iters = 200, # need to look at this, currently uses laplacian 
@@ -44,9 +44,17 @@ def articular_gap(
 
     ################# COMPUTE TAPER REGION #################
     # extract mesh of cartilage points on bone mesh (makes gdist computation faster) - (bone-cartilage interface mesh)
-    inter_mesh = bone_mesh.extract_points(min_df['bone_id'], adjacent_cells=False).extract_geometry()
+    inter_mesh1 = bone_mesh.extract_points(min_df['bone_id'], adjacent_cells=False).extract_surface(algorithm=None)
+
+    # JUST REMOVE ANY ISLANDS
+    conn = inter_mesh1.connectivity(label_regions=True)
+    region_ids = conn.cell_data["RegionId"]
+    island_ids, counts = np.unique(region_ids, return_counts=True)
+    largest_region_id = island_ids[np.argmax(counts)]
+    inter_mesh = inter_mesh1.extract_cells(np.where(region_ids == largest_region_id)[0]).extract_surface(algorithm=None)
     inter_mesh['inter_cell_ids'] = np.arange(inter_mesh.n_cells)
-    # remove any missing points due to extract geometry (so remove any points not part of a complete triangle)
+
+    # remove any missing points due to extract geometry (incomplete triangles) and islands
     missing_mask = ~np.isin(min_df['bone_id'], inter_mesh['bone_id'])
     min_df.drop(min_df['bone_id'][missing_mask].index.values, inplace=True)
 
@@ -69,43 +77,63 @@ def articular_gap(
     ) 
 
     # get mask of nodes within taper width and below taper function
-    taper_heights = taper_f(geo_dists, taper_width, max_height, p=p_h)
-    taper_mask = (taper_heights <= min_df['dist'] / 2) & (geo_dists<=taper_width)
+    #taper_heights = taper_f(geo_dists, taper_width, max_height, p=p_h)
+    #taper_mask = (taper_heights <= min_df['dist'] / 2) & (geo_dists<=taper_width)
+    taper_mask = geo_dists<=taper_width # new
 
     # get taper points mesh (makes computation much faster) - mesh of only taper region
     taper_mask_inter = np.isin(inter_mesh['bone_id'], min_df['bone_id'][taper_mask])
-    taper_mesh = inter_mesh.extract_points(taper_mask_inter, adjacent_cells=False).extract_geometry()
+    taper_mesh = inter_mesh.extract_points(taper_mask_inter, adjacent_cells=False).extract_surface(algorithm=None)
         # assign non-taper cells that lie on "pinched" islands to taper region
-    not_taper_mesh = inter_mesh.extract_cells(taper_mesh['inter_cell_ids'], invert=True).extract_geometry()
-    edge_map, adjacency = get_triangle_adjacency(not_taper_mesh)
+    not_taper_mesh = inter_mesh.extract_cells(taper_mesh['inter_cell_ids'], invert=True).extract_surface(algorithm=None)
+    _, adjacency = get_triangle_adjacency(not_taper_mesh)
     start_face = not_taper_mesh.find_closest_cell(np.mean(not_taper_mesh.points, axis=0)) # not best way of doing this!
     inner_cells = flood_fill_cells(not_taper_mesh, start_face, get_boundary(not_taper_mesh).lines.reshape(-1, 3)[:, 1:], adjacency)
         # final taper mesh #
-    taper_mesh = inter_mesh.extract_cells(not_taper_mesh['inter_cell_ids'][inner_cells], invert=True).extract_geometry()
+    taper_mesh = inter_mesh.extract_cells(not_taper_mesh['inter_cell_ids'][inner_cells], invert=True).extract_surface(algorithm=None)
+    taper_mesh['taper_point_id'] = np.arange(taper_mesh.n_points)
         # remove any missing points from taper_mask after extracting geometry and islands - not ideal but quicker than using inter mesh
     taper_mask = np.isin(min_df['bone_id'], taper_mesh['bone_id'])
     #taper_geo_dists = geo_dists[taper_mask]
-
-    # geo_dist between all points within max_distance
-    geo_dists_matrix = gdist.local_gdist_matrix(
-        taper_mesh.points.astype(np.float64),
-        taper_mesh.faces.reshape(-1, 4)[:, 1:].astype(np.int32),
-        max_distance=taper_width+1e-3
-    ) 
 
     # get taper mesh boundaries
     taper_boundary = get_boundary(taper_mesh)
     boundary_outer_mask_tb = np.isin(taper_boundary['bone_id'], inter_boundary['bone_id']) # on taper_boundary
 
+    # geo_dist between all points within max_distance
+    #geo_dists_matrix = gdist.local_gdist_matrix(
+    #    taper_mesh.points.astype(np.float64),
+    #    taper_mesh.faces.reshape(-1, 4)[:, 1:].astype(np.int32),
+    #    max_distance=taper_width+1e-3  # This is cause of cliffs at pinched islands and patch of flat faces edge case
+    #)                                    # when there is pinched island those points don't find the inner boundary and return np.inf
+
     # get taper boundary innner and outer nodes on taper mesh
-    taper_outer_mask = np.isin(taper_mesh['bone_id'], taper_boundary['bone_id'][boundary_outer_mask_tb]) # on taper_mesh
-    taper_inner_mask = np.isin(taper_mesh['bone_id'], taper_boundary['bone_id'][~boundary_outer_mask_tb]) # on taper_mesh
-    taper_outer_ids = np.arange(taper_mesh.n_points)[taper_outer_mask] # on taper_mesh
-    taper_inner_ids = np.arange(taper_mesh.n_points)[taper_inner_mask] # on taper_mesh
+    #taper_outer_mask = np.isin(taper_mesh['bone_id'], taper_boundary['bone_id'][boundary_outer_mask_tb]) # on taper_mesh
+    #taper_inner_mask = np.isin(taper_mesh['bone_id'], taper_boundary['bone_id'][~boundary_outer_mask_tb]) # on taper_mesh
+    #taper_outer_ids = np.arange(taper_mesh.n_points)[taper_outer_mask] # on taper_mesh
+    #taper_inner_ids = np.arange(taper_mesh.n_points)[taper_inner_mask] # on taper_mesh
 
     # ids and distances of boundary nodes that are closest to each taper node
-    _, near_taper_outer_D = get_nearest_boundary(taper_outer_ids, geo_dists_matrix) # ids on taper_mesh
-    near_taper_inner_ids, near_taper_inner_D = get_nearest_boundary(taper_inner_ids, geo_dists_matrix) # ids on taper_mesh
+    #_, near_taper_outer_D = get_nearest_boundary(taper_outer_ids, geo_dists_matrix) # ids on taper_mesh
+    #near_taper_inner_ids, near_taper_inner_D = get_nearest_boundary(taper_inner_ids, geo_dists_matrix) # ids on taper_mesh
+
+    # now using Euclidean distance for computation speed due to flaw in using geo_dist with max_distance #
+    # when there is pinched island those points don't find the inner boundary and return np.inf - causing cliff #
+    # now closest boudnary points are found with cdist #
+
+    # get taper boundary innner and outer nodes on taper mesh
+    taper_outer_ids = np.sort(taper_boundary['taper_point_id'][boundary_outer_mask_tb]) # on taper mesh
+    taper_inner_ids = np.sort(taper_boundary['taper_point_id'][~boundary_outer_mask_tb]) # on taper mesh
+
+    # ids and distances of boundary nodes that are closest to each taper node
+    d_taper_outer = cdist(taper_mesh.points, taper_mesh.points[taper_outer_ids])
+    near_taper_outer_D = d_taper_outer.min(axis=1)
+    #near_taper_outer_ids = taper_outer_ids[np.argmin(d_taper_outer, axis=1)]
+
+    d_taper_inner = cdist(taper_mesh.points, taper_mesh.points[taper_inner_ids])
+    near_taper_inner_D = d_taper_inner.min(axis=1)
+    near_taper_inner_ids = taper_inner_ids[np.argmin(d_taper_inner, axis=1)]
+
     # Distance fraction of each taper_mesh point from closest outer_node to closest_inner node
     taper_Df = (near_taper_outer_D) / (near_taper_outer_D + near_taper_inner_D)
 
@@ -144,7 +172,7 @@ def articular_gap(
     ################# MESH INNER REGION #################
     tapered_edge = get_boundary(tapered_mesh)
 
-    inner_edge = tapered_edge.extract_points(~boundary_outer_mask_tb).extract_geometry()
+    inner_edge = tapered_edge.extract_points(~boundary_outer_mask_tb).extract_surface(algorithm=None)
     #inner_points = pv.PolyData(midpoints[~taper_mask])
     inner_mesh = pv.PolyData(np.vstack( (inner_edge.points, midpoints[~taper_mask]) ), lines=inner_edge.lines)
 
@@ -206,6 +234,14 @@ def articular_gap(
     #mesh_clean['inner_points'] = np.zeros(mesh_clean.n_points, dtype=int)
     #for p in inner_mesh_clean.points:
     #    mesh_clean['inner_points'][mesh_clean.find_closest_point(p)] = 1
+
+
+    # Remove flat faces from interface mesh (final interface mesh)
+    if flat_face_mask.any():
+        interface_mesh = inter_mesh.extract_cells(find_corresponding_cells(inter_mesh, mesh.extract_cells(flat_face_mask)), invert=True)
+    else:
+        interface_mesh = inter_mesh.copy(deep=True)
+
 
     # get edge points on mesh and bone_mesh
     mesh_clean_edge = get_boundary(mesh_clean)
@@ -334,14 +370,14 @@ def articular_gap(
     ################# GET FINAL INTERFACE MESH BETWEEN BONE AND CARTILAGE #################
     # find which inter_boundary points are still in mesh boundary - after unused point removal
     #inter_boundary_ids = check_points_still_there(inter_boundary, mesh_edge_points)
-    _, inter_boundary_ids, _ = identical_points_count(inter_boundary.points, mesh_edge_points, return_indices=True) #*** new
+    #_, inter_boundary_ids, _ = identical_points_count(inter_boundary.points, mesh_edge_points, return_indices=True) #*** new
 
     # find which inter_mesh points are still in mesh and their bone_ids
-    unused_inter_ids = inter_boundary['bone_id'][~np.isin(np.arange(inter_boundary.n_points), inter_boundary_ids)]
-    interface_bone_mesh_ids = inter_mesh['bone_id'][~np.isin(inter_mesh['bone_id'], unused_inter_ids)]
+    #unused_inter_ids = inter_boundary['bone_id'][~np.isin(np.arange(inter_boundary.n_points), inter_boundary_ids)]
+    #interface_bone_mesh_ids = inter_mesh['bone_id'][~np.isin(inter_mesh['bone_id'], unused_inter_ids)]
 
     # extract bone_cartilage interface mesh
-    interface_mesh = bone_mesh.extract_points(interface_bone_mesh_ids, adjacent_cells=False).extract_geometry()
+    #interface_mesh = bone_mesh.extract_points(interface_bone_mesh_ids, adjacent_cells=False).extract_surface(algorithm=None)
     ################# GET FINAL INTERFACE MESH BETWEEN BONE AND CARTILAGE #################
 
 
@@ -386,7 +422,7 @@ def articular_gap(
     #interface_surf_ids = combined_mesh_cell_ids[np.where(combined_mesh['region_id']==3)[0]]
 
     # extract enclosed cartilage volume to do checks
-    cartilage_mesh = combined_mesh.extract_cells(bone_surf_ids, invert=True).extract_geometry()
+    cartilage_mesh = combined_mesh.extract_cells(bone_surf_ids, invert=True).extract_surface(algorithm=None)
     remove_normals(cartilage_mesh)  # have to remove them before recomputing 
                             #- cos inherited from parent mesh and doesn't recompute something about them for some reason
     cartilage_mesh.compute_normals(auto_orient_normals=True, inplace=True)
