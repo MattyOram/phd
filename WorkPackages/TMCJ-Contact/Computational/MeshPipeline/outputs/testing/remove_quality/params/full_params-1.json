@@ -73,13 +73,13 @@
     "max_gap_cartilage": 2,
     "use_remeshed_arbone": true,
     "taper_width": 1.5,
-    "p_h": 8.5,
+    "p_h": 2,
     "p_v": 1,
     "smooth_iters": 100,
     "n_iters": 10
   },
   "3Dmesh": {
-    "overwrite": false,
+    "overwrite": true,
     "input_mesh": null,
     "output_filename": null,
     "cgal_input_name": "",

@@ -194,8 +194,8 @@ if not mesh_exists or overwrite:
     # --------------------- SAVE MESH --------------------- #
     print(f"SAVING MESH... ({mesh_name})")
     if save_orig_smooth:
-        orig_mesh.save(output_path / 'orig_cart_surf.vtp')
-        smooth_mesh.save(output_path / 'smooth_cart_surf.vtp')
+        orig_mesh.save(output_path / f'orig_cart_surf{run_id}.vtp')
+        smooth_mesh.save(output_path / f'smooth_cart_surf{run_id}.vtp')
     combined_mesh.save(output_path / mesh_name, recompute_normals=False)
     print("Complete\n")
     # --------------------- SAVE MESH --------------------- #

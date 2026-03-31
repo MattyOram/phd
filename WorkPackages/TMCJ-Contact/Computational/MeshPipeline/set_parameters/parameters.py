@@ -143,7 +143,7 @@ params_cart['cgal_input_name']    = None # filename for cgal input mesh (assign 
 # path to dir containing bin, inputs, outputs folders
 params_cart['cgal_path']          = str(get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/2Dmesh')
 
-params_cart['save_orig_smooth']    = False
+params_cart['save_orig_smooth']    = True
 
         # ACTUAL PARAMETERS #
 params_cart['remesh_cartilage']   = True # after creating cartilage cap remesh to high quality mesh (not needed if mesh3D but maybe makes 3D mesh better quality)
@@ -173,7 +173,7 @@ params_cart['n_iters']            = 10 # n isotropic remeshing iterations for ca
 # ••••••••••••••••••••• 3Dmesh ••••••••••••••••••••• #
 params_3D = params['3Dmesh']
 
-params_3D['overwrite']          = True # overwrite postprocessed output mesh if it already exist (if params_glob['allow_overwrite'])
+params_3D['overwrite']          = False # overwrite postprocessed output mesh if it already exist (if params_glob['allow_overwrite'])
 
 params_3D['input_mesh']         = None # filepath
 
