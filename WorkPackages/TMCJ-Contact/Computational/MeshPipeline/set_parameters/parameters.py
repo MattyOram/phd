@@ -66,11 +66,13 @@ params_sub = params['subjects']
 
 # all CMC subjects that pass both bone and cartilage interference checks for final params (TMCJ-Contact 2Dmesh->cartilage)
 #  - see: InterferenceCheckFinal/interference-box.ipynb
+#  - 36 total
 params_sub['subject_sideL'] = pd.read_csv(
                                 get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/subs_ok.csv'
                             ).subs_ok.to_list()
 
 # ALL CMC SUBJECTS
+#  - 46 total
 """params_sub['subject_sideL'] = ['50037L', '50090R', '15294R', '50053R', '50049R', '15737R', 
                                '50061R', '14726R', '50016L', '14613R', '15358R', '50008L', 
                                '16276L', '15441R', '50024R', '14874R', '22306R', '14727R', 
