@@ -1,0 +1,151 @@
+{
+  "global": {
+    "output_root": "outputs/grad_width_test",
+    "allow_overwrite": true,
+    "step_timeout": 330,
+    "steps": {
+      "2Dmesh": true,
+      "cartilage": false,
+      "3Dmesh": false,
+      "manifold": false
+    }
+  },
+  "subjects": {
+    "subject_sideL": [
+      "14548R"
+    ],
+    "bone_arbone": [
+      "tpm-mc1"
+    ]
+  },
+  "2Dmesh": {
+    "overwrite": true,
+    "input_bone_mesh": null,
+    "input_arbone_mesh": null,
+    "output_filename": null,
+    "cgal_input_name": null,
+    "cgal_path": "/Users/maro/Library/CloudStorage/OneDrive-UniversityofLeeds/PhD-wrist/WorkPackages/WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/2Dmesh",
+    "compute_quality": true,
+    "poses": [
+      [
+        "adduction",
+        "abduction",
+        "flexion",
+        "extension",
+        "pinch",
+        "grasp",
+        "jar",
+        "neutral"
+      ]
+    ],
+    "taubin_iters": 50,
+    "remesh_arbone": true,
+    "max_gap_remesh": 2.2,
+    "adjacent_cells": true,
+    "fine_edge_length": 0.2,
+    "coarse_edge_length": 0.6,
+    "grad_width": 4,
+    "remesh_iters": 10
+  },
+  "cartilage": {
+    "overwrite": true,
+    "input_bone_mesh": null,
+    "input_arbone_mesh": null,
+    "output_filename": null,
+    "cgal_input_name": null,
+    "cgal_path": "/Users/maro/Library/CloudStorage/OneDrive-UniversityofLeeds/PhD-wrist/WorkPackages/WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/2Dmesh",
+    "compute_quality": true,
+    "remesh_cartilage": true,
+    "edge_length": null,
+    "poses": [
+      [
+        "adduction",
+        "abduction",
+        "flexion",
+        "extension",
+        "pinch",
+        "grasp",
+        "jar",
+        "neutral"
+      ]
+    ],
+    "max_gap_cartilage": 2,
+    "use_remeshed_arbone": true,
+    "taper_width": 2,
+    "max_height": 1,
+    "p_h": 2,
+    "p_v": 1,
+    "smooth_iters": 100,
+    "n_iters": 5
+  },
+  "3Dmesh": {
+    "overwrite": true,
+    "input_mesh": null,
+    "output_filename": null,
+    "cgal_input_name": "",
+    "save_cgal_inputs": false,
+    "cgal_path": "/Users/maro/Library/CloudStorage/OneDrive-UniversityofLeeds/PhD-wrist/WorkPackages/WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/3Dmesh",
+    "postprocess": true,
+    "keep_cgal_copy": false,
+    "compute_quality": true,
+    "cgal_params": {
+      "sizing_field": {
+        "n_tets": 3,
+        "min_size": 0.01,
+        "max_size": 0.25,
+        "d_taper": 2,
+        "taper_size": 0.2,
+        "h_bone_max": 1.5,
+        "d0": 10.0
+      },
+      "facet_distance": {
+        "fd_interface": 0.01,
+        "fd_bone": 0.1,
+        "fd_edge_loop": 0.05,
+        "fd_cart_near": 0.05,
+        "fd_cart_far": 0.01,
+        "d0_cart": 1.0
+      },
+      "criteria": {
+        "facet_angle": 30.0,
+        "cell_radius_edge_ratio": 3.0,
+        "manifold_with_boundary": false
+      },
+      "optimisation": {
+        "odt": false,
+        "lloyd": true,
+        "perturb": true,
+        "exude": true
+      },
+      "odt": {
+        "time_limit": 60,
+        "max_iteration_number": 3,
+        "convergence": 0.005,
+        "do_freeze": true,
+        "freeze_bound": 0.002
+      },
+      "lloyd": {
+        "time_limit": 120,
+        "max_iteration_number": 50,
+        "convergence": 0.002,
+        "do_freeze": true,
+        "freeze_bound": 0.01
+      },
+      "perturb": {
+        "time_limit": 60,
+        "sliver_bound": 15
+      },
+      "exude": {
+        "time_limit": 60,
+        "sliver_bound": 0
+      }
+    }
+  },
+  "manifold": {
+    "input_mesh": null,
+    "output_filename": null,
+    "require_manifold": true,
+    "max_area": 0.05,
+    "max_loc": 0.2
+  }
+}

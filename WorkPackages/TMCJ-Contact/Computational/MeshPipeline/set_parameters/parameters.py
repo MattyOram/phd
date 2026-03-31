@@ -14,6 +14,10 @@ import json
 import sys
 
 
+#------------------------------- ALWAYS KEEP THIS FILE IN THIS DIRECTORY ------------------------------ #
+# - even if setting output_root somewhere else (a json copy will be saved to the output_root)
+# - (could change it so that params_path is a cli arg for main.py)
+
 
 params = {
     'global': {},
@@ -28,11 +32,11 @@ params = {
 # ••••••••••••••••••••• GLOBAL ••••••••••••••••••••• # - no lists!
 params_glob = params['global']
 
-# root directory for outputs and save loc of params file - if relative will be relative to current directory!
+# root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 #params_glob['output_root']     = 'outputs/ParamOptimisation/study1' 
-params_glob['output_root']     = 'outputs/testing/testing6' 
+params_glob['output_root']     = 'outputs/cartilage_ok' 
 
-params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
+params_glob['allow_overwrite'] = False # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
 #     - but not full_params.json - keeps all copies of full params for each output_root, with -i suffix for each new file
 
@@ -45,7 +49,7 @@ params_glob['step_timeout']    = 330 # (s) time limit per step (3D meshing can h
 params_glob['steps'] = {
     '2Dmesh':    True,
     'cartilage': True,
-    '3Dmesh':    True,
+    '3Dmesh':    False,
     'manifold':  False # only might be needed if planning to 3D print (haven't checked...)
 } 
 
@@ -53,15 +57,33 @@ params_glob['steps'] = {
 # ••••••••••••••••••••• SUBJECTS ••••••••••••••••••••• #
 params_sub = params['subjects']
 
-params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side 
 
-# these are all subjects without interference for params in testing 3
-"""params_sub['subject_sideL'] = ['14818R', '14874R', '22306R', '50000R', '50049R', '50034R',
-                                '15006R', '50017L', '15441R', '14827L', '14726R', '15294R', 
-                                '50021R', '50027L', '50008L', '14548R', '14873R', '15737R', 
-                                '14685R', '50045R', '50006R', '50029R', '50020R', '50018L', 
-                                '50037L', '14727R', '50014R', '50019R', '50053R', '50016L', 
-                                '50024R', '50007L', '50001R', '14819R', '15283R']"""
+
+#params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side 
+
+
+# all subjects without interference based on interferece-box for taubin(50) and remesh(0.2)-fel
+# - should all be able to get cartilage on both tpm and mc1...
+# - but - '14613R' - fails the cartilage interference check for both tpm and mc1
+# - and - '50018L' - fails the cartilage interference check for the mc1
+# (see top of taper-box.ipynb for full info)
+"""params_sub['subject_sideL'] = ['14548R', '14613R', '14685R', '14726R', '14727R', '14818R', 
+                                '14819R','14827L', '14873R', '14874R', '15006R', '15283R', 
+                                '15294R', '15441R', '15737R', '22306R', '50000R', '50001R', 
+                                '50006R', '50007L', '50008L', '50014R', '50016L', '50017L', 
+                                '50019R', '50020R', '50021R', '50024R', '50027L', '50029R', 
+                                '50034R','50037L', '50045R', '50049R', '50053R']"""
+
+# ALL CMC SUBJECTS
+params_sub['subject_sideL'] = ['50037L', '50090R', '15294R', '50053R', '50049R', '15737R', 
+                               '50061R', '14726R', '50016L', '14613R', '15358R', '50008L', 
+                               '16276L', '15441R', '50024R', '14874R', '22306R', '14727R', 
+                               '50033L', '15284R', '50017L', '50029R', '50027L', '50018L', 
+                               '15357R', '50001R', '15006R', '14819R', '14873R', '50034R', 
+                               '15283R', '50021R', '50019R', '15285R', '50020R', '50006R', 
+                               '50000R', '50007L', '50014R', '14827L', '14818R', '14548R', 
+                               '15882R', '15282R', '50045R', '14685R']
+
 
 params_sub['bone_arbone']   = ['tpm-mc1'] # target_bone - articulating_bone
 
@@ -71,37 +93,40 @@ params_sub['bone_arbone']   = ['tpm-mc1'] # target_bone - articulating_bone
 # ••••••••••••••••••••• 2DMESH ••••••••••••••••••••• #
 params_2D = params['2Dmesh']
 
-params_2D['overwrite']          = True # overwrite output meshes if they already exist (if params_glob['allow_overwrite'])
+params_2D['overwrite']          = False # overwrite output meshes if they already exist (if params_glob['allow_overwrite'])
 
 params_2D['input_bone_mesh']    = None # filepath
 params_2D['input_arbone_mesh']  = None # filepath
 
-params_2D['output_filename']    = None # mesh filename (.vtp)
+params_2D['output_filename']    = None # remesh filename (.vpt/.obj ...)
 params_2D['cgal_input_name']    = None # filename for cgal input mesh (assign unique per subprocess name to avoid issues!)
 
 # path to dir containing bin, inputs, outputs folders
 params_2D['cgal_path']          = str(get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/2Dmesh')
 
 
-params_2D['compute_quality']    = True # output directory containing element quality and mesh surface change
+params_2D['compute_quality']    = False # output directory containing element quality and mesh surface change
 
         # ACTUAL PARAMETERS #
 params_2D['poses']              = [
                             ['adduction','abduction','flexion','extension','pinch','grasp','jar','neutral']
                             ]
 
-params_2D['taubin_iters']       = 50  # currently constant based on visual look (smoothing)
-# - need to do sensitivity study and check if it should be scaled by mesh quality (see SmoothRemesh-box)
+params_2D['taubin_iters']       = 50  # n smoothing iterations
+params_2D['save_smoothed_mesh'] = False # by default, only the final remeshed output of 2Dmesh is saves
+                                        # if taubin iters is not list but other 2Dmesh param is then it will 
+                                        # save the identical smooth mesh every time with different run-id...
+params_2D['output_filename_smooth'] = None # smooth mesh filename (.vtp/.obj ...)
 
 params_2D['remesh_arbone']      = True # results in smoother cartilage surface and better 3Dmesh quality
 
 # max gap remesh must be ≥ params_cart['max_gap_cartilage'] to ensure entire cartilage is within fine_edge_length region (if remeshing cartilage)
-params_2D['max_gap_remesh']     = 2.2   # max distance of point on mesh1 from mesh2 to be part of fine mesh region
+params_2D['max_gap_remesh']     = 2.5   # max distance of point on mesh1 from mesh2 to be part of fine mesh region
 params_2D['adjacent_cells']     = True # include any cells with ≥1 node in region - True should mean can set max_gap_remesh = max_gap_cartilage
 
 params_2D['fine_edge_length']   = 0.2 # edge length in articulation region
 params_2D['coarse_edge_length'] = 0.6 # edge length away from articulation region
-params_2D['grad_width']         = 4 # width of edge lenth gradient region from fine to coarse
+params_2D['grad_width']         = 6 # width of edge lenth gradient region from fine to coarse
 params_2D['remesh_iters']       = 10  # n isotropic remeshing iterations
         # ACTUAL PARAMETERS #
 
@@ -113,18 +138,18 @@ params_2D['remesh_iters']       = 10  # n isotropic remeshing iterations
 # ••••••••••••••••••••• CARTILAGE ••••••••••••••••••••• #
 params_cart = params['cartilage']
 
-params_cart['overwrite']          = True # overwrite output mesh it already exists (if params_glob['allow_overwrite'])
+params_cart['overwrite']          = False # overwrite output mesh it already exists (if params_glob['allow_overwrite'])
 
 params_cart['input_bone_mesh']    = None # filepath
 params_cart['input_arbone_mesh']  = None # filepath
 
-params_cart['output_filename']    = None # mesh filename (.obj) 
+params_cart['output_filename']    = None # mesh filename (.vtp) 
 params_cart['cgal_input_name']    = None # filename for cgal input mesh (assign unique per subprocess name to avoid issues!)
 
 # path to dir containing bin, inputs, outputs folders
 params_cart['cgal_path']          = str(get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/2Dmesh')
 
-params_cart['compute_quality']    = True 
+params_cart['compute_quality']    = False
 
         # ACTUAL PARAMETERS #
 params_cart['remesh_cartilage']   = True # after creating cartilage cap remesh to high quality mesh (not needed if mesh3D but maybe makes 3D mesh better quality)
@@ -139,12 +164,12 @@ params_cart['max_gap_cartilage']  = 2 # maximum articular gap for cartilage pres
 # if params_2D['remesh_arbone']
 params_cart['use_remeshed_arbone']= True # results in smoother cartilage surface and better 3Dmesh quality
 
-params_cart['taper_width']        = 2 # width of cartilage taper region (limit - only tapers if above taper curve)
-params_cart['max_height']         = 1 # max height of cartilage in taper region
+params_cart['taper_width']        = 2 # width of cartilage taper region
+params_cart['max_height']         = 0.5*params_cart['taper_width'] # max height of cartilage in taper region
 params_cart['p_h']                = 2 # shape of taper height (1=linear , higher = steeper taper)
 params_cart['p_v']                = 1 # shape of vector ratio (1=linear) - normal to midpoint vector ratio for taper region extrusion
 params_cart['smooth_iters']       = 100 # looked at this in ArticularGap4-box - might be different for different tri density?
-params_cart['n_iters']            = 5 # n isotropic remeshing iterations for cartilage remesh
+params_cart['n_iters']            = 10 # n isotropic remeshing iterations for cartilage remesh
         # ACTUAL PARAMETERS #
 
 
@@ -158,7 +183,7 @@ params_3D['overwrite']          = True # overwrite postprocessed output mesh if 
 
 params_3D['input_mesh']         = None # filepath
 
-params_3D['output_filename']    = None # mesh filename (.vtu) (auto given .mesh for cgal copy)
+params_3D['output_filename']    = None # mesh filename (.vtu) (if keep_cgal_copy=True, cgal copy is auto given .mesh)
 params_3D['cgal_input_name']    = ''   # filename add on for cgal inputs (assign unique per subprocess name to avoid issues!)
 params_3D['save_cgal_inputs']   = False
 
@@ -181,7 +206,7 @@ params_3D['cgal_params'] = {
 
         # edge size linearly increases from d_taper to cartilage boundary
         "d_taper": params_cart['taper_width'], # width of cartilage taper region that doesn't use height based size
-        "taper_size": 0.20, # target max edge length (or circumradius?) at cartilage boundary
+        "taper_size": 0.2, # target max edge length (or circumradius?) at cartilage boundary
 
         # bone ramp - bone surface/volume mesh grows with distance from interface
         "h_bone_max": 1.5,  # max edge length (or circumradius?) - bone surface/volumetric mesh
@@ -192,11 +217,11 @@ params_3D['cgal_params'] = {
     "facet_distance": {
         "fd_interface": 0.01, # target max facet distance - interface
         "fd_bone": 0.10,      # target max facet distance - bone
-        "fd_edge_loop": 0.05, # target max facet distance - edge loop
+        "fd_edge_loop": 0.10, # target max facet distance - edge loop (maybe do = None and set to bone and same for cart near)
         
-        "fd_cart_near": 0.05, # target max facet distance - at cartilage boundary (==fd_edge_loop)
-        "fd_cart_far": 0.01,  # target max facet distance - at d0 from cartilage boundary (==fd_interface)
-        "d0_cart": 1.0        # distance over which cartilage fd grows
+        "fd_cart_near": 0.10, # target max facet distance - at cartilage boundary (==fd_edge_loop)
+        "fd_cart_far": 0.01,  # target max facet distance - at d0 from cartilage boundary (==fd_interface) (maybe do = None for study)
+        "d0_cart": params_cart['taper_width']        # distance over which cartilage fd grows
     },
 
     # CGAL Mesh criteria
@@ -207,6 +232,12 @@ params_3D['cgal_params'] = {
         "manifold_with_boundary": False # Should ensure that volume shells of returned mesh are manifold (default=False)
                                         # - found that it can make remeshing either hang or take forever probs cos of criteria
     },
+
+    # above - facet angle, cell ratio, fd bone, fd interface, d0, h_bone_max, taper_size?, n_tets
+        # - fd could be based on what is acceptable difference (given specifics of study)
+        # - ((4*3**7) / 7) / 60 = 21 ; 7 is doable
+    # COULD SPLIT UP MESH CREATION AND OPTIMISATION - for optimisation STUDIES #
+
 
     # ---- OPTIMISATION STEPS ---- #
     # if flags are set to [True, False] then corresponding params are only looped over when flag==True 

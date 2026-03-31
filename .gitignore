@@ -48,3 +48,6 @@ CADmodels/*
 *.mesh
 *.ply
 *.inp
+
+# random csv files
+**/metric_dfs/*
