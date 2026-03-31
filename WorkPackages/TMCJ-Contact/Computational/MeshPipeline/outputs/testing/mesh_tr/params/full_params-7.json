@@ -49,7 +49,7 @@
     "remesh_iters": 10
   },
   "cartilage": {
-    "overwrite": true,
+    "overwrite": false,
     "input_bone_mesh": null,
     "input_arbone_mesh": null,
     "output_filename": null,

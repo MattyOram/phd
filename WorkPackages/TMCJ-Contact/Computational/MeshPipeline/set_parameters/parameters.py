@@ -35,7 +35,7 @@ params_glob = params['global']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 #params_glob['output_root']     = 'outputs/ParamOptimisation/study1' 
-params_glob['output_root']     = 'outputs/testing/remove_quality' 
+params_glob['output_root']     = 'outputs/testing/mesh_tr' 
 
 params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
@@ -173,7 +173,7 @@ params_cart['n_iters']            = 10 # n isotropic remeshing iterations for ca
 # ••••••••••••••••••••• 3Dmesh ••••••••••••••••••••• #
 params_3D = params['3Dmesh']
 
-params_3D['overwrite']          = False # overwrite postprocessed output mesh if it already exist (if params_glob['allow_overwrite'])
+params_3D['overwrite']          = True # overwrite postprocessed output mesh if it already exist (if params_glob['allow_overwrite'])
 
 params_3D['input_mesh']         = None # filepath
 
@@ -201,19 +201,18 @@ params_3D['cgal_params'] = {
         "taper_size": 0.2, # target max edge length (or circumradius?) at cartilage boundary
 
         # bone ramp - bone surface/volume mesh grows with distance from interface
-        "h_bone_max": 1.5,  # max edge length (or circumradius?) - bone surface/volumetric mesh
+        "h_bone_max": 1,  # max edge length (or circumradius?) - bone surface/volumetric mesh
         "d0": 6          # distance of growth region from interface edge length (or circumradius?) to h_bone_max
     },
 
     # Facet distance params - max deviation from origial mesh
     "facet_distance": {
-        "fd_interface": 0.01, # target max facet distance - interface - is this all interface or just outside of taper region?
+        "fd_cart_near": 0.05, # target max facet distance - at cartilage boundary (==fd_edge_loop)
+        "fd_cart_far": 0.02,  # target max facet distance - at d0 from cartilage boundary
+        "d0_cart": params_cart['taper_width'],        # distance over which cartilage fd grows
+
         "fd_bone": 0.10,      # target max facet distance - bone
-        "fd_edge_loop": 0.10, # target max facet distance - edge loop (maybe do = None and set to bone and same for cart near)
-        
-        "fd_cart_near": 0.10, # target max facet distance - at cartilage boundary (==fd_edge_loop)
-        "fd_cart_far": 0.01,  # target max facet distance - at d0 from cartilage boundary (==fd_interface) (maybe do = None for study)
-        "d0_cart": params_cart['taper_width']        # distance over which cartilage fd grows
+        "fd_edge_loop": None, # target max facet distance - edge loop (if None = "fd_cart_near")
     },
 
     # CGAL Mesh criteria

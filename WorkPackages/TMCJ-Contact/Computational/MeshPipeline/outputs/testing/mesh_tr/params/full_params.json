@@ -49,7 +49,7 @@
     "remesh_iters": 10
   },
   "cartilage": {
-    "overwrite": true,
+    "overwrite": false,
     "input_bone_mesh": null,
     "input_arbone_mesh": null,
     "output_filename": null,
@@ -94,15 +94,15 @@
         "max_size": 0.5,
         "d_taper": 1.5,
         "taper_size": 0.2,
-        "h_bone_max": 1,
+        "h_bone_max": 1.5,
         "d0": 6
       },
       "facet_distance": {
-        "fd_cart_near": 0.05,
-        "fd_cart_far": 0.02,
-        "d0_cart": 1.5,
         "fd_bone": 0.1,
-        "fd_edge_loop": null
+        "fd_edge_loop": 0.1,
+        "fd_cart_near": 0.1,
+        "fd_cart_far": 0.01,
+        "d0_cart": 1.5
       },
       "criteria": {
         "facet_angle": 30.0,
