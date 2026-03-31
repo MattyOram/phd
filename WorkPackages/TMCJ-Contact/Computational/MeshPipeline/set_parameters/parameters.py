@@ -10,6 +10,7 @@ beware if using subprocesses to parrallelise - need to give cgal input files per
 
 
 from phd_helpers.paths import get_project_root
+import pandas as pd
 import json
 import sys
 
@@ -34,9 +35,9 @@ params_glob = params['global']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 #params_glob['output_root']     = 'outputs/ParamOptimisation/study1' 
-params_glob['output_root']     = 'outputs/cartilage_ok' 
+params_glob['output_root']     = 'outputs/testing/testy' 
 
-params_glob['allow_overwrite'] = False # If False, ignores per step overwrite flags
+params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
 #     - but not full_params.json - keeps all copies of full params for each output_root, with -i suffix for each new file
 
@@ -60,33 +61,27 @@ params_sub = params['subjects']
 
 
 #params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side 
+#params_sub['subject_sideL'] = ['50014R'] # subject id and wrist side 
 
 
-# all subjects without interference based on interferece-box for taubin(50) and remesh(0.2)-fel
-# - should all be able to get cartilage on both tpm and mc1...
-# - but - '14613R' - fails the cartilage interference check for both tpm and mc1
-# - and - '50018L' - fails the cartilage interference check for the mc1
-# (see top of taper-box.ipynb for full info)
-"""params_sub['subject_sideL'] = ['14548R', '14613R', '14685R', '14726R', '14727R', '14818R', 
-                                '14819R','14827L', '14873R', '14874R', '15006R', '15283R', 
-                                '15294R', '15441R', '15737R', '22306R', '50000R', '50001R', 
-                                '50006R', '50007L', '50008L', '50014R', '50016L', '50017L', 
-                                '50019R', '50020R', '50021R', '50024R', '50027L', '50029R', 
-                                '50034R','50037L', '50045R', '50049R', '50053R']"""
+# all CMC subjects that pass both bone and cartilage interference checks for final params (TMCJ-Contact 2Dmesh->cartilage)
+#  - see: InterferenceCheckFinal/interference-box.ipynb
+params_sub['subject_sideL'] = pd.read_csv(
+                                get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/subs_ok.csv'
+                            ).subs_ok.to_list()
 
 # ALL CMC SUBJECTS
-params_sub['subject_sideL'] = ['50037L', '50090R', '15294R', '50053R', '50049R', '15737R', 
+"""params_sub['subject_sideL'] = ['50037L', '50090R', '15294R', '50053R', '50049R', '15737R', 
                                '50061R', '14726R', '50016L', '14613R', '15358R', '50008L', 
                                '16276L', '15441R', '50024R', '14874R', '22306R', '14727R', 
                                '50033L', '15284R', '50017L', '50029R', '50027L', '50018L', 
                                '15357R', '50001R', '15006R', '14819R', '14873R', '50034R', 
                                '15283R', '50021R', '50019R', '15285R', '50020R', '50006R', 
                                '50000R', '50007L', '50014R', '14827L', '14818R', '14548R', 
-                               '15882R', '15282R', '50045R', '14685R']
+                               '15882R', '15282R', '50045R', '14685R']"""
 
 
-params_sub['bone_arbone']   = ['tpm-mc1'] # target_bone - articulating_bone
-
+params_sub['bone_arbone']   = ['tpm-mc1' ,'mc1-tpm'] # target_bone - articulating_bone
 
 
 
@@ -138,7 +133,7 @@ params_2D['remesh_iters']       = 10  # n isotropic remeshing iterations
 # ••••••••••••••••••••• CARTILAGE ••••••••••••••••••••• #
 params_cart = params['cartilage']
 
-params_cart['overwrite']          = False # overwrite output mesh it already exists (if params_glob['allow_overwrite'])
+params_cart['overwrite']          = True # overwrite output mesh it already exists (if params_glob['allow_overwrite'])
 
 params_cart['input_bone_mesh']    = None # filepath
 params_cart['input_arbone_mesh']  = None # filepath
@@ -164,9 +159,9 @@ params_cart['max_gap_cartilage']  = 2 # maximum articular gap for cartilage pres
 # if params_2D['remesh_arbone']
 params_cart['use_remeshed_arbone']= True # results in smoother cartilage surface and better 3Dmesh quality
 
-params_cart['taper_width']        = 2 # width of cartilage taper region
-params_cart['max_height']         = 0.5*params_cart['taper_width'] # max height of cartilage in taper region
-params_cart['p_h']                = 2 # shape of taper height (1=linear , higher = steeper taper)
+params_cart['taper_width']        = 1.5 # width of cartilage taper region
+#params_cart['max_height']         = 0.5*params_cart['taper_width'] # max height of cartilage in taper region
+params_cart['p_h']                = 8.5 # shape of taper height (1=linear , higher = steeper taper)
 params_cart['p_v']                = 1 # shape of vector ratio (1=linear) - normal to midpoint vector ratio for taper region extrusion
 params_cart['smooth_iters']       = 100 # looked at this in ArticularGap4-box - might be different for different tri density?
 params_cart['n_iters']            = 10 # n isotropic remeshing iterations for cartilage remesh
