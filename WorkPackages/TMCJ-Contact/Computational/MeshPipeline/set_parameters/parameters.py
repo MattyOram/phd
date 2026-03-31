@@ -235,9 +235,9 @@ params_3D['cgal_params'] = {
     # - see main.py
     "optimisation": { # This determines which of the following optimisation steps are used
         "odt": False,    # not had good results with odt - makes worst worse to make avg better?
-        "lloyd": True,   # does good stuff - smoothes mesh improves qaulity
-        "perturb": True, # does good stuff - improves dihedral angles of worst elements
-        "exude": True    # doesn't seem to do much  - removes slivers
+        "lloyd": False,   # does good stuff - smoothes mesh improves qaulity
+        "perturb": False, # does good stuff - improves dihedral angles of worst elements
+        "exude": False    # doesn't seem to do much  - removes slivers
     },
 
     "odt": { # these were the original args for lloyd when I first got it working, except iter=0
