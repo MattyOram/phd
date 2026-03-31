@@ -80,7 +80,7 @@ while (full_param_path := step_param_dir / f"full_params{'' if i == 0 else f'-{i
     i += 1
 with open(full_param_path, "w") as f:
     json.dump(params, f, indent=2)
-
+print(f'Full parameter file saved to {full_param_path}')
 
 # GENERATE .JSON PARAMETER FILES FOR EACH STEP #
 step_counts = []
