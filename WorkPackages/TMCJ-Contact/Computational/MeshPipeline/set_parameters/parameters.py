@@ -132,7 +132,7 @@ params_2D['remesh_iters']       = 10  # n isotropic remeshing iterations
 # ••••••••••••••••••••• CARTILAGE ••••••••••••••••••••• #
 params_cart = params['cartilage']
 
-params_cart['overwrite']          = True # overwrite output mesh it already exists (if params_glob['allow_overwrite'])
+params_cart['overwrite']          = False # overwrite output mesh it already exists (if params_glob['allow_overwrite'])
 
 params_cart['input_bone_mesh']    = None # filepath
 params_cart['input_arbone_mesh']  = None # filepath
@@ -178,7 +178,7 @@ params_3D['overwrite']          = True # overwrite postprocessed output mesh if 
 params_3D['input_mesh']         = None # filepath
 
 params_3D['output_filename']    = None # mesh filename (.vtu) (if keep_cgal_copy=True, cgal copy is auto given .mesh)
-params_3D['cgal_input_name']    = ''   # filename add on for cgal inputs (assign unique per subprocess name to avoid issues!)
+params_3D['cgal_input_name']    = '-0'   # filename add on for cgal inputs (assign unique per subprocess name to avoid issues!)
 params_3D['save_cgal_inputs']   = False
 
 # path to dir containing bin, inputs, outputs folders
@@ -212,7 +212,7 @@ params_3D['cgal_params'] = {
         "d0_cart": params_cart['taper_width'],        # distance over which cartilage fd grows
 
         "fd_bone": 0.10,      # target max facet distance - bone
-        "fd_edge_loop": None, # target max facet distance - edge loop (if None = "fd_cart_near")
+        "fd_edge_loop": None, # target max facet distance - edge loop (if None==fd_cart_near)
     },
 
     # CGAL Mesh criteria
@@ -243,17 +243,17 @@ params_3D['cgal_params'] = {
     "odt": { # these were the original args for lloyd when I first got it working, except iter=0
         "time_limit": 60, # 0 means that there is no limit (default)
         "max_iteration_number": 3, # 0 means that there is no limit (default)
-        "convergence": 0.005, # default = 0.02 - did nothing
+        "convergence": 0.002, # default = 0.02 
         "do_freeze": True, # default True
         "freeze_bound": 0.002 # default 0.01
     },
 
     "lloyd": {
         "time_limit": 120, # 0 means that there is no limit (default)
-        "max_iteration_number": 50, # 0 means that there is no limit (default) - hits this if 50 and con 0.005, f_b 0.01, t_l 120
+        "max_iteration_number": 0, # 0 means that there is no limit (default) - hits this if 50 and con 0.005, f_b 0.01, t_l 120
         "convergence": 0.002, # default = 0.02
         "do_freeze": True, # default True
-        "freeze_bound": 0.01 # default 0.01
+        "freeze_bound": 0.002 # default 0.01
     },
 
     # if sliver bound set for peturb and exude, it may sacrifice other metrics to hit sliver target but also somtimes helps a lot.

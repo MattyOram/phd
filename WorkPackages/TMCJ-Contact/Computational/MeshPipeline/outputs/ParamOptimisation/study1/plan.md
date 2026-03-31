@@ -2,17 +2,17 @@
 
 ## Relevant parameters
 
-#### global:
-* step_timeout = 330?
+### global:
+* step_timeout = 300
 
-#### subjects:
+### subjects:
 * subeject_sideL = 14548R
     * run for one subject first? Or check mesh quality for current params and pick subjects that span the range?
 
 * bone_arbone = tpm-mc1
     * just run for tpm for now
 
-#### 2Dmesh:
+### 2Dmesh:
 * taubin_iters = 50
     * Justified in smooth-box.ipynb
 
@@ -34,7 +34,7 @@
     * Justified in remesh-box.ipynb
 
 
-#### cartilage:
+### cartilage:
 * poses = ['adduction','abduction','flexion','extension','pinch','grasp','jar','neutral']
     * need to do all relevant unloaded poses
 
@@ -56,5 +56,47 @@
 * smooth_iters = 100
     * Justified in taper-box.ipynb
 
-#### 3Dmesh
-* todo
+### 3Dmesh
+
+#### Criteria
+* n_tets = 3 
+    * this will be dictated by FEA convergence study
+
+* taper_size = 0.2 
+    * average is ~0.6mm => ~3 accross thickness
+
+* h_bone_max = [0.5, 1, 2]
+
+* d0 = [2, 4, 8]
+
+* fd_cart_near = [0.02, 0.04, 0.08]
+
+* fd_cart_far = [0.01, 0.02, 0.04]
+
+* fd_bone = [0.2 0.4, 0.8]
+
+* facet_angle = [7.5, 15, 30]
+
+* cell_radius_edge_ratio = [3, 6, 12]
+
+
+#### Optmisation
+     - Set time limits and iterations so that so hopefully arn't hit unless it is making very slow progress
+     - check exit codes after
+     - lloyd give 2 minutes because it can be slower - global regularisation
+     - peturb and exude target sliver triangles - local repair
+
+* lloyd = True
+    * time_limit = 120
+    * max_iterations = 0 (no limit)
+    * convergence = []
+    * freeze_bound = []
+    * do_freeze = True
+
+* peturb = True
+    * time_limit = 60
+    * sliver_bound = []
+
+* exude = True
+    * time_limit = 60
+    * sliver_bound = []
