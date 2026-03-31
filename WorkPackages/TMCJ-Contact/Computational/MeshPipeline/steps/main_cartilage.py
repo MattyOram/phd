@@ -75,7 +75,7 @@ cartilage_smooth_iters = params_cart['smooth_iters']
 n_iters = params_cart['n_iters']
 
 edge_length = params_cart['edge_length']
-if not edge_length: # set edge length from parent 2D mesh params
+if edge_length is None: # set edge length from parent 2D mesh params
     mesh2D_id = id_args[-2]
     with open(Path(param_path).parent.parent / f'2Dmesh/{mesh2D_id}.json', "r") as f:
         params_2D = json.load(f)
