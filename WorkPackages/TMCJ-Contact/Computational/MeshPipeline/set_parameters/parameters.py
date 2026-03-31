@@ -35,7 +35,7 @@ params_glob = params['global']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 #params_glob['output_root']     = 'outputs/ParamOptimisation/study1' 
-params_glob['output_root']     = 'outputs/testing/testy' 
+params_glob['output_root']     = 'outputs/testing/remove_quality' 
 
 params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
@@ -50,7 +50,7 @@ params_glob['step_timeout']    = 330 # (s) time limit per step (3D meshing can h
 params_glob['steps'] = {
     '2Dmesh':    True,
     'cartilage': True,
-    '3Dmesh':    False,
+    '3Dmesh':    True,
     'manifold':  False # only might be needed if planning to 3D print (haven't checked...)
 } 
 
@@ -60,16 +60,16 @@ params_sub = params['subjects']
 
 
 
-#params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side 
+params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side 
 #params_sub['subject_sideL'] = ['50014R'] # subject id and wrist side 
 
 
 # all CMC subjects that pass both bone and cartilage interference checks for final params (TMCJ-Contact 2Dmesh->cartilage)
 #  - see: InterferenceCheckFinal/interference-box.ipynb
 #  - 36 total
-params_sub['subject_sideL'] = pd.read_csv(
-                                get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/subs_ok.csv'
-                            ).subs_ok.to_list()
+#params_sub['subject_sideL'] = pd.read_csv(
+#                            ).subs_ok.to_list()
+#                                get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/subs_ok.csv'
 
 # ALL CMC SUBJECTS
 #  - 46 total
@@ -83,7 +83,7 @@ params_sub['subject_sideL'] = pd.read_csv(
                                '15882R', '15282R', '50045R', '14685R']"""
 
 
-params_sub['bone_arbone']   = ['tpm-mc1' ,'mc1-tpm'] # target_bone - articulating_bone
+params_sub['bone_arbone']   = ['tpm-mc1'] # target_bone - articulating_bone
 
 
 
@@ -100,9 +100,6 @@ params_2D['cgal_input_name']    = None # filename for cgal input mesh (assign un
 
 # path to dir containing bin, inputs, outputs folders
 params_2D['cgal_path']          = str(get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/2Dmesh')
-
-
-params_2D['compute_quality']    = False # output directory containing element quality and mesh surface change
 
         # ACTUAL PARAMETERS #
 params_2D['poses']              = [
@@ -146,7 +143,7 @@ params_cart['cgal_input_name']    = None # filename for cgal input mesh (assign 
 # path to dir containing bin, inputs, outputs folders
 params_cart['cgal_path']          = str(get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/2Dmesh')
 
-params_cart['compute_quality']    = False
+params_cart['save_orig_smooth']    = False
 
         # ACTUAL PARAMETERS #
 params_cart['remesh_cartilage']   = True # after creating cartilage cap remesh to high quality mesh (not needed if mesh3D but maybe makes 3D mesh better quality)
@@ -191,15 +188,13 @@ params_3D['cgal_path']          = str(get_project_root() / 'WorkPackages/TMCJ-Co
 params_3D['postprocess']        = True # Assign region_id scalar
 params_3D['keep_cgal_copy']     = False # keep copy of cgals ouput mesh - (pre postprocessing mesh)
 
-params_3D['compute_quality']    = True # if this is True postprocess must also be True
-
         # VOLUMETRIC MESHING PARAMETERS #
 params_3D['cgal_params'] = { 
     # Sizing field params
     "sizing_field": {
         "n_tets": 3,        # number of tetrahedrons accross thickness of cartilage
-        "min_size": 0.01,   # min target edge length (or circumradius?) within main cartilage region
-        "max_size": 0.25,   # max target edge length (or circumradius?) within main cartilage region
+        "min_size": 0.03,   # min target edge length (or circumradius?) within main cartilage region
+        "max_size": 0.5,   # max target edge length (or circumradius?) within main cartilage region
 
         # edge size linearly increases from d_taper to cartilage boundary
         "d_taper": params_cart['taper_width'], # width of cartilage taper region that doesn't use height based size
@@ -207,12 +202,12 @@ params_3D['cgal_params'] = {
 
         # bone ramp - bone surface/volume mesh grows with distance from interface
         "h_bone_max": 1.5,  # max edge length (or circumradius?) - bone surface/volumetric mesh
-        "d0": 10.0          # distance of growth region from interface edge length (or circumradius?) to h_bone_max
+        "d0": 6          # distance of growth region from interface edge length (or circumradius?) to h_bone_max
     },
 
     # Facet distance params - max deviation from origial mesh
     "facet_distance": {
-        "fd_interface": 0.01, # target max facet distance - interface
+        "fd_interface": 0.01, # target max facet distance - interface - is this all interface or just outside of taper region?
         "fd_bone": 0.10,      # target max facet distance - bone
         "fd_edge_loop": 0.10, # target max facet distance - edge loop (maybe do = None and set to bone and same for cart near)
         

@@ -13,22 +13,9 @@ from smooth import smooth
 from remesh import remesh_surface
 
 from phd_helpers.paths import get_mesh, get_subject_stl_path
-#from phd_helpers.MeshQuality import check_mesh_quality, plot_mesh_quality, mesh_quality_summary, export_mesh_quality_report
 from phd_helpers.CartilageGeneration import get_min_df_fast
 
 from MeshPrep import get_run_id
-
-
-def save_smooth_dists(bone_mesh, bone_mesh_smooth, quality_path):
-    """measure implicit distances of smooth mesh from original mesh and save to file"""
-    bone_mesh_smooth['implicit_distance_orig'] = np.asarray(
-        bone_mesh_smooth.compute_implicit_distance(bone_mesh)['implicit_distance'],
-        dtype=np.float64
-        ).copy()
-    pd.DataFrame({
-        'dist_orig':bone_mesh_smooth['implicit_distance_orig'], 
-        }).to_csv(quality_path / 'smoothing_dists.csv', index=False)
-    
 
 t0 = time.perf_counter()
 print(f'\n\n---------------- REMESHING SURFACE ----------------\n\n')
@@ -72,8 +59,6 @@ stl_path = get_subject_stl_path(subject, sideL)
 bone_arbone = output_dir.name
 bone1, bone2 = bone_arbone.split('-')[0], bone_arbone.split('-')[1]
 poses = params_2D['poses']
-
-compute_quality = params_2D['compute_quality'] 
 
 remesh_arbone = params_2D['remesh_arbone']
 
@@ -188,67 +173,9 @@ for (bone, ar_bone), (bone_mesh, arbone_mesh) in zip(bones[:i], meshes[:i]):
 
         print('Complete\n')
 
+        # --------------------- REMESHING --------------------- #
+        #########################################################
 
-    if compute_quality:
-        #####################################################################
-        # --------------------- CHECKING MESH QUALITY --------------------- #
-
-        quality_exists = False
-        quality_path = output_path / f'MeshQuality{run_id}/Bone'
-        if quality_path.is_dir():
-            quality_exists = True
-            print('MeshQuality already exists')
-            print("Overwrite", overwrite, '\n')
-
-        if not quality_exists or overwrite:
-            print('CHECKING MESH QUALITY...')
-            quality_path.mkdir(parents=True, exist_ok=True)
-
-
-            if mesh_exists and not overwrite: # get meshes for quality checks if they already existed
-                bone_mesh_smooth = smooth(bone_mesh, taubin_iters)
-                bone_remesh = pv.read(output_path / remesh_file)
-
-
-            # measure change from original mesh and save to file
-            save_smooth_dists(bone_mesh, bone_mesh_smooth, quality_path)
-
-            # measure change from original mesh and smooth mesh and save to file
-            bone_remesh['implicit_distance_orig'] = np.asarray(
-                bone_remesh.compute_implicit_distance(bone_mesh)['implicit_distance'],
-                dtype=np.float64
-                ).copy()
-            bone_remesh['implicit_distance_smooth'] = np.asarray(
-                bone_remesh.compute_implicit_distance(bone_mesh_smooth)['implicit_distance'],
-                dtype=np.float64
-                ).copy()
-            
-            pd.DataFrame({
-                'dist_orig':bone_remesh['implicit_distance_orig'],
-                'dist_smooth':bone_remesh['implicit_distance_smooth'], 
-                }).to_csv(quality_path / 'remesh_dists.csv', index=False)
-
-            # measure change in bone mesh volume
-            pd.DataFrame({
-                'vol_orig': [bone_mesh.volume],
-                'vol_smooth': [bone_mesh_smooth.volume],
-                'vol_remesh': [bone_remesh.volume]
-            }).to_csv(quality_path / 'volumes.csv', index=False)
-
-            # check element quality
-            #quality = check_mesh_quality(bone_remesh)
-            #quality_plot = plot_mesh_quality(quality, return_fig=True)
-            #quality_summary = mesh_quality_summary(quality)
-
-            # write to file
-            #quality_plot.savefig(quality_path/f'tris.png')
-            #quality_summary.to_csv(quality_path/f'tris.csv')
-            #export_mesh_quality_report(quality_plot, quality_summary, quality_path/f'tris.pdf', 'Bone Surface Mesh Quality')
-
-            print('Complete\n')
-
-        # --------------------- CHECKING MESH QUALITY --------------------- #
-        #####################################################################
 
 dt = time.perf_counter() - t0
 print(f"Step time: {dt:.3f}s")

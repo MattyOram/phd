@@ -10,7 +10,6 @@ import time
 from cartilage import articular_gap
 
 from phd_helpers.paths import get_subject_stl_path, get_mesh
-#from phd_helpers.MeshQuality import check_mesh_quality, plot_mesh_quality, mesh_quality_summary, export_mesh_quality_report
 from phd_helpers.CartilageGeneration import get_min_df_fast
 
 from MeshPrep import get_run_id
@@ -61,7 +60,8 @@ bone, ar_bone = bone_arbone.split('-')[0], bone_arbone.split('-')[1]
 poses = params_cart['poses']
 
 remesh_cartilage = params_cart['remesh_cartilage']
-compute_quality = params_cart['compute_quality'] 
+
+save_orig_smooth = params_cart['save_orig_smooth']
 
 use_remeshed_arbone = params_cart['use_remeshed_arbone']
 
@@ -95,9 +95,6 @@ output_path.mkdir(parents=True, exist_ok=True)
 
 if    output_filename: mesh_name = output_filename
 else: mesh_name = f'bone_cartilage_mesh{run_id}.vtp'
-
-quality_path = output_path / f'MeshQuality{run_id}/Cartilage'
-if compute_quality: quality_path.mkdir(parents=True, exist_ok=True)
 
 # --------------------- DIRS --------------------- #
 ####################################################
@@ -175,11 +172,9 @@ if not mesh_exists or overwrite:
     cgal_input_path = cgal_path / f'inputs/fb_input/{cartilage_remesh_name}'
 
     print('CREATING CARTILAGE...')
-    combined_mesh = articular_gap(
+    orig_mesh, smooth_mesh, combined_mesh = articular_gap(
         bone_mesh,
         min_df,
-        compute_quality,
-        quality_path, # where to save cartilage mesh distance data (to measure effect of smoothing/remeshing)
         remesh_cartilage,
         cgal_input_path, # input path for CGAL C++ remeshing
         taper_width, # width of cartilage taper region 
@@ -198,34 +193,13 @@ if not mesh_exists or overwrite:
     #########################################################
     # --------------------- SAVE MESH --------------------- #
     print(f"SAVING MESH... ({mesh_name})")
+    if save_orig_smooth:
+        orig_mesh.save(output_path / 'orig_cart_surf.vtp')
+        smooth_mesh.save(output_path / 'smooth_cart_surf.vtp')
     combined_mesh.save(output_path / mesh_name, recompute_normals=False)
     print("Complete\n")
     # --------------------- SAVE MESH --------------------- #
     #########################################################
-
-
-    #if compute_quality:
-        ###############################################################################
-        # --------------------- CHECKING CARTILAGE MESH QUALITY --------------------- #
-
-        #if mesh_exists and not overwrite: # would need to set overwrite = True if wanted full quality output
-        #    combined_mesh = pv.read(output_path / mesh_name)
-
-        #cartilage_cap = combined_mesh.extract_cells(np.where(combined_mesh['region_id']==2)[0])
-        #print('CHECKING CARTILAGE MESH QUALITY...')
-        #quality = check_mesh_quality(cartilage_cap)
-        #quality_plot = plot_mesh_quality(quality, return_fig=True)
-        #quality_summary = mesh_quality_summary(quality)
-
-        # write to file
-        #quality_plot.savefig(quality_path/f'Cartilage_surface.png')
-        #quality_summary.to_csv(quality_path/f'Cartilage_surface.csv')
-        #export_mesh_quality_report(quality_plot, quality_summary, quality_path/f'Cartilage_surface.pdf', 'Cartilage Cap Mesh Quality')
-
-        #print('Complete\n')
-
-        # --------------------- CHECKING CARTILAGE MESH QUALITY --------------------- #
-        ###############################################################################
 
 dt = time.perf_counter() - t0
 print(f"Step time: {dt:.3f}s")

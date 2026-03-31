@@ -18,8 +18,6 @@ from phd_helpers.paths import find_corresponding_cells, identical_points_count, 
 def articular_gap(
     bone_mesh,
     min_df,
-    compute_quality,
-    quality_path, # where to save cartilage mesh distance data (to measure effect of smoothing/remeshing)
     remesh_cartilage,
     cgal_input_path, # path to c++ fixed boundary input
     taper_width = 2, # width of cartilage taper region
@@ -279,17 +277,6 @@ def articular_gap(
     # put edge points back so they are numerically identical
     cartilage_cap.points[mesh_edge_ids] = bone_mesh.points[bone_mesh_edge_ids]
 
-    if compute_quality:
-        # measure change due to smoothing and save to file - compute_implicit_distance is fastest algo
-        cartilage_cap['implicit_distance_orig'] = np.asarray(
-            cartilage_cap.compute_implicit_distance(mesh_clean)['implicit_distance'],
-            dtype=np.float64
-            ).copy()
-        quality_path.mkdir(parents=True, exist_ok=True)
-        pd.DataFrame({
-            'dist_orig':cartilage_cap['implicit_distance_orig'], 
-            'inner_point':cartilage_cap['inner_points']
-            }).to_csv(quality_path / 'smoothing_dists.csv', index=False)
     ################# SMOOTH CARTILAGE MESH CAP #################
 
     if remesh_cartilage:
@@ -346,20 +333,6 @@ def articular_gap(
         # add cartilge taper/inner region array
         cartilage_remesh['inner_cells'] = cartilage_cap['inner_cells'][cartilage_cap.find_closest_cell(cartilage_remesh.cell_centers().points)]
         
-        if compute_quality:
-            # measure change due to remeshing and save to file
-            cartilage_remesh['implicit_distance_orig'] = np.asarray(
-                cartilage_remesh.compute_implicit_distance(mesh_clean)['implicit_distance'],
-                dtype=np.float64
-                ).copy()
-            cartilage_remesh['implicit_distance_smooth'] = np.asarray(
-                cartilage_remesh.compute_implicit_distance(cartilage_cap)['implicit_distance'],
-                dtype=np.float64
-                ).copy()
-            pd.DataFrame({
-                'dist_orig':cartilage_remesh['implicit_distance_orig'], 
-                'dist_smooth':cartilage_remesh['implicit_distance_smooth'],
-                }).to_csv(quality_path / 'remesh_dists.csv', index=False)
         ################# REMESH CARTILAGE #################
     else:
         cartilage_remesh = cartilage_cap.copy(deep=True)
@@ -495,5 +468,5 @@ def articular_gap(
     ################# MESH CHECKS #################
 
     ################# RETURN MESH #################
-    return combined_mesh_flipped #  bone cartilage shared interface
+    return mesh_clean, cartilage_cap, combined_mesh_flipped #  before smoothing, before remeshing, final bone cartilage shared interface
     ################# RETURN MESH #################

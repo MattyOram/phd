@@ -10,12 +10,9 @@ import subprocess
 import shutil
 import meshio
 import time
-#import gdist
 import sys
 
 from phd_helpers.paths import find_shared_cells, identical_points_count, get_subject_stl_path, get_mesh, get_boundary
-#from phd_helpers.MeshQuality import check_mesh_quality, mesh_quality_summary, plot_mesh_quality, export_mesh_quality_report
-
 from MeshPrep import get_run_id
 
 def write_regions_off(mesh: pv.PolyData, region2filename: dict[int, str]):
@@ -79,8 +76,6 @@ stl_path = get_subject_stl_path(subject, sideL)
 
 bone_arbone = output_dir.name
 bone, ar_bone = bone_arbone.split('-')[0], bone_arbone.split('-')[1]
-
-compute_quality = params_3D['compute_quality'] 
 
 keep_cgal_copy = params_3D['keep_cgal_copy']
 postprocess = params_3D['postprocess']
@@ -352,108 +347,5 @@ if not mesh_exists or overwrite:
     # --------------------- POSTPROCESSING --------------------- #
     ##############################################################
 
-
-
-        ##################################################################
-        # --------------------- CHECK MESH QUALITY --------------------- #
-        if compute_quality:
-
-            print('CHECKING MESH QUALITY...')
-
-            quality_path = output_path / f'MeshQuality{run_id}'
-            quality_path.mkdir(parents=True, exist_ok=True)
-
-            combined_shell = combined.extract_cells_by_type(5)
-
-            bone_shell_orig = get_mesh(stl_path, bone)                                                       # original OSCD bone shell mesh
-            bone_shell_input = mesh.extract_cells(
-                                    np.where(mesh['region_id']==2)[0], invert=True
-                                    ).extract_geometry() # input bone shell mesh for this step
-            bone_shell_output = combined_shell.extract_cells(
-                                    np.where(combined_shell['region_id']==-2)[0], invert=True
-                                    ) # ouput bone shell mesh from this step
-
-            cartilage_surf_input = mesh.extract_cells(np.where(mesh['region_id']==2))        # input cartilage surface for this step
-            cartilage_surf_output = combined.extract_cells(
-                                    np.where(combined['region_id']==-2)
-                                    ).extract_geometry() # output cartilage surface from this step
-
-            cartilage_shell_input = mesh.extract_cells(
-                                    np.where(mesh['region_id']==1)[0], invert=True
-                                    ).extract_geometry() # input cartilage shell
-            cartilage_shell_output = combined_shell.extract_cells(
-                                    np.where(combined_shell['region_id']==-1)[0], invert=True
-                                    ) # ouput cartilage shell
-
-            # measure change of bone shell mesh from original mesh and input mesh and save to file
-            implicit_distance_orig = np.asarray(
-                bone_shell_output.compute_implicit_distance(bone_shell_orig)['implicit_distance'],
-                dtype=np.float64
-                ).copy()
-            implicit_distance_input = np.asarray(
-                bone_shell_output.compute_implicit_distance(bone_shell_input)['implicit_distance'],
-                dtype=np.float64
-                ).copy()
-            pd.DataFrame({
-                'dist_orig':implicit_distance_orig,
-                'dist_input':implicit_distance_input, 
-                }).to_csv(quality_path / 'remesh_dists_bone_shell.csv', index=False)
-            # measure change of cartilage surface mesh from original mesh and input mesh and save to file
-            implicit_distance_input_cart = np.asarray(
-                cartilage_surf_output.compute_implicit_distance(cartilage_shell_input)['implicit_distance'],
-                dtype=np.float64
-                ).copy()
-            
-            # label inner and taper cartilage regions
-            cartilage_surf_output['inner_cells'] = cartilage_surf_input['inner_cells'][cartilage_surf_input.find_closest_cell(
-                                                                                                cartilage_surf_output.cell_centers().points
-                                                                                                )]
-            cartilage_surf_output['inner_points'] = np.full(cartilage_surf_output.n_points, 1)
-            cartilage_surf_output['inner_points'][np.unique(cartilage_surf_output.faces.reshape(-1, 4)[:, 1:][np.where(
-                                                                                            cartilage_surf_output['inner_cells']==0
-                                                                                            )[0]])] = 0
-            #cartilage_surf_output['cartilage_region'] = np.full(cartilage_surf_output.n_points, 1).astype(int)
-            #cartilage_surf_output['cartilage_surf_ids'] = np.arange(cartilage_surf_output.n_points)
-            #cartilage_surf_output_edge = get_boundary(cartilage_surf_output)
-            #cartilage_edge_dists = gdist.compute_gdist(
-            #    cartilage_surf_output.points.astype(np.float64),
-            #    cartilage_surf_output.faces.reshape(-1, 4)[:, 1:].astype(np.int32),
-            #    source_indices=cartilage_surf_output_edge['cartilage_surf_ids'].astype(np.int32), 
-            #)
-            #remesh_taper_mask = cartilage_edge_dists <= cgal_params['sizing_field']['d_taper']
-            #cartilage_surf_output['cartilage_region'][remesh_taper_mask] = 0
-
-
-            pd.DataFrame({
-                'dist_input':implicit_distance_input_cart, 
-                'inner_point': cartilage_surf_output['inner_points'] # 1 if inner cartilage, 0 if in taper region
-                }).to_csv(quality_path / 'remesh_dists_cartilage_surf.csv', index=False)
-
-            # Change in volumes
-            pd.DataFrame({
-                'vol_orig_bone': [bone_shell_orig.volume],
-                'vol_input_bone': [bone_shell_input.volume],
-                'vol_output_bone': [bone_shell_output.volume],
-                'vol_input_cartilage': [cartilage_shell_input.volume],
-                'vol_output_cartilage': [cartilage_shell_output.volume]
-            }).to_csv(quality_path / 'volumes.csv', index=False)
-
-
-
-            # check element quality
-            #quality = check_mesh_quality(combined.extract_cells_by_type(10), 'tet')
-            #quality_plot = plot_mesh_quality(quality, return_fig=True)
-            #quality_summary = mesh_quality_summary(quality)
-
-            # write to file
-            #quality_plot.savefig(quality_path/f'tets.png')
-            #quality_summary.to_csv(quality_path/f'tets.csv')
-            #export_mesh_quality_report(quality_plot, quality_summary, quality_path/f'tets.pdf', 'Tetrahedral Mesh Quality')
-            
-            print('Complete\n')
-
-
-        # --------------------- CHECK MESH QUALITY --------------------- #
-        ##################################################################
 dt = time.perf_counter() - t0
 print(f"Step time: {dt:.3f}s")
