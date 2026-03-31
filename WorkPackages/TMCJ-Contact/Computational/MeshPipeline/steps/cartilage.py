@@ -114,7 +114,7 @@ def articular_gap(
     inner_node_midpoint_heights = midpoint_dist.values[taper_inner_mask_c]
     near_inner_node_midpoint_heights = inner_node_midpoint_heights[np.searchsorted(taper_inner_ids, near_taper_inner_ids)]
 
-    # set taper node heights
+    # set taper node heights - should be based on interpolated height really - but as long as mesh is dense this is fine...
     taper_heights = taper_f(taper_Df, 1, near_inner_node_midpoint_heights, p=p_h) # non-linear
 
     # set vector directions
@@ -148,7 +148,7 @@ def articular_gap(
     #inner_points = pv.PolyData(midpoints[~taper_mask])
     inner_mesh = pv.PolyData(np.vstack( (inner_edge.points, midpoints[~taper_mask]) ), lines=inner_edge.lines)
 
-    # alpha changed from 0.9 -> 0.85 on 28/03/26 - cos of remesh-box.ipynb cases
+    # alpha for coarse meshes wants to be slightly lower and vice versa - I think
     inner_mesh = inner_mesh.delaunay_2d(edge_source=inner_edge, alpha=0.9).triangulate()
     inner_mesh = inner_mesh.fill_holes(inner_mesh.area/20)
     #inner_mesh.lines = inner_edge.lines # reset edge lines to remove delaunay leftover lines
