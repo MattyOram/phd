@@ -35,14 +35,14 @@ params_glob = params['global']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 #params_glob['output_root']     = 'outputs/ParamOptimisation/study1' 
-params_glob['output_root']     = 'outputs/testing/mesh_tr' 
+params_glob['output_root']     = 'outputs/ParamOptimisation/criteria3D/study1c' 
 
-params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
+params_glob['allow_overwrite'] = False # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
 #     - but not full_params.json - keeps all copies of full params for each output_root, with -i suffix for each new file
 
 
-params_glob['step_timeout']    = 330 # (s) time limit per step (3D meshing can hang if criteria too strict)
+params_glob['step_timeout']    = 180 # (s) time limit per step (3D meshing can hang if criteria too strict)
 
 
 # switches for the steps to carry out
@@ -107,7 +107,7 @@ params_2D['poses']              = [
                             ]
 
 params_2D['taubin_iters']       = 50  # n smoothing iterations
-params_2D['save_smoothed_mesh'] = False # by default, only the final remeshed output of 2Dmesh is saves
+params_2D['save_smoothed_mesh'] = True # by default, only the final remeshed output of 2Dmesh is saves
                                         # if taubin iters is not list but other 2Dmesh param is then it will 
                                         # save the identical smooth mesh every time with different run-id...
 params_2D['output_filename_smooth'] = None # smooth mesh filename (.vtp/.obj ...)
@@ -116,11 +116,11 @@ params_2D['remesh_arbone']      = True # results in smoother cartilage surface a
 
 # max gap remesh must be ≥ params_cart['max_gap_cartilage'] to ensure entire cartilage is within fine_edge_length region (if remeshing cartilage)
 params_2D['max_gap_remesh']     = 2.5   # max distance of point on mesh1 from mesh2 to be part of fine mesh region
-params_2D['adjacent_cells']     = True # include any cells with ≥1 node in region - True should mean can set max_gap_remesh = max_gap_cartilage
+params_2D['adjacent_cells']     = False # include any cells with ≥1 node in region - True should mean can set max_gap_remesh = max_gap_cartilage
 
 params_2D['fine_edge_length']   = 0.2 # edge length in articulation region
-params_2D['coarse_edge_length'] = 0.6 # edge length away from articulation region
-params_2D['grad_width']         = 6 # width of edge lenth gradient region from fine to coarse
+params_2D['coarse_edge_length'] = 0.4 # edge length away from articulation region
+params_2D['grad_width']         = 8 # width of edge lenth gradient region from fine to coarse
 params_2D['remesh_iters']       = 10  # n isotropic remeshing iterations
         # ACTUAL PARAMETERS #
 
@@ -159,7 +159,6 @@ params_cart['max_gap_cartilage']  = 2 # maximum articular gap for cartilage pres
 params_cart['use_remeshed_arbone']= True # results in smoother cartilage surface and better 3Dmesh quality
 
 params_cart['taper_width']        = 1.5 # width of cartilage taper region
-#params_cart['max_height']         = 0.5*params_cart['taper_width'] # max height of cartilage in taper region
 params_cart['p_h']                = 8.5 # shape of taper height (1=linear , higher = steeper taper)
 params_cart['p_v']                = 1 # shape of vector ratio (1=linear) - normal to midpoint vector ratio for taper region extrusion
 params_cart['smooth_iters']       = 100 # looked at this in ArticularGap4-box - might be different for different tri density?
@@ -173,12 +172,12 @@ params_cart['n_iters']            = 10 # n isotropic remeshing iterations for ca
 # ••••••••••••••••••••• 3Dmesh ••••••••••••••••••••• #
 params_3D = params['3Dmesh']
 
-params_3D['overwrite']          = True # overwrite postprocessed output mesh if it already exist (if params_glob['allow_overwrite'])
+params_3D['overwrite']          = False # overwrite postprocessed output mesh if it already exist (if params_glob['allow_overwrite'])
 
 params_3D['input_mesh']         = None # filepath
 
 params_3D['output_filename']    = None # mesh filename (.vtu) (if keep_cgal_copy=True, cgal copy is auto given .mesh)
-params_3D['cgal_input_name']    = '-0'   # filename add on for cgal inputs (assign unique per subprocess name to avoid issues!)
+params_3D['cgal_input_name']    = '3'   # filename add on for cgal inputs (assign unique per subprocess name to avoid issues!)
 params_3D['save_cgal_inputs']   = False
 
 # path to dir containing bin, inputs, outputs folders
@@ -193,7 +192,7 @@ params_3D['cgal_params'] = {
     # Sizing field params
     "sizing_field": {
         "n_tets": 3,        # number of tetrahedrons accross thickness of cartilage
-        "min_size": 0.03,   # min target edge length (or circumradius?) within main cartilage region
+        "min_size": 0.02,   # min target edge length (or circumradius?) within main cartilage region
         "max_size": 0.5,   # max target edge length (or circumradius?) within main cartilage region
 
         # edge size linearly increases from d_taper to cartilage boundary
@@ -201,25 +200,25 @@ params_3D['cgal_params'] = {
         "taper_size": 0.2, # target max edge length (or circumradius?) at cartilage boundary
 
         # bone ramp - bone surface/volume mesh grows with distance from interface
-        "h_bone_max": 1,  # max edge length (or circumradius?) - bone surface/volumetric mesh
-        "d0": 6          # distance of growth region from interface edge length (or circumradius?) to h_bone_max
+        "h_bone_max": [2.0],  # max edge length (or circumradius?) - bone surface/volumetric mesh
+        "d0": [2, 4, 8]          # distance of growth region from interface edge length (or circumradius?) to h_bone_max
     },
 
     # Facet distance params - max deviation from origial mesh
     "facet_distance": {
-        "fd_cart_near": 0.05, # target max facet distance - at cartilage boundary (==fd_edge_loop)
-        "fd_cart_far": 0.02,  # target max facet distance - at d0 from cartilage boundary
+        "fd_cart_near": [0.02, 0.04, 0.08], # target max facet distance - at cartilage boundary (==fd_edge_loop)
+        "fd_cart_far": [0.01, 0.02, 0.04],  # target max facet distance - at d0 from cartilage boundary
         "d0_cart": params_cart['taper_width'],        # distance over which cartilage fd grows
 
-        "fd_bone": 0.10,      # target max facet distance - bone
+        "fd_bone": [0.2, 0.4, 0.8],      # target max facet distance - bone
         "fd_edge_loop": None, # target max facet distance - edge loop (if None==fd_cart_near)
     },
 
     # CGAL Mesh criteria
     #mesh code hanging can happen in the initial make_mesh_3 step due to too strict criteria - probs facet distance and quality combo
     "criteria": {
-        "facet_angle": 30.0,            # target min dihedral(?) angle - hangs at higher values
-        "cell_radius_edge_ratio": 3.0,  # target max radius ratio
+        "facet_angle": [7.5, 15, 30],            # target min dihedral(?) angle - hangs at higher values
+        "cell_radius_edge_ratio": [3, 6, 12],  # target max radius ratio
         "manifold_with_boundary": False # Should ensure that volume shells of returned mesh are manifold (default=False)
                                         # - found that it can make remeshing either hang or take forever probs cos of criteria
     },

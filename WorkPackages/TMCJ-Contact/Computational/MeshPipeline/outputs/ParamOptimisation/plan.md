@@ -9,6 +9,8 @@
 * subeject_sideL = 14548R
     * run for one subject first? Or check mesh quality for current params and pick subjects that span the range?
 
+    * Or choose subjects that span cartilage thickness? or something else
+
 * bone_arbone = tpm-mc1
     * just run for tpm for now
 
@@ -73,7 +75,7 @@
 
 * fd_cart_far = [0.01, 0.02, 0.04]
 
-* fd_bone = [0.2 0.4, 0.8]
+* fd_bone = [0.2, 0.4, 0.8]
 
 * facet_angle = [7.5, 15, 30]
 

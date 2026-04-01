@@ -1,6 +1,6 @@
 {
   "global": {
-    "output_root": "outputs/ParamOptimisation/criteria3D/study1c",
+    "output_root": "outputs/ParamOptimisation/criteria3D/study1b",
     "allow_overwrite": true,
     "step_timeout": 180,
     "steps": {
@@ -82,7 +82,7 @@
     "overwrite": false,
     "input_mesh": null,
     "output_filename": null,
-    "cgal_input_name": "3",
+    "cgal_input_name": "2",
     "save_cgal_inputs": false,
     "cgal_path": "/Users/maro/Library/CloudStorage/OneDrive-UniversityofLeeds/PhD-wrist/WorkPackages/WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/3Dmesh",
     "postprocess": true,
@@ -95,7 +95,7 @@
         "d_taper": 1.5,
         "taper_size": 0.2,
         "h_bone_max": [
-          2.0
+          1.0
         ],
         "d0": [
           2,
