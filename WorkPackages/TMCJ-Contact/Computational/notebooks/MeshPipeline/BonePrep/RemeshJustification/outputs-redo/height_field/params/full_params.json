@@ -1,11 +1,11 @@
 {
   "global": {
-    "output_root": "outputs-redo/iterations",
+    "output_root": "outputs-redo/height_field",
     "allow_overwrite": false,
     "step_timeout": 180,
     "steps": {
       "2Dmesh": true,
-      "cartilage": false,
+      "cartilage": true,
       "3Dmesh": false,
       "manifold": false
     }
@@ -50,7 +50,7 @@
       "50053R"
     ],
     "bone_arbone": [
-      "mc1-tpm"
+      "tpm-mc1"
     ]
   },
   "2Dmesh": {
@@ -78,17 +78,17 @@
     "remesh_arbone": true,
     "max_gap_remesh": 2.5,
     "adjacent_cells": true,
-    "fine_edge_length": 0.2,
+    "fine_edge_length": [
+      0.6,
+      0.424,
+      0.3,
+      0.212,
+      0.15,
+      0.106
+    ],
     "coarse_edge_length": 0.6,
     "grad_width": 4,
-    "remesh_iters": [
-      1,
-      5,
-      10,
-      20,
-      40,
-      80
-    ]
+    "remesh_iters": 5
   },
   "cartilage": {
     "overwrite": false,

@@ -35,7 +35,7 @@ params_glob = params['global']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 #params_glob['output_root']     = 'outputs/ParamOptimisation/study1' 
-params_glob['output_root']     = 'outputs/ParamOptimisation/criteria3D/study1c' 
+params_glob['output_root']     = 'outputs-redo/iterations' 
 
 params_glob['allow_overwrite'] = False # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
@@ -49,8 +49,8 @@ params_glob['step_timeout']    = 180 # (s) time limit per step (3D meshing can h
 # - for now, must do all previous steps unless passing input mesh in params here
 params_glob['steps'] = {
     '2Dmesh':    True,
-    'cartilage': True,
-    '3Dmesh':    True,
+    'cartilage': False,
+    '3Dmesh':    False,
     'manifold':  False # only might be needed if planning to 3D print (haven't checked...)
 } 
 
@@ -60,16 +60,16 @@ params_sub = params['subjects']
 
 
 
-params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side 
+#params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side 
 #params_sub['subject_sideL'] = ['50014R'] # subject id and wrist side 
 
 
 # all CMC subjects that pass both bone and cartilage interference checks for final params (TMCJ-Contact 2Dmesh->cartilage)
 #  - see: InterferenceCheckFinal/interference-box.ipynb
 #  - 36 total
-#params_sub['subject_sideL'] = pd.read_csv(
-#                            ).subs_ok.to_list()
-#                                get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/subs_ok.csv'
+params_sub['subject_sideL'] = pd.read_csv(
+                                get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/subs_ok.csv'
+                            ).subs_ok.to_list()
 
 # ALL CMC SUBJECTS
 #  - 46 total
@@ -83,7 +83,7 @@ params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side
                                '15882R', '15282R', '50045R', '14685R']"""
 
 
-params_sub['bone_arbone']   = ['tpm-mc1'] # target_bone - articulating_bone
+params_sub['bone_arbone']   = ['mc1-tpm'] # target_bone - articulating_bone
 
 
 
@@ -107,7 +107,7 @@ params_2D['poses']              = [
                             ]
 
 params_2D['taubin_iters']       = 50  # n smoothing iterations
-params_2D['save_smoothed_mesh'] = True # by default, only the final remeshed output of 2Dmesh is saves
+params_2D['save_smoothed_mesh'] = False # by default, only the final remeshed output of 2Dmesh is saves
                                         # if taubin iters is not list but other 2Dmesh param is then it will 
                                         # save the identical smooth mesh every time with different run-id...
 params_2D['output_filename_smooth'] = None # smooth mesh filename (.vtp/.obj ...)
@@ -116,12 +116,12 @@ params_2D['remesh_arbone']      = True # results in smoother cartilage surface a
 
 # max gap remesh must be ≥ params_cart['max_gap_cartilage'] to ensure entire cartilage is within fine_edge_length region (if remeshing cartilage)
 params_2D['max_gap_remesh']     = 2.5   # max distance of point on mesh1 from mesh2 to be part of fine mesh region
-params_2D['adjacent_cells']     = False # include any cells with ≥1 node in region - True should mean can set max_gap_remesh = max_gap_cartilage
+params_2D['adjacent_cells']     = True # include any cells with ≥1 node in region - True should mean can set max_gap_remesh = max_gap_cartilage
 
 params_2D['fine_edge_length']   = 0.2 # edge length in articulation region
-params_2D['coarse_edge_length'] = 0.4 # edge length away from articulation region
-params_2D['grad_width']         = 8 # width of edge lenth gradient region from fine to coarse
-params_2D['remesh_iters']       = 10  # n isotropic remeshing iterations
+params_2D['coarse_edge_length'] = 0.6 # edge length away from articulation region
+params_2D['grad_width']         = 4 # width of edge length gradient region from fine to coarse
+params_2D['remesh_iters']       = 5  # n isotropic remeshing iterations
         # ACTUAL PARAMETERS #
 
 
@@ -143,7 +143,7 @@ params_cart['cgal_input_name']    = None # filename for cgal input mesh (assign 
 # path to dir containing bin, inputs, outputs folders
 params_cart['cgal_path']          = str(get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/2Dmesh')
 
-params_cart['save_orig_smooth']    = True
+params_cart['save_orig_smooth']    = False
 
         # ACTUAL PARAMETERS #
 params_cart['remesh_cartilage']   = True # after creating cartilage cap remesh to high quality mesh (not needed if mesh3D but maybe makes 3D mesh better quality)
@@ -162,7 +162,7 @@ params_cart['taper_width']        = 1.5 # width of cartilage taper region
 params_cart['p_h']                = 8.5 # shape of taper height (1=linear , higher = steeper taper)
 params_cart['p_v']                = 1 # shape of vector ratio (1=linear) - normal to midpoint vector ratio for taper region extrusion
 params_cart['smooth_iters']       = 100 # looked at this in ArticularGap4-box - might be different for different tri density?
-params_cart['n_iters']            = 10 # n isotropic remeshing iterations for cartilage remesh
+params_cart['n_iters']            = 5 # n isotropic remeshing iterations for cartilage remesh
         # ACTUAL PARAMETERS #
 
 

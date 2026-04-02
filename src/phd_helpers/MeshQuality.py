@@ -2,6 +2,9 @@ import numpy as np
 import pandas as pd
 import pyvista as pv
 import matplotlib.pyplot as plt
+import trimesh
+
+from phd_helpers.paths import avg_edge_length
 
 METRICS = [
     "min_angle",
@@ -342,3 +345,55 @@ def plot_cross_section_through_center(
 
     p.add_mesh(slc, scalars=scalars, show_edges=show_edges)
     p.show()
+
+
+# Mesh deviation metrics after smoothing / remeshing ... #
+
+def compute_dists(points, surf):
+    """computes the distance of points from surface"""
+    _, ps = surf.find_closest_cell(points, return_closest_point=True)
+    return np.linalg.norm(points - ps, axis=1)
+
+def compute_rmsd(dists):
+    return np.sqrt(np.mean(dists**2))
+
+def compute_d_metrics(dists, dic=None, label=''):
+    if dic is None:
+        dic = {}
+    dic[f'{label}mean'] = np.mean(dists)
+    dic[f'{label}median'] = np.median(dists)
+    dic[f'{label}std'] = np.std(dists)
+    dic[f'{label}min'] = np.min(dists)
+    dic[f'{label}max'] = np.max(dists)
+    dic[f'{label}99'] = np.percentile(dists, 99)
+    dic[f'{label}95'] = np.percentile(dists, 95)
+    return dic
+
+def compute_mesh_metrics(surf, dic=None, vol=True, edge_length=False, label=''):
+    if dic is None:
+        dic = {}
+    dic[f'{label}points'] = surf.n_points
+    dic[f'{label}cells'] = surf.n_cells
+    dic[f'{label}A'] = surf.area
+    if vol:
+        dic[f'{label}V'] = surf.volume
+    if edge_length:
+        dic[f'{label}L_edge'] = avg_edge_length(surf)
+    return dic
+
+def sample_surface(surf: pv.PolyData, n_samples: int):
+    """Area weighted sampling of a mesh, returns sampled points\n
+    probability of a face being picked for sampling is proportinal to its area - so gives approximately evenly spaced sample"""
+    ps, face_ids = trimesh.sample.sample_surface(pv.to_trimesh(surf), count=n_samples)
+    return ps
+
+def compute_curv_metrics(mesh, dic, mean=True, gauss=True, maxi=True, mini=True, label=''):
+    if mean:
+        dic = compute_d_metrics(mesh.curvature(curv_type='mean'), dic, f'{label}Kmean_')
+    if gauss:
+        dic = compute_d_metrics(mesh.curvature(curv_type='gaussian'), dic, f'{label}Kgauss_')
+    if maxi:
+        dic = compute_d_metrics(mesh.curvature(curv_type='maximum'), dic, f'{label}Kmax_')
+    if mini:
+        dic = compute_d_metrics(mesh.curvature(curv_type='minimum'), dic, f'{label}Kmin_')
+    return dic
