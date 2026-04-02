@@ -331,7 +331,7 @@ def articular_gap(
             raise AssertionError('Not all cartilage points above bone surface') # detect interference
 
         # add cartilge taper/inner region array
-        cartilage_remesh['inner_cells'] = cartilage_cap['inner_cells'][cartilage_cap.find_closest_cell(cartilage_remesh.cell_centers().points)]
+        cartilage_remesh['inner_cells'] = mesh_clean['inner_cells'][mesh_clean.find_closest_cell(cartilage_remesh.cell_centers().points)]
         
         ################# REMESH CARTILAGE #################
     else:
