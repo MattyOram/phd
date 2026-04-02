@@ -36,6 +36,11 @@ CADmodels/*
 **/MeshPipeline/**/outputs/**/params/*
 !**/MeshPipeline/**/params/*.json
 
+**/MeshPipeline/**/outputs-redo/**/meshes/*
+**/MeshPipeline/**/outputs-redo/**/reports/*
+**/MeshPipeline/**/outputs-redo/**/params/*
+!**/MeshPipeline/**/outputs-redo/**/params/*.json
+
 # mesh files
 *.obj
 *.stl
