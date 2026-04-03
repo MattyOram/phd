@@ -35,9 +35,9 @@ params_glob = params['global']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 #params_glob['output_root']     = 'outputs/ParamOptimisation/study1' 
-params_glob['output_root']     = 'outputs-redo/iterations' 
+params_glob['output_root']     = 'outputs/fd_test/test2' 
 
-params_glob['allow_overwrite'] = False # If False, ignores per step overwrite flags
+params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
 #     - but not full_params.json - keeps all copies of full params for each output_root, with -i suffix for each new file
 
@@ -49,8 +49,8 @@ params_glob['step_timeout']    = 180 # (s) time limit per step (3D meshing can h
 # - for now, must do all previous steps unless passing input mesh in params here
 params_glob['steps'] = {
     '2Dmesh':    True,
-    'cartilage': False,
-    '3Dmesh':    False,
+    'cartilage': True,
+    '3Dmesh':    True,
     'manifold':  False # only might be needed if planning to 3D print (haven't checked...)
 } 
 
@@ -60,16 +60,16 @@ params_sub = params['subjects']
 
 
 
-#params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side 
+params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side 
 #params_sub['subject_sideL'] = ['50014R'] # subject id and wrist side 
 
 
 # all CMC subjects that pass both bone and cartilage interference checks for final params (TMCJ-Contact 2Dmesh->cartilage)
 #  - see: InterferenceCheckFinal/interference-box.ipynb
 #  - 36 total
-params_sub['subject_sideL'] = pd.read_csv(
-                                get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/subs_ok.csv'
-                            ).subs_ok.to_list()
+#params_sub['subject_sideL'] = pd.read_csv(
+#                                get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/subs_ok.csv'
+#                            ).subs_ok.to_list()
 
 # ALL CMC SUBJECTS
 #  - 46 total
@@ -83,7 +83,7 @@ params_sub['subject_sideL'] = pd.read_csv(
                                '15882R', '15282R', '50045R', '14685R']"""
 
 
-params_sub['bone_arbone']   = ['mc1-tpm'] # target_bone - articulating_bone
+params_sub['bone_arbone']   = ['tpm-mc1'] # target_bone - articulating_bone
 
 
 
@@ -119,8 +119,8 @@ params_2D['max_gap_remesh']     = 2.5   # max distance of point on mesh1 from me
 params_2D['adjacent_cells']     = True # include any cells with ≥1 node in region - True should mean can set max_gap_remesh = max_gap_cartilage
 
 params_2D['fine_edge_length']   = 0.2 # edge length in articulation region
-params_2D['coarse_edge_length'] = 0.6 # edge length away from articulation region
-params_2D['grad_width']         = 4 # width of edge length gradient region from fine to coarse
+params_2D['coarse_edge_length'] = 0.4 # edge length away from articulation region
+params_2D['grad_width']         = 8 # width of edge length gradient region from fine to coarse
 params_2D['remesh_iters']       = 5  # n isotropic remeshing iterations
         # ACTUAL PARAMETERS #
 
@@ -172,7 +172,7 @@ params_cart['n_iters']            = 5 # n isotropic remeshing iterations for car
 # ••••••••••••••••••••• 3Dmesh ••••••••••••••••••••• #
 params_3D = params['3Dmesh']
 
-params_3D['overwrite']          = False # overwrite postprocessed output mesh if it already exist (if params_glob['allow_overwrite'])
+params_3D['overwrite']          = True # overwrite postprocessed output mesh if it already exist (if params_glob['allow_overwrite'])
 
 params_3D['input_mesh']         = None # filepath
 
@@ -200,25 +200,28 @@ params_3D['cgal_params'] = {
         "taper_size": 0.2, # target max edge length (or circumradius?) at cartilage boundary
 
         # bone ramp - bone surface/volume mesh grows with distance from interface
-        "h_bone_max": [2.0],  # max edge length (or circumradius?) - bone surface/volumetric mesh
-        "d0": [2, 4, 8]          # distance of growth region from interface edge length (or circumradius?) to h_bone_max
-    },
+        "h_bone_max": 1.0,  # max edge length (or circumradius?) - bone surface/volumetric mesh
+        "d0": [4]          # distance of growth region from interface edge length (or circumradius?) to h_bone_max                 
+    },                      # - ~8->10 mm covers whole tpm
 
-    # Facet distance params - max deviation from origial mesh
+    # Surface facet distance params - max deviation from origial mesh surface
+    # - distance between centre of circumscribed circle of candidate facet and centre of delaunay ball 
+    # - delaunay ball passes through 3 the vertices of the candidate facet and it's centre lies on the input mesh
     "facet_distance": {
-        "fd_cart_near": [0.02, 0.04, 0.08], # target max facet distance - at cartilage boundary (==fd_edge_loop)
-        "fd_cart_far": [0.01, 0.02, 0.04],  # target max facet distance - at d0 from cartilage boundary
+        "fd_cart_near": [0.1], # target max facet distance - at cartilage boundary (==fd_edge_loop)
+        "fd_cart_far": [0.05],  # target max facet distance - at d0 from cartilage boundary
         "d0_cart": params_cart['taper_width'],        # distance over which cartilage fd grows
 
-        "fd_bone": [0.2, 0.4, 0.8],      # target max facet distance - bone
+        "fd_bone": [1.0],      # target max facet distance - bone
         "fd_edge_loop": None, # target max facet distance - edge loop (if None==fd_cart_near)
     },
 
     # CGAL Mesh criteria
     #mesh code hanging can happen in the initial make_mesh_3 step due to too strict criteria - probs facet distance and quality combo
     "criteria": {
-        "facet_angle": [7.5, 15, 30],            # target min dihedral(?) angle - hangs at higher values
-        "cell_radius_edge_ratio": [3, 6, 12],  # target max radius ratio
+        # these two only affect surface mesh and the input is already high quality - also have no impact on output (criteria3D/study1)
+        "facet_angle": 30,            # target min dihedral(?) angle - hangs at higher values
+        "cell_radius_edge_ratio": 3,  # target max radius ratio
         "manifold_with_boundary": False # Should ensure that volume shells of returned mesh are manifold (default=False)
                                         # - found that it can make remeshing either hang or take forever probs cos of criteria
     },

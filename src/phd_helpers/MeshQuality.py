@@ -24,7 +24,7 @@ def get_acceptable_ranges(cell_type):
         #'min_angle': (30, 60),
         'min_angle': (10, 70.53),
         'max_angle': (70.53, 170),
-        'radius_ratio': (0.4, 1.0),
+        'radius_ratio': (1.0, 3.0),
         'shape': (0.4, 1.0),
         'aspect_ratio': (1.0, 3.0),
         #'relative_size_squared': (0.4, 1),
@@ -39,7 +39,7 @@ def get_acceptable_ranges(cell_type):
         #'min_angle': (30, 60),
         'min_angle': (30, 60),
         'max_angle': (60, 120),
-        'radius_ratio': (0.4, 1.0),
+        'radius_ratio': (1.0, 3.0),
         'shape': (0.4, 1.0),
         'aspect_ratio': (1.0, 3.0),
         #'relative_size_squared': (0.4, 1),
@@ -62,7 +62,7 @@ def get_ideal_values(cell_type):
     IDEAL_VALUES = {
         "min_angle": ACCEPTABLE_RANGES['min_angle'][1],
         "max_angle": ACCEPTABLE_RANGES['max_angle'][0],
-        "radius_ratio": ACCEPTABLE_RANGES['radius_ratio'][1],
+        "radius_ratio": ACCEPTABLE_RANGES['radius_ratio'][0],
         "shape": ACCEPTABLE_RANGES['shape'][1],
         "aspect_ratio": ACCEPTABLE_RANGES['aspect_ratio'][0],
         #"relative_size_squared":ACCEPTABLE_RANGES['relative_size_squared'][1],
@@ -80,7 +80,7 @@ def get_worst_acceptable(cell_type):
     WORST_ACCEPTABLE = {
         "min_angle": ACCEPTABLE_RANGES['min_angle'][0],
         "max_angle": ACCEPTABLE_RANGES['max_angle'][1],
-        "radius_ratio": ACCEPTABLE_RANGES['radius_ratio'][0],
+        "radius_ratio": ACCEPTABLE_RANGES['radius_ratio'][1],
         "shape": ACCEPTABLE_RANGES['shape'][0],
         "aspect_ratio": ACCEPTABLE_RANGES['aspect_ratio'][1],
         #"relative_size_squared":ACCEPTABLE_RANGES['relative_size_squared'][0],
@@ -107,7 +107,6 @@ def check_mesh_quality(mesh: pv.PolyData, cell_type='tri'):
             alphas / 60,
             (180 - betas) / (180 - 60)
         )
-    quality['radius_ratio'] = 1 / quality['radius_ratio']
 
     # remove any unwanted cell_data arrays
     for key in np.array(quality.cell_data.keys())[~np.isin(quality.cell_data.keys(), METRICS + ['equiangle_skew'])]:
