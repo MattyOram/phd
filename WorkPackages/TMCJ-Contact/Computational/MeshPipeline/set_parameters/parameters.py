@@ -35,7 +35,7 @@ params_glob = params['global']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 #params_glob['output_root']     = 'outputs/ParamOptimisation/study1' 
-params_glob['output_root']     = 'outputs/3Dmesh_postprocess_test' 
+params_glob['output_root']     = 'outputs/testing' 
 
 params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
@@ -184,7 +184,7 @@ params_3D['save_cgal_inputs']   = False
 params_3D['cgal_path']          = str(get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/3Dmesh')
 
 # One of these must be true for a copy to be saved to the output path - otherwise cgal copy only exists in cgal output
-params_3D['postprocess']        = True # Assign region_id scalar
+params_3D['postprocess']        = True # Build tri/tet mesh with region_id scalar
 params_3D['keep_cgal_copy']     = False # keep copy of cgals ouput mesh - (pre postprocessing mesh)
 
         # VOLUMETRIC MESHING PARAMETERS #
@@ -208,9 +208,9 @@ params_3D['cgal_params'] = {
     # - distance between centre of circumscribed circle of candidate facet and centre of delaunay ball 
     # - delaunay ball passes through 3 the vertices of the candidate facet and it's centre lies on the input mesh
     "facet_distance": {
-        "fd_cart_near": 0.10, # target max facet distance - at cartilage boundary (==fd_edge_loop)
-        "fd_cart_far": 0.05,  # target max facet distance - at d0 from cartilage boundary
-        "d0_cart": params_cart['taper_width'],        # distance over which cartilage fd grows
+        "fd_cart_far": 0.05,  # target max facet distance - at > d_taper from boundary
+        "fd_cart_near": 0.10, # target max facet distance - at cartilage boundary
+        "d0_cart": 0.5,  # distance over which cartilage fd grows from d_taper towards boundary (<d_taper)
 
         "fd_bone": 1.0,      # target max facet distance - bone
         "fd_edge_loop": None, # target max facet distance - edge loop (if None==fd_cart_near)
@@ -223,7 +223,7 @@ params_3D['cgal_params'] = {
         #  - plus higher is best and any higher and the code starts hanging so leave as they are
         "facet_angle": 30,            # target min dihedral(?) angle - hangs at higher values
         "cell_radius_edge_ratio": 3,  # target max radius ratio
-        "manifold_with_boundary": False # Should ensure that volume shells of returned mesh are manifold (default=False)
+        "manifold_with_boundary": False, # Should ensure that volume shells of returned mesh are manifold (default=False)
                                         # - found that it can make remeshing either hang or take forever probs cos of criteria
     },
 
@@ -238,7 +238,7 @@ params_3D['cgal_params'] = {
     # - see main.py
     "optimisation": { # This determines which of the following optimisation steps are used
         "odt": False,    # not had good results with odt - makes worst worse to make avg better?
-        "lloyd": False,   # does good stuff - smoothes mesh improves qaulity
+        "lloyd": True,   # does good stuff - smoothes mesh improves qaulity
         "perturb": False, # does good stuff - improves dihedral angles of worst elements
         "exude": False    # doesn't seem to do much  - removes slivers
     },

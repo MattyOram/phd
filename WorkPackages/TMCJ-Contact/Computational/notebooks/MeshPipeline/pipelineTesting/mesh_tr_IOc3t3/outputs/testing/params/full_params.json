@@ -100,9 +100,9 @@
         ]
       },
       "facet_distance": {
-        "fd_cart_far": 0.05,
         "fd_cart_near": 0.1,
-        "d0_cart": 0.5,
+        "fd_cart_far": 0.05,
+        "d0_cart": 1.5,
         "fd_bone": 1.0,
         "fd_edge_loop": null
       },

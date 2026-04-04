@@ -104,14 +104,19 @@
     * sliver_bound = []
 
 
+# TODO
+
+---
+Check if mesh has already been generated and overwrite = false and load it for optimisation
+---
 
 plan mesh optimisation study - run it
 
-# Rank them
+Rank them
  - for fidelity and quality, set value above which is ideal gets 1 point, the points decrease linealry between ideal and worst acceptable then 0 below that
  - maybe just rank element count normally
     - could even ignore element count at first just see whats best
 
 use criteria metrics as mock ouputs to write evalutaiton code
 
-in cgal check if mesh has already been generated and overwrite = false and load it for optimisation
+
