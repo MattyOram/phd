@@ -15,6 +15,8 @@ import sys
 from phd_helpers.paths import find_shared_cells, identical_points_count, get_subject_stl_path, get_mesh, get_boundary
 from MeshPrep import get_run_id
 
+from ad_hoc_mesh_fix import ad_hoc_mesh_fix
+
 def write_regions_off(mesh: pv.PolyData, region2filename: dict[int, str]):
 
     region_ids = mesh['region_id']
@@ -253,6 +255,7 @@ if not mesh_exists or overwrite:
 
     #••• THIS RELIES ON ALL BONE TETS BEING CONTAINED WITHIN ORIGINAL BONE VOLUME - PROBABLY TRUE BUT NOT GURANTEED •••#
     # - updated to find any cells not within bone volume as long as they aren't connected to any cartilage cells (better, not perfect)
+    # - updated to again, to address most cases for when cells are not in bone volume but are connected to cartilage cells
 
     print('POSTPROCESSING...')
 
@@ -265,7 +268,7 @@ if not mesh_exists or overwrite:
         tet = cgal_mesh.extract_cells_by_type(10) # extract tetrahedral mesh
         tet['cell_id_tet'] = np.arange(tet.n_cells)
         # mask of tets in original bone volume
-        bone_mesh_shell = mesh.extract_cells(np.where(mesh['region_id']==cartilage_id)[0], invert=True).extract_geometry()
+        bone_mesh_shell = mesh.extract_cells(mesh['region_id']==cartilage_id, invert=True).extract_surface(algorithm=None)
         tet_bone_ids = tet['cell_id_tet'][tet.cell_centers().compute_implicit_distance(bone_mesh_shell)['implicit_distance'] <= 0]
         cartilage_tet = tet.extract_cells(tet_bone_ids, invert=True)
 
@@ -276,7 +279,7 @@ if not mesh_exists or overwrite:
         if cart_island_ids.shape[0] > 1:
             bone_islands = []
             for island_id in cart_island_ids[island_counts < island_counts.max()]: # region ids of islands that should be part of bone
-                bone_islands.append(cartilage_conn['cell_id_tet'][np.where(cartilage_conn['RegionId']==island_id)])
+                bone_islands.append(cartilage_conn['cell_id_tet'][cartilage_conn['RegionId']==island_id])
             tet_bone_ids = np.hstack((np.hstack(bone_islands), tet['cell_id_tet'][tet_bone_ids]))
 
             cartilage_tet = tet.extract_cells(tet_bone_ids, invert=True)
@@ -296,9 +299,9 @@ if not mesh_exists or overwrite:
             raise RuntimeError("Cell islands in cartilage volume mesh!")
 
         # extract volume shells for surface meshes
-        cartilage_shell = cartilage_tet.extract_surface() # cartilage shell
-        bone_shell = bone_tet.extract_surface() # bone shell
-        tet_shell = tet.extract_surface() # tet shell
+        cartilage_shell = cartilage_tet.extract_surface(algorithm=None) # cartilage shell
+        bone_shell = bone_tet.extract_surface(algorithm=None) # bone shell
+        #tet_shell = tet.extract_surface(algorithm=None) # tet shell
 
         # find interface surfaces on cartilage and bone
         interface_mask_bone = find_shared_cells(bone_shell, cartilage_shell)
@@ -321,10 +324,8 @@ if not mesh_exists or overwrite:
 
         # combined mesh of tets and tris with region ids - ••• Needs to be tets then tris for abaqus input script to work •••
         combined = tet + interface_surf + bone_surf + cartilage_surf
-        print("Saving mesh")
-        combined.save(output_path / remesh_name)
 
-        # checks
+        # CHECKS #
         #print("\nFINAL MESH...\n")
         if not tet.n_points == combined.n_points:
             raise AssertionError("All points merged in final mesh:")
@@ -344,6 +345,16 @@ if not mesh_exists or overwrite:
             for key, value in checks.items():
                 print(key, value)
                 raise AssertionError("Postprocessing failed")
+
+
+        # QUICK FIX #
+        # quick, slow fix to address " as long as they aren't connected to any cartilage cells"
+        # - from study1-analyseMetrics-box.ipynb ; still probably some edge cases it doesn't work for
+        combined = ad_hoc_mesh_fix(combined)
+
+
+        print("Saving mesh")
+        combined.save(output_path / remesh_name)
 
         print('Complete\n')
 
