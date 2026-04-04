@@ -12,6 +12,8 @@ from phd_helpers.MeshQuality import (
     )
 from phd_helpers.paths import get_mesh, get_subject_stl_path, get_boundary
 
+from ad_hoc_mesh_fix import ad_hoc_mesh_fix
+
 def build_ids(ids: list):
     id_1, id_2, id_3 = ids
 
@@ -25,7 +27,7 @@ def assign_inner(mesh, mesh_with_inner):
     mesh['inner_points'] = np.full(mesh.n_points, 1)
     mesh['inner_points'][np.unique(mesh.faces.reshape(-1, 4)[:, 1:][mesh['inner_cells']==0])] = 0
 
-def generate_mesh_dict(path_mesh, ids, bone, stl_path, taper_width):
+def build_mesh_dict(path_mesh, ids, bone, stl_path, taper_width):
     id_2d, id_cart, id_3d = build_ids(ids)
     
     path2d = path_mesh / '2Dmesh'
@@ -34,7 +36,7 @@ def generate_mesh_dict(path_mesh, ids, bone, stl_path, taper_width):
     # -------- COMBINED --------------------------------------------- #
     mesh2d = pv.read(path2d / f'bone_cartilage_mesh{id_cart}.vtp')
 
-    mesh3d = pv.read(path3d / f'mesh{id_3d}.vtu')
+    mesh3d = ad_hoc_mesh_fix(pv.read(path3d / f'mesh{id_3d}.vtu')) # --------- !!!!!!!!!!!!! ********* ••••••••••••••• get rid of this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Already does this in 3Dmesh - leave this version as is but get rid for final code
     mesh3d['mesh3d_point_id'] = np.arange(mesh3d.n_points)
     shell_mesh = mesh3d.extract_cells_by_type(5)
 
@@ -261,117 +263,119 @@ def compute_quality_metrics(mesh, dic=None, label=''):
 
 
 # MAIN #
+if __name__ == "__main__":
 # -------- PATHS --------------------------------------------- #
-root_dir = Path('../../../../MeshPipeline/outputs/ParamOptimisation/criteria3D') # path to parent of output_root in set_parameters
-out_dir = Path('outputs/study1') # path dir to save outputs in
+    root_dir = Path('../../../../MeshPipeline/outputs/ParamOptimisation/criteria3D') # path to parent of output_root in set_parameters
+    out_dir = Path('outputs/study1-meshFix') # path dir to save outputs in
+    out_dir.mkdir(parents=True, exist_ok=True)
 
-study_prefix = 'study1' # start of dir name of output_root in set_parameters
-studies = ['a', 'b', 'c'] # individual study identifier
+    study_prefix = 'study1' # start of dir name of output_root in set_parameters
+    studies = ['c'] # individual study identifier
 
-for study in studies:
-    study_name = study_prefix + study
-    study_dir = root_dir / study_name
+    for study in studies:
+        study_name = study_prefix + study
+        study_dir = root_dir / study_name
 
-    # -------- PARAMS --------------------------------------------- #
-    params_path = study_dir / 'params/full_params.json'
-    with open(params_path, 'r') as f:
-        params = json.load(f)
+        # -------- PARAMS --------------------------------------------- #
+        params_path = study_dir / 'params/full_params.json'
+        with open(params_path, 'r') as f:
+            params = json.load(f)
 
-    taper_width = params['cartilage']['taper_width']
-    id_2d, id_cart = 0, 0
-    subs = params['subjects']['subject_sideL']
-    bone_pairs = params['subjects']['bone_arbone']
-    parts = ['bone', 'cart']
-    n_samples = 20000
+        taper_width = params['cartilage']['taper_width']
+        id_2d, id_cart = 0, 0
+        subs = params['subjects']['subject_sideL']
+        bone_pairs = params['subjects']['bone_arbone']
+        parts = ['bone', 'cart']
+        n_samples = 20000
 
-    # -------- MAIN --------------------------------------------- #
-    data = {
-        'bone': [],
-        'cart': [],
-        'qual': []
-    }
-    for sub in subs:
+        # -------- MAIN --------------------------------------------- #
+        data = {
+            'bone': [],
+            'cart': [],
+            'qual': []
+        }
+        for sub in subs:
 
-        subject, sideL = sub[:-1], sub[-1]
-        stl_path = get_subject_stl_path(subject, sideL)
+            subject, sideL = sub[:-1], sub[-1]
+            stl_path = get_subject_stl_path(subject, sideL)
 
-        for bone_pair in bone_pairs:
+            for bone_pair in bone_pairs:
 
-            bone, arbone = bone_pair.split('-')
-            path_mesh = study_dir / f'meshes/{subject}{sideL}/{bone_pair}'
-            run_ids = np.sort([int(p.name.split('-')[-1][:-4]) for p in (path_mesh / '3Dmesh').iterdir() if p.suffix == '.vtu'])
+                bone, arbone = bone_pair.split('-')
+                path_mesh = study_dir / f'meshes/{subject}{sideL}/{bone_pair}'
+                run_ids = np.sort([int(p.name.split('-')[-1][:-4]) for p in (path_mesh / '3Dmesh').iterdir() if p.suffix == '.vtu'])
 
-            for run_id in tqdm(run_ids):
+                for run_id in tqdm(run_ids):
 
-                mesh_dict = generate_mesh_dict(path_mesh, [id_2d, id_cart, run_id], bone, stl_path, taper_width)
+                    mesh_dict = build_mesh_dict(path_mesh, [id_2d, id_cart, run_id], bone, stl_path, taper_width)
 
-                for part in parts:
-                    
-                    # create data row
-                    mets = {
+                    for part in parts:
+                        
+                        # create data row
+                        mets = {
+                            'sub': sub,
+                            'bone': bone,
+                            'run_id': str(run_id)+study
+                        }
+                        
+                        mesh = mesh_dict[part]
+                        remesh3d = mesh['remesh3d']
+                        full_3d = remesh3d['full']
+                        inner_3d = remesh3d['inner']
+                        outer_3d = remesh3d['outer']
+
+                        # distance from remesh3d
+                        for name, regions in mesh.items(): # orig smooth remesh2d remesh3d
+                            if name != 'remesh3d':
+                                full = regions['full']
+                                inner = regions['inner']
+                                outer = regions['outer']
+                                
+                                di_ab = compute_dists(sample_surface(inner_3d, n_samples), full)
+                                di_ba = compute_dists(sample_surface(inner, n_samples), full_3d)
+                                di = np.hstack( (di_ab, di_ba) )
+                            
+                                do_ab = compute_dists(sample_surface(outer_3d, n_samples), full)
+                                do_ba = compute_dists(sample_surface(outer, n_samples), full_3d)
+                                do = np.hstack( (do_ab, do_ba) )
+
+                                label = f'{name}_'
+                                mets[label + 'rmsdi'] = compute_rmsd(di)
+                                mets = compute_d_metrics(di, mets, label + 'di_')
+                                mets[label + 'rmsdo'] = compute_rmsd(do)
+                                mets = compute_d_metrics(do, mets, label + 'do_')
+
+                                # height of inner cartilage for: orig smooth remesh2d
+                                if part == 'cart':
+                                    bone_full = mesh_dict['bone']['smooth']['full']
+                                    h = compute_dists(sample_surface(inner, n_samples), bone_full)
+                                    mets[label + 'h_rmsd'] = compute_rmsd(h)
+                                    mets = compute_d_metrics(h, mets, label + 'h_')
+
+                        # height of cartilage for remesh3d
+                        if part == 'cart':
+                            bone_full = mesh_dict['bone']['remesh3d']['full']
+                            h = compute_dists(sample_surface(inner_3d, n_samples), bone_full)
+                            mets['remesh3d_h_rmsd'] = compute_rmsd(h)
+                            mets = compute_d_metrics(h, mets, 'remesh3d_h_')
+
+                        # only store volume of bone remesh3d
+                        if part == 'bone':
+                            mets['remesh3d_vol'] = full_3d.volume
+
+                        data[part].append(mets)
+
+                    # compute quality of tetrahedral mesh
+                    row = {
                         'sub': sub,
                         'bone': bone,
                         'run_id': str(run_id)+study
                     }
-                    
-                    mesh = mesh_dict[part]
-                    remesh3d = mesh['remesh3d']
-                    full_3d = remesh3d['full']
-                    inner_3d = remesh3d['inner']
-                    outer_3d = remesh3d['outer']
+                    for name, tet in mesh_dict['tet'].items(): # bone cart cart_inner
+                        row = compute_quality_metrics(tet, row, name + '_')
+                    data['qual'].append(row)
 
-                    # distance from remesh3d
-                    for name, regions in mesh.items(): # orig smooth remesh2d remesh3d
-                        if name != 'remesh3d':
-                            full = regions['full']
-                            inner = regions['inner']
-                            outer = regions['outer']
-                            
-                            di_ab = compute_dists(sample_surface(inner_3d, n_samples), full)
-                            di_ba = compute_dists(sample_surface(inner, n_samples), full_3d)
-                            di = np.hstack( (di_ab, di_ba) )
+        # write to file
+        for key, value in data.items():
+            pd.DataFrame(data[key]).to_csv(out_dir / f'{study_name}-{key}Metrics.csv', index=False)
                         
-                            do_ab = compute_dists(sample_surface(outer_3d, n_samples), full)
-                            do_ba = compute_dists(sample_surface(outer, n_samples), full_3d)
-                            do = np.hstack( (do_ab, do_ba) )
-
-                            label = f'{name}_'
-                            mets[label + 'rmsdi'] = compute_rmsd(di)
-                            mets = compute_d_metrics(di, mets, label + 'di_')
-                            mets[label + 'rmsdo'] = compute_rmsd(do)
-                            mets = compute_d_metrics(do, mets, label + 'do_')
-
-                            # height of inner cartilage for: orig smooth remesh2d
-                            if part == 'cart':
-                                bone_full = mesh_dict['bone']['smooth']['full']
-                                h = compute_dists(sample_surface(inner, n_samples), bone_full)
-                                mets[label + 'h_rmsd'] = compute_rmsd(h)
-                                mets = compute_d_metrics(h, mets, label + 'h_')
-
-                    # height of cartilage for remesh3d
-                    if part == 'cart':
-                        bone_full = mesh_dict['bone']['remesh3d']['full']
-                        h = compute_dists(sample_surface(inner_3d, n_samples), bone_full)
-                        mets['remesh3d_h_rmsd'] = compute_rmsd(h)
-                        mets = compute_d_metrics(h, mets, 'remesh3d_h_')
-
-                    # only store volume of bone remesh3d
-                    if part == 'bone':
-                        mets['remesh3d_vol'] = full_3d.volume
-
-                    data[part].append(mets)
-
-                # compute quality of tetrahedral mesh
-                row = {
-                    'sub': sub,
-                    'bone': bone,
-                    'run_id': str(run_id)+study
-                }
-                for name, tet in mesh_dict['tet'].items(): # bone cart cart_inner
-                    row = compute_quality_metrics(tet, row, name + '_')
-                data['qual'].append(row)
-
-    # write to file
-    for key, value in data.items():
-        pd.DataFrame(data[key]).to_csv(out_dir / f'{study_name}-{key}Metrics.csv', index=False)
-                    

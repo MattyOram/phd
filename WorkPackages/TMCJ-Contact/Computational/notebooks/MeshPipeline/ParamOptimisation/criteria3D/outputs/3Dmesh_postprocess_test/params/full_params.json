@@ -101,20 +101,20 @@
       },
       "facet_distance": {
         "fd_cart_near": [
-          0.02
+          0.08
         ],
         "fd_cart_far": [
-          0.01
+          0.04
         ],
         "d0_cart": 1.5,
         "fd_bone": [
-          0.2
+          0.8
         ],
         "fd_edge_loop": null
       },
       "criteria": {
-        "facet_angle": 7.5,
-        "cell_radius_edge_ratio": 3,
+        "facet_angle": 15,
+        "cell_radius_edge_ratio": 12,
         "manifold_with_boundary": false
       },
       "optimisation": {
