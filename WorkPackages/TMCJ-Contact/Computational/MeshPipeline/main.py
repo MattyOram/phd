@@ -135,15 +135,9 @@ for subject_sideL in subject_sideLs:
                 print(f"\t\t\tRuntime: {dt:.3f}s - {ok}")
 
 
-# delete step param dir contents if exists
 
-
-# bone cells look like they grow to big immediately - double check c++ logic for bone cell size
 # might be good to keep track of pymeshfix usage in cartilage creation
 # only apply timeout to cgal subprocesses not parent subprocess
-
-#plan study
-# - set time limits too high but not too high
-# use database on ssd
-
+# shouldn't write all combos to file, should just pass full_params_id and combo id to each run
+#   - would solve problem of not being able to run mutiple processes on same output_dir
 
