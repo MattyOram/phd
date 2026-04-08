@@ -26,7 +26,8 @@ def articular_gap(
     p_v = 1, # shape of vector ratio (1 = linear)
     cartilage_smooth_iters = 200, # need to look at this, currently uses laplacian 
     edge_length = 0.2, # target edge length of cartilage remesh
-    n_iters = 5 # n isotropic remeshing iterations for cartilage remesh
+    n_iters = 5, # n isotropic remeshing iterations for cartilage remesh
+    clamp_height = 0.06
     ):
     """
     Returns:
@@ -278,6 +279,25 @@ def articular_gap(
     cartilage_cap.points[mesh_edge_ids] = bone_mesh.points[bone_mesh_edge_ids]
 
     ################# SMOOTH CARTILAGE MESH CAP #################
+
+    ################# CLAMP CARTILAGE HEIGHT #################
+    if clamp_height:
+        def clamp_cartilage(cartilage_mesh, bone_mesh, min_height):
+            mesh = cartilage_mesh.copy(deep=True)
+
+            inner = mesh.extract_cells(mesh['inner_cells']==1).extract_surface(algorithm=None)
+            _, close_points = bone_mesh.find_closest_cell(inner.points, return_closest_point=True)
+            vecs = inner.points - close_points
+            ds = np.linalg.norm(vecs, axis=1)
+            dirs = vecs / np.linalg.norm(vecs, axis=1, keepdims=True)
+            clamp_mask = ds < min_height
+            inner.points[clamp_mask] = close_points[clamp_mask] + dirs[clamp_mask] * min_height
+            mesh.points[inner['mesh_clean_id']] = inner.points
+            return mesh
+
+        mesh_clean = clamp_cartilage(mesh_clean, bone_mesh, clamp_height) # clamp mesh clean aswel for returning and saving
+        cartilage_cap = clamp_cartilage(cartilage_cap, bone_mesh, clamp_height)
+    ################# CLAMP CARTILAGE HEIGHT #################
 
     if remesh_cartilage:
         ################# REMESH CARTILAGE #################
