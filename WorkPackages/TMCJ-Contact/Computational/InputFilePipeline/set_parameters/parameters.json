@@ -1,0 +1,23 @@
+{
+  "general": {
+    "mesh_root": "../MeshPipeline/outputs/ParamOptimisation/fullRuns/study4",
+    "mesh_glob": "**/mesh*.vtu",
+    "output_root": "outputs/testing/test1",
+    "allow_overwrite": true,
+    "step_timeout": 1200
+  },
+  "preprocessing": {
+    "subjects": null,
+    "poses": [
+      "adduction",
+      "abduction",
+      "flexion",
+      "extension",
+      "pinch",
+      "grasp",
+      "jar",
+      "neutral"
+    ]
+  },
+  "inp": {}
+}
