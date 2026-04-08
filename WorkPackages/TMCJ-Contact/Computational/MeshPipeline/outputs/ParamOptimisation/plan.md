@@ -83,40 +83,41 @@
 
 
 #### Optmisation
+Study 1
      - Set time limits and iterations so that so hopefully arn't hit unless it is making very slow progress
      - check exit codes after
      - lloyd give 2 minutes because it can be slower - global regularisation
      - peturb and exude target sliver triangles - local repair
 
+criteria['d0'] = [2, 4, 8]
+
 * lloyd = True
     * time_limit = 120
     * max_iterations = 0 (no limit)
-    * convergence = []
-    * freeze_bound = []
+    * convergence = [0.01, 0.005, 0.0025]
+    * freeze_bound = [0.01, 0.005, 0.0025]
     * do_freeze = True
 
 * peturb = True
     * time_limit = 60
-    * sliver_bound = []
+    * sliver_bound = [0, 10, 20]
 
 * exude = True
     * time_limit = 60
-    * sliver_bound = []
+    * sliver_bound = [0, 10, 20]
+
+Study 2 looked at if exude matters and different d0 values but realised the stuff that is written at the top of study2-box
 
 
-# TODO
+TODO:
 
----
-Check if mesh has already been generated and overwrite = false and load it for optimisation
----
+Study 3 - figure out feasable n_tets / d0 / h_min combos
+        - NEED TO RUN SOME SIMULATIONS TO FIGURE OUT MAX N_TETS - or know how to calculate required memory
+study 4 - look at if higher facet_distances improve element quality and still keep max_d's reasonable 
+study 5 - find perturb sliver bounda and lloyd freeze_bound for each subject
 
-plan mesh optimisation study - run it
+FIGURE OUT - how many cells FEA memory can handle or what the runtimes are
 
-Rank them
- - for fidelity and quality, set value above which is ideal gets 1 point, the points decrease linealry between ideal and worst acceptable then 0 below that
- - maybe just rank element count normally
-    - could even ignore element count at first just see whats best
-
-use criteria metrics as mock ouputs to write evalutaiton code
-
-
+I CAN PICK SUBJECTS TODAY AS LONG AS I PICK ONES THAT HAVE REASONABLE CELL COUNTS RELATIVE TO THE LOWEST
+     - cos if even they are a problem then everyone is a problem
+    - so pick subjects

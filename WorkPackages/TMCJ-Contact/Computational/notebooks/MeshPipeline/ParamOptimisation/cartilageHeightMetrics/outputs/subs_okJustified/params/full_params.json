@@ -1,12 +1,12 @@
 {
   "global": {
-    "output_root": "outputs/ParamOptimisation/fullRuns/study4",
-    "allow_overwrite": false,
-    "step_timeout": 1200,
+    "output_root": "outputs/subs_okJustified",
+    "allow_overwrite": true,
+    "step_timeout": 300,
     "steps": {
       "2Dmesh": true,
       "cartilage": true,
-      "3Dmesh": true,
+      "3Dmesh": false,
       "manifold": false
     }
   },
@@ -50,7 +50,8 @@
       "50053R"
     ],
     "bone_arbone": [
-      "tpm-mc1"
+      "tpm-mc1",
+      "mc1-tpm"
     ]
   },
   "2Dmesh": {
@@ -106,7 +107,6 @@
       ]
     ],
     "max_gap_cartilage": 2,
-    "clamp_height": 0.06,
     "use_remeshed_arbone": true,
     "taper_width": 1.5,
     "p_h": 8.5,
@@ -126,19 +126,23 @@
     "cgal_params": {
       "sizing_field": {
         "n_tets": 3,
-        "min_size": 0.06,
-        "max_size": 1.0,
+        "min_size": 0.05,
+        "max_size": 0.5,
         "d_taper": 1.5,
         "taper_size": 0.2,
         "h_bone_max": 1.0,
-        "d0": 6
+        "d0": [
+          3,
+          4,
+          5
+        ]
       },
       "facet_distance": {
-        "fd_cart_near": 0.5,
-        "fd_cart_far": null,
-        "fd_edge_loop": null,
-        "d0_cart": 0,
-        "fd_bone": 2.0
+        "fd_cart_far": 0.05,
+        "fd_cart_near": 0.1,
+        "d0_cart": 0.5,
+        "fd_bone": 1.0,
+        "fd_edge_loop": null
       },
       "criteria": {
         "facet_angle": 30,
@@ -149,29 +153,41 @@
         "odt": false,
         "lloyd": true,
         "perturb": true,
-        "exude": true
+        "exude": false
       },
       "odt": {
-        "time_limit": 300,
-        "max_iteration_number": 0,
-        "convergence": 0.0,
+        "time_limit": 60,
+        "max_iteration_number": 3,
+        "convergence": 0.002,
         "do_freeze": true,
-        "freeze_bound": 0.0005
+        "freeze_bound": 0.002
       },
       "lloyd": {
-        "time_limit": 600,
+        "time_limit": 180,
         "max_iteration_number": 0,
-        "convergence": 0.0,
+        "convergence": [
+          0.0025
+        ],
         "do_freeze": true,
-        "freeze_bound": 0.0005
+        "freeze_bound": [
+          0.005,
+          0.0025,
+          0.00125
+        ]
       },
       "perturb": {
         "time_limit": 60,
-        "sliver_bound": 20
+        "sliver_bound": [
+          0,
+          20,
+          30
+        ]
       },
       "exude": {
-        "time_limit": 60,
-        "sliver_bound": 0
+        "time_limit": 40,
+        "sliver_bound": [
+          0
+        ]
       }
     }
   },

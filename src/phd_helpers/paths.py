@@ -23,8 +23,9 @@ def get_db_path() -> Path:
 def get_info_path()  -> Path:
     return PROJECT_ROOT / 'data' / 'BrownUniCarpalDataset' / 'subject_info.csv'
 
-def get_info_df() -> pd.DataFrame:
-    return pd.read_csv(get_info_path())
+def get_info_df(group=None) -> pd.DataFrame:
+    df = pd.read_csv(get_info_path())
+    return df if group is None else df[df['group']==group]
 
 def get_stl_paths() -> list[Path]:
     """Returns list of Paths to STL folders for all subjects and sides"""

@@ -85,8 +85,15 @@ postprocess = params_3D['postprocess']
 save_cgal_inputs = params_3D['save_cgal_inputs']
 
 cgal_params = params_3D['cgal_params']
+
 if cgal_params["facet_distance"]["fd_edge_loop"] is None:
     cgal_params["facet_distance"]["fd_edge_loop"] = cgal_params["facet_distance"]["fd_cart_near"]
+
+if cgal_params["facet_distance"]["fd_cart_far"] is None:
+    cgal_params["facet_distance"]["fd_cart_far"] = cgal_params["facet_distance"]["fd_cart_near"]
+
+if cgal_params["lloyd"]["convergence"] is None:
+    cgal_params["lloyd"]["convergence"] = cgal_params["lloyd"]["freeze_bound"]
 
 cgal_input_name = params_3D['cgal_input_name']
 cgal_path = Path(params_3D['cgal_path'])
