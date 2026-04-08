@@ -291,8 +291,10 @@ def articular_gap(
             ds = np.linalg.norm(vecs, axis=1)
             dirs = vecs / np.linalg.norm(vecs, axis=1, keepdims=True)
             clamp_mask = ds < min_height
-            inner.points[clamp_mask] = close_points[clamp_mask] + dirs[clamp_mask] * min_height
-            mesh.points[inner['mesh_clean_id']] = inner.points
+            if clamp_mask.any():
+                print('Clamping')
+                inner.points[clamp_mask] = close_points[clamp_mask] + dirs[clamp_mask] * min_height
+                mesh.points[inner['mesh_clean_id']] = inner.points
             return mesh
 
         mesh_clean = clamp_cartilage(mesh_clean, bone_mesh, clamp_height) # clamp mesh clean aswel for returning and saving
