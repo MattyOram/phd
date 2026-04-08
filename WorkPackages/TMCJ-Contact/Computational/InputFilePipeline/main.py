@@ -3,6 +3,9 @@ import subprocess
 from datetime import datetime
 import os
 import signal
+import copy
+from pathlib import Path
+import time
 
 def to_text(x):
     if x is None:
@@ -11,15 +14,14 @@ def to_text(x):
         return x.decode("utf-8", errors="replace")
     return str(x)
 
-def write_failure_log(log_dir, filename, subject, bones, stdout, stderr, step, input_json, run_ids, full_params_file):
+def write_failure_log(log_dir, filename, subject, stdout, stderr, input_json, run_id, run_id_mesh, full_params_file):
     info = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
         "full_params": full_params_file,
         "subject": subject,
-        "bones": bones,
-        "step": step,
         "input_json": str(input_json), 
-        "run_ids": run_ids,  
+        'run_id_mesh': run_id_mesh,
+        "run_id": run_id,  
         "stdout": to_text(stdout),
         "stderr": to_text(stderr)
     }
@@ -29,18 +31,13 @@ def write_failure_log(log_dir, filename, subject, bones, stdout, stderr, step, i
         f.write("\n")
 
 def run_subprocess(args, timeout=60):
-    out_dir = args[6] # Path
-    subject = str(out_dir.parent.name)
-    bones = str(out_dir.name)
-    log_dir = args[0] # Path
-    step = str(args[5].parent.name)
 
-    full_params_file = str(args[1])
-    args_str = [str(a) for a in args]
-    # args_str starts at 1 so index from there
-    input_json = args_str[3]
-    run_ids = args_str[5:] 
+    param_path = args[2]
+    log_dir = param_path.parent.parent.parent / 'reports'
+    subject = args[3].name
+    full_params_file = args[-1]
 
+    args_str = ['python', '-u'] + [str(a) for a in args]
     proc = subprocess.Popen(
         args_str,
         stdout=subprocess.PIPE,
@@ -53,12 +50,19 @@ def run_subprocess(args, timeout=60):
         stdout, stderr = proc.communicate(timeout=timeout)
 
         if proc.returncode != 0:
-            stderr_text = to_text(stderr)
 
-            # check if an input mesh from the previous step exists
-            previous_step_check = "FileNotFoundError: No input mesh"
-            if previous_step_check in stderr_text:
-                return 'no input'
+            write_failure_log(
+                log_dir,
+                "errors.jsonl",
+                subject=subject,
+                stdout=stdout,
+                stderr=stderr,
+                input_json=param_path,
+                run_id=run_id,
+                run_id_mesh=run_id_mesh,
+                full_params_file=full_params_file
+            )
+            return 'error'
 
         return 'ok'
 
@@ -70,12 +74,11 @@ def run_subprocess(args, timeout=60):
             log_dir,
             "timeouts.jsonl",
             subject=subject,
-            bones=bones,
             stdout=stdout,
             stderr=stderr,
-            step=step,
-            input_json=input_json,
-            run_ids=run_ids,
+            input_json=param_path,
+            run_id=run_id,
+            run_id_mesh=run_id_mesh,
             full_params_file=full_params_file
         )
         return 'timeout'
@@ -87,9 +90,8 @@ def get_list(value):
 
 def load_parameters(param_path):
     # run parameters.py to update parameters.json with any changes in parameters.py, then load parameters.json
-    result = subprocess.run(
+    subprocess.run(
         ["python", param_path.with_suffix(".py"), param_path],
-        capture_output=True, 
         text=True
         )
     with open(param_path, "r") as f:
@@ -103,28 +105,136 @@ def write_full_params_copy(param_dir):
     with open(full_param_path, "w") as f:
         json.dump(params, f, indent=2)
     print(f'Full parameter file saved to {full_param_path}')
+    return full_param_path
     
 def get_subs(mesh_root):
-    mesh_path = mesh_root / 'meshes'
-    return [x.name for x in mesh_path.iterdir() if x.is_dir()]
+    return [x.name for x in mesh_root.iterdir() if x.is_dir()]
 
-from pathlib import Path
+def extract_mesh_run_id(mesh_path: Path):
+    return mesh_path.name.split('.')[0].strip('mesh-')
+
+
+
+def is_list_of_lists(x):
+    return (
+        isinstance(x, list)
+        and len(x) > 0
+        and all(isinstance(item, list) for item in x)
+    )
+
+always_list = ['poses', 'tpm_patch_params', 'mc1_patch_params']
+
+def find_loops(d, path=()):
+    loops = []
+
+    if not isinstance(d, dict):
+        return loops
+
+    for key, value in d.items():
+        new_path = path + (key,)
+
+        if isinstance(value, dict):
+            loops.extend(find_loops(value, new_path))
+
+        if isinstance(value, tuple):
+            print(value)
+            pass
+
+        elif isinstance(value, list):
+            # poses is always a list or list of lists
+            if key in always_list:
+                if is_list_of_lists(value) and len(value) > 1:
+                    loops.append((new_path, value))
+            else:
+                if len(value) > 1:
+                    loops.append((new_path, value))
+
+    return loops
+
+def set_nested(d, path, value):
+    for key in path[:-1]:
+        d = d[key]
+    d[path[-1]] = value
+
+def unwrap_singles(d, parent_key=None):
+    if isinstance(d, dict):
+        return {k: unwrap_singles(v, k) for k, v in d.items()}
+
+    elif isinstance(d, list):
+        # poses=[[...]] -> poses=[...]
+        if parent_key in always_list and is_list_of_lists(d) and len(d) == 1:
+            return unwrap_singles(d[0])
+
+        # any single-item list -> scalar/item
+        if len(d) == 1:
+            return unwrap_singles(d[0])
+
+        return [unwrap_singles(v) for v in d]
+
+    else:
+        return d
+
+def expand_params(params):
+    loops = find_loops(params)
+
+    if not loops:
+        param = copy.deepcopy(params)
+        param = unwrap_singles(param)
+        param["run_id"] = 0
+        yield param
+        return
+
+    results = []
+
+    def recurse(i, param, chosen):
+        if i == len(loops):
+            out = unwrap_singles(copy.deepcopy(param))
+            out["_loop"] = chosen.copy()
+            results.append(out)
+            return
+
+        path, values = loops[i]
+        for value in values:
+            set_nested(param, path, value)
+            chosen[".".join(path)] = value
+            recurse(i + 1, param, chosen)
+            chosen.pop(".".join(path), None)
+
+    recurse(0, copy.deepcopy(params), {})
+
+    for i, param in enumerate(results):
+        param["run_id"] = i
+        yield param
+
+
+def write_param_files(params, output_dir):
+
+    last_run_id = -1
+    for param in expand_params(params):
+        out_path = output_dir / f"{param['run_id']}.json"
+        with open(out_path, "w") as f:
+            json.dump(param, f, indent=2)
+        last_run_id = param["run_id"]
+
+    return last_run_id
+
+
 
 from phd_helpers.paths import get_project_root
 
-MeshPipeline_root = get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/InputFilePipeline'
+InpPipeline_root = get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/InputFilePipeline'
 
 # LOAD PARAMETERS #
 print('\nUpdating parameters.json')
-param_path = MeshPipeline_root / 'set_parameters/parameters.json'
+param_path = InpPipeline_root / 'set_parameters/parameters.json'
 params = load_parameters(param_path)
 
 # -------- GENERAL PARAMETERS ---------------------------- #
-params_glob = params['general']
-params_pre = params['preprocessing']
+params_gen = params['general']
+timeout = params_gen['timeout']
 
 # create output dir
-root_dir = Path(params_glob["output_root"])
+root_dir = Path(params_gen["output_root"])
 root_dir.mkdir(parents=True, exist_ok=True)
 
 # create param dir
@@ -136,25 +246,65 @@ log_dir = root_dir / 'reports'
 log_dir.mkdir(parents=True, exist_ok=True)
 
 # save copy of full parameters in root directory 
-write_full_params_copy(param_dir)
+full_param_path = write_full_params_copy(param_dir)
+
+# generate json param files for each combination of parameters -clear any from previous runs``
+loop_param_dir = param_dir / 'loop_params'
+loop_param_dir.mkdir(parents=True, exist_ok=True)
+for p in loop_param_dir.iterdir():
+    if p.is_file():
+        Path.unlink(p)
+run_count = write_param_files(params['inp'], loop_param_dir)
+
 
 # input meshes root dir
-mesh_root = Path(params_glob['mesh_root'])
+mesh_root = Path(params_gen['mesh_root']) / 'meshes'
 mesh_glob = '**/mesh*.vtu'
 
-# subject selection
-subs_sides = params_pre['subjects']
+# subjects
+subs_sides = params_gen['subjects']
 if subs_sides is not None:
     subs = get_list(subs_sides)
 else:
     subs = get_subs(mesh_root)
 
-
-
-
-
-for sub in subs: 
+subs = [x for x in subs if x == '14548R']
+for sub in subs[:1]: 
+    print(f"\nSUBJECT: {sub}")
+    sub_path = mesh_root / sub
+    mesh_paths_tpm = list(sub_path.glob('tpm-mc1/3Dmesh/mesh*.vtu'))
+    mesh_paths_mc1 = [Path(str(x).replace('tpm-mc1', 'mc1-tpm')) for x in mesh_paths_tpm]
     
+    for tpm_path, mc1_path in zip(mesh_paths_tpm, mesh_paths_mc1):
+        run_id_mesh = extract_mesh_run_id(tpm_path) #str: 0-0-0
+        print(f"\tMESH: {run_id_mesh}")
+        
+
+        for run_id in range(run_count+1):
+            print(f"\t\tRUN ID: {run_id}")
+            t0 = time.perf_counter()
+
+            param_path = loop_param_dir / f'{run_id}.json'
+            args = [
+                'steps/main_inp.py',
+                root_dir,
+                param_path,
+                sub_path,
+                tpm_path,
+                mc1_path,
+                run_id,
+                run_id_mesh,
+                full_param_path.name
+            ]
+            ok = run_subprocess(args, timeout=timeout)
+
+            dt = time.perf_counter() - t0
+            print(f"\t\t\tRuntime: {dt:.3f}s - {ok}")
+
+
+
+    
+
 
 
 

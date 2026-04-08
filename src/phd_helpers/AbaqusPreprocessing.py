@@ -10,8 +10,8 @@ from phd_helpers.paths import get_boundary, get_intercepts
 def compute_x_dist(tpm, mc1, return_points=False, cartilage_id=-2):
     """Compute the minimum distance in the x direction between the trapezium and metacarpal cartilage surfaces"""
     # extract cartilage surfaces to speed up computation
-    mc1_cartilage_surf = mc1.extract_cells(np.where(mc1['region_id']==cartilage_id)[0]).extract_geometry()
-    tpm_cartilage_surf = tpm.extract_cells(np.where(tpm['region_id']==cartilage_id)[0]).extract_geometry()
+    mc1_cartilage_surf = mc1.extract_cells(np.where(mc1['region_id']==cartilage_id)[0]).extract_surface(algorithm=None)
+    tpm_cartilage_surf = tpm.extract_cells(np.where(tpm['region_id']==cartilage_id)[0]).extract_surface(algorithm=None)
     # compute distance in direction of metacarpal principal axis (x) between cartilage surfaces
     vecs_x = np.zeros_like(mc1_cartilage_surf.points)+np.array([-1, 0, 0])
     points_tpm, points_mc1, mask_points_mc1 = get_intercepts(tpm_cartilage_surf, mc1_cartilage_surf.points, vecs_x)
@@ -35,7 +35,7 @@ def position_mc1_tpm(mc1, tpm, target_dist=0.01, raise_error=False):
     # checks
     final_dist = abs(compute_x_dist(tpm, mc1))
     print(f"Distance between cartilage surfaces (x->): {final_dist:.4f}")
-    interference_check = (tpm.extract_surface().compute_implicit_distance(mc1.extract_surface())['implicit_distance'] >= 0).all()
+    interference_check = (tpm.extract_surface(algorithm=None).compute_implicit_distance(mc1.extract_surface(algorithm=None))['implicit_distance'] >= 0).all()
     print("No interference: ", interference_check)
 
     if raise_error:
@@ -55,7 +55,7 @@ def bone_surface_patch_nodes(mesh, patch_dist, distance_measure="euclidean", onl
     """
     mesh['node_id'] = np.arange(mesh.n_points)
     mesh['cell_id'] = np.arange(mesh.n_cells)
-    bone_surf = mesh.extract_cells(np.where(mesh['region_id']==-1)[0]).extract_geometry()
+    bone_surf = mesh.extract_cells(np.where(mesh['region_id']==-1)[0]).extract_surface(algorithm=None)
     bone_boudnary = get_boundary(bone_surf)
     boundary_mask = np.isin(bone_surf['node_id'], bone_boudnary['node_id']) # on bone surf
 
@@ -82,7 +82,7 @@ def bone_surface_patch_nodes(mesh, patch_dist, distance_measure="euclidean", onl
 
 
     if only_full_face_nodes:
-        extracted_surf = bone_surf.extract_points(bone_patch_mask, adjacent_cells=False).extract_geometry()
+        extracted_surf = bone_surf.extract_points(bone_patch_mask, adjacent_cells=False).extract_surface(algorithm=None)
         bone_patch_mask = np.isin(bone_surf['node_id'], extracted_surf['node_id'])
         mesh['bc_patch'] = np.zeros(mesh.n_cells)
         mesh.cell_data['bc_patch'][extracted_surf['cell_id']] = 1

@@ -12,10 +12,10 @@
   },
   "subjects": {
     "subject_sideL": [
-      "14548R"
+      "15441R"
     ],
     "bone_arbone": [
-      "mc1-tpm"
+      "tpm-mc1"
     ]
   },
   "2Dmesh": {
@@ -71,7 +71,7 @@
       ]
     ],
     "max_gap_cartilage": 2,
-    "clamp_height": 0.06,
+    "clamp_height": 0,
     "use_remeshed_arbone": true,
     "taper_width": 1.5,
     "p_h": 8.5,

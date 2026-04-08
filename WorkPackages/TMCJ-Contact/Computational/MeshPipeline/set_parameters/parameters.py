@@ -36,7 +36,7 @@ params_glob = params['global']
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 params_glob['output_root']     = 'outputs/ParamOptimisation/fullRuns/study4'                                        # -------- *** -------- #
 
-params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
+params_glob['allow_overwrite'] = False # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
 #     - but not full_params.json - keeps all copies of full params for each output_root, with -i suffix for each new file
 
@@ -77,7 +77,7 @@ params_sub = params['subjects']
 #params_sub['subject_sideL'] = pd.read_csv(
 #                                get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/subs_ok.csv'
 #                            ).subs_ok.to_list()
-params_sub['subject_sideL'] = ['15441R', '15737R', '22306R', '50000R', '50001R', '50006R', '50007L', '50008L', '50014R', '50016L']
+params_sub['subject_sideL'] = ['15441R']
 
 # ALL CMC SUBJECTS
 #  - 46 total
