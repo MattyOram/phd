@@ -39,12 +39,9 @@
   "step_type": "STATIC",
   "nlgeom": "YES",
   "unsymm": "YES",
-  "convert_sdi": "YES",
+  "convert_sdi": "NO",
   "equil_iters": 16,
   "sdi_iters": 15,
   "increment_attemps": 5,
-  "_loop": {
-    "convert_sdi": "YES"
-  },
   "run_id": 0
 }

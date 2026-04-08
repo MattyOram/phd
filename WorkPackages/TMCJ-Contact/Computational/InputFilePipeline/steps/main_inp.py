@@ -33,11 +33,9 @@ subject, sideL = sub[:-1], sub[-1]
 stl_path = get_subject_stl_path(subject, sideL)
 
 
-# save dirs
-savepath_inp = output_dir / f'{sub}/inp' 
-savepath_mesh = output_dir / f'{sub}/mesh' 
+# save dir
+savepath_inp = output_dir / f'inpFiles/{sub}/inp' 
 savepath_inp.mkdir(parents=True, exist_ok=True)
-savepath_mesh.mkdir(parents=True, exist_ok=True)
 
 # --------------------- PATHS --------------------- #
 #####################################################
@@ -54,6 +52,10 @@ savepath_mesh.mkdir(parents=True, exist_ok=True)
 
 # PRE-PROCESSING #
 save_mesh = params['save_meshes']
+if save_mesh:
+    savepath_mesh = output_dir / f'inpFiles/{sub}/mesh' 
+    savepath_mesh.mkdir(parents=True, exist_ok=True)
+
 target_dist = params['target_dist'] # gap between cartilage at start of simulation
 
 tpm_patch_params = params['tpm_patch_params']
