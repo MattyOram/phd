@@ -26,10 +26,10 @@ import json
 
 from steps.MeshPrep import get_list, write_param_files, run_subprocess, write_runtime_log
 
-from phd_helpers.paths import get_project_root
+from phd_helpers.paths import PROJECT_ROOT
 
 
-MeshPipeline_root = get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline'
+MeshPipeline_root = PROJECT_ROOT / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline'
 
 # LOAD PARAMETERS #
 print('\nUpdating parameters.json')

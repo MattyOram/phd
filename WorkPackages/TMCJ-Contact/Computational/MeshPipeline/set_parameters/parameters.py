@@ -9,7 +9,7 @@ beware if using subprocesses to parrallelise - need to give cgal input files per
 """
 
 
-from phd_helpers.paths import get_project_root
+from phd_helpers.paths import PROJECT_ROOT
 import pandas as pd
 import json
 import sys
@@ -77,7 +77,7 @@ params_sub = params['subjects']
 #params_sub['subject_sideL'] = pd.read_csv(
 #                                get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/subs_ok.csv'
 #                            ).subs_ok.to_list()
-params_sub['subject_sideL'] = ['15441R']
+
 
 # ALL CMC SUBJECTS
 #  - 46 total
@@ -98,7 +98,7 @@ params_sub['bone_arbone']   = ['tpm-mc1'] # target_bone - articulating_bone
 # ••••••••••••••••••••• 2DMESH ••••••••••••••••••••• #
 params_2D = params['2Dmesh']
 
-params_2D['overwrite']          = True # overwrite output meshes if they already exist (if params_glob['allow_overwrite'])
+params_2D['overwrite']          = False # overwrite output meshes if they already exist (if params_glob['allow_overwrite'])
 
 params_2D['input_bone_mesh']    = None # filepath
 params_2D['input_arbone_mesh']  = None # filepath
@@ -107,7 +107,7 @@ params_2D['output_filename']    = None # remesh filename (.vpt/.obj ...)
 params_2D['cgal_input_name']    = None # filename for cgal input mesh (assign unique per subprocess name to avoid issues!)
 
 # path to dir containing bin, inputs, outputs folders
-params_2D['cgal_path']          = str(get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/2Dmesh')
+params_2D['cgal_path']          = str(PROJECT_ROOT / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/2Dmesh')
 
         # ACTUAL PARAMETERS #
 params_2D['poses']              = [
@@ -149,7 +149,7 @@ params_cart['output_filename']    = None # mesh filename (.vtp)
 params_cart['cgal_input_name']    = None # filename for cgal input mesh (assign unique per subprocess name to avoid issues!)
 
 # path to dir containing bin, inputs, outputs folders
-params_cart['cgal_path']          = str(get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/2Dmesh')
+params_cart['cgal_path']          = str(PROJECT_ROOT / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/2Dmesh')
 
 params_cart['save_orig_smooth']    = True
 
@@ -193,7 +193,7 @@ params_3D['cgal_input_name']    = '3'   # filename add on for cgal inputs (assig
 params_3D['save_cgal_inputs']   = False
 
 # path to dir containing bin, inputs, outputs folders
-params_3D['cgal_path']          = str(get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/3Dmesh') 
+params_3D['cgal_path']          = str(PROJECT_ROOT / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/3Dmesh') 
 
 # One of these must be true for a copy to be saved to the output path - otherwise cgal copy only exists in cgal output
 params_3D['postprocess']        = True # Build tri/tet mesh with region_id scalar

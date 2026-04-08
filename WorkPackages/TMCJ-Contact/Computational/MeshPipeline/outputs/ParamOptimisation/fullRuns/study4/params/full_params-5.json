@@ -1,7 +1,7 @@
 {
   "global": {
     "output_root": "outputs/ParamOptimisation/fullRuns/study4",
-    "allow_overwrite": true,
+    "allow_overwrite": false,
     "step_timeout": 1200,
     "steps": {
       "2Dmesh": true,
@@ -19,7 +19,7 @@
     ]
   },
   "2Dmesh": {
-    "overwrite": false,
+    "overwrite": true,
     "input_bone_mesh": null,
     "input_arbone_mesh": null,
     "output_filename": null,

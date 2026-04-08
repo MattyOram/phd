@@ -12,7 +12,7 @@ import meshio
 import time
 import sys
 
-from phd_helpers.paths import find_shared_cells, identical_points_count, get_subject_stl_path, get_mesh, get_boundary
+from phd_helpers.paths import find_shared_cells, identical_points_count, get_subject_stl_path
 from MeshPrep import get_run_id
 
 from ad_hoc_mesh_fix import ad_hoc_mesh_fix

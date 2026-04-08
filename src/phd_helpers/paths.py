@@ -12,10 +12,6 @@ from scipy.spatial.distance import cdist
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-def get_project_root() -> Path:
-    return PROJECT_ROOT
-
-
 def get_db_path() -> Path:
     """get BrownUniCarpalDataset path"""
     return PROJECT_ROOT / 'data' / 'BrownUniCarpalDataset' / 'Database'
