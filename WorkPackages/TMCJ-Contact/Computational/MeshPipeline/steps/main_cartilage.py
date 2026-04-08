@@ -67,6 +67,8 @@ use_remeshed_arbone = params_cart['use_remeshed_arbone']
 
 max_gap_cartilage = params_cart['max_gap_cartilage']
 
+clamp_height = params_cart['clamp_height']
+
 taper_width = params_cart['taper_width']
 #max_height = params_cart['max_height']
 p_h = params_cart['p_h'] 
@@ -183,7 +185,8 @@ if not mesh_exists or overwrite:
         p_v, # shape of vector ratio (1 = linear)
         cartilage_smooth_iters, # need to look at this, currently uses laplacian  ##################### check this #############
         edge_length, # target edge length of cartilage remesh
-        n_iters # n isotropic remeshing iterations for cartilage remesh
+        n_iters, # n isotropic remeshing iterations for cartilage remesh
+        clamp_height # minimum cartilage height
         )
     print('Complete\n')
     # --------------------- CREATING CARTILAGE --------------------- #
