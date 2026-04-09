@@ -15,6 +15,7 @@ params_gen = params['general']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 params_gen['mesh_root']    = '../MeshPipeline/outputs/ParamOptimisation/fullRuns/study4' # output_root in MeshPipeline
+#params_gen['subjects']  = ['14548R']
 params_gen['subjects']     = ['50000R', '50017L', '50034R'] # provide list of subjects or set to None for all available subjects 
                                                                 # (assumes Meshpipeline dir layout)
 
@@ -37,7 +38,7 @@ params_inp = params['inp']
 #params_inp['poses'] = ['adduction','abduction','flexion','extension','pinch','grasp','jar','neutral']
 params_inp['poses'] = ['neutral']
 
-params_inp['save_meshes'] = True # can parse from inp files - also will currently overwrite for each run_id
+params_inp['save_meshes'] = False # can parse from inp files - also will currently overwrite for each run_id
 
 # PRE-PROCESSING #
 params_inp['target_dist'] = 0.01 # gap between cartilage at start of simulation

@@ -2,11 +2,9 @@
   "general": {
     "mesh_root": "../MeshPipeline/outputs/ParamOptimisation/fullRuns/study4",
     "subjects": [
-      "50000R",
-      "50017L",
-      "50034R"
+      "14548R"
     ],
-    "output_root": "outputs/testing/SML-1",
+    "output_root": "outputs/testing/test2",
     "timeout": 60
   },
   "inp": {

@@ -175,8 +175,6 @@ for pose in poses:
 
     # get nodes to form surface for coupling with reference point
     print("Computing tpm bone surface patch for RP coupling")
-    if not tpm_patch_params:
-        tpm_patch_params = ("xlims", [tpm_RP_loc[0]-100, tpm_RP_loc[0]])
     tpm_patch_nodes = bone_surface_patch_nodes(tpm_mesh, tpm_patch_params[1], tpm_patch_params[0], True)
 
     if save_mesh:
@@ -290,14 +288,14 @@ for pose in poses:
         "RF1"
     ]
     )
-    b.add_history_output_lines(
-        step_name,
-        [
-        "*OUTPUT, HISTORY",
-        "*CONTACT OUTPUT, SURFACE=tpm_INST.tpm_CART_SURF",
-        "CAREA"
-    ]
-    )
+    #b.add_history_output_lines(
+    #    step_name,
+    #    [
+    #    "*OUTPUT, HISTORY",
+    #    "*CONTACT OUTPUT, SURFACE=tpm_INST.tpm_CART_SURF",
+    #    "CAREA"
+    #]
+    #) # don't remember when this was added or if it was verified to work
 
     # FIELD OUTPUTS
     b.add_field_output_lines(
