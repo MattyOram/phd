@@ -2,7 +2,7 @@ import subprocess
 import os
 
 
-sub = '5000R'
+sub = '50000R'
 pose = 'neutral'
 run_id = '0'
 run_id_mesh = '0-0-0'
@@ -10,7 +10,7 @@ run_id_mesh = '0-0-0'
 job_name = f'{run_id_mesh}-{pose}-{run_id}'
 inp_file = job_name + '.inp'   
 out_dir = f'outputs/testing/SML-1/inpFiles/{sub}/inp/{job_name}' # relative to wherever this script is run from
-
+print(out_dir)
 # ------ RUN ABAQUS ------------------------------------------------ #
 
 cmd = [

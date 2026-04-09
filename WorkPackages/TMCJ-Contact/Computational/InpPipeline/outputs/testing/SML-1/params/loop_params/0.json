@@ -2,7 +2,7 @@
   "poses": [
     "neutral"
   ],
-  "save_meshes": false,
+  "save_meshes": true,
   "target_dist": 0.01,
   "tpm_patch_params": [
     "euclidean",

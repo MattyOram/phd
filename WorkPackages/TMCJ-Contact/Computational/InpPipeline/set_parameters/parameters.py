@@ -37,7 +37,7 @@ params_inp = params['inp']
 #params_inp['poses'] = ['adduction','abduction','flexion','extension','pinch','grasp','jar','neutral']
 params_inp['poses'] = ['neutral']
 
-params_inp['save_meshes'] = False # can parse from inp files - also will currently overwrite for each run_id
+params_inp['save_meshes'] = True # can parse from inp files - also will currently overwrite for each run_id
 
 # PRE-PROCESSING #
 params_inp['target_dist'] = 0.01 # gap between cartilage at start of simulation

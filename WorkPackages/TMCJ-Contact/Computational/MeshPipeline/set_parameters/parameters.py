@@ -36,7 +36,7 @@ params_glob = params['global']
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 params_glob['output_root']     = 'outputs/ParamOptimisation/fullRuns/study4'          # -------- *** -------- #
 
-params_glob['allow_overwrite'] = False # If False, ignores per step overwrite flags
+params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
 #     - but not full_params.json - keeps all copies of full params for each output_root, with -i suffix for each new file
 
@@ -77,9 +77,9 @@ params_sub = params['subjects']
 # all CMC subjects that pass both bone and cartilage interference checks for final params (TMCJ-Contact 2Dmesh->cartilage)
 #  - see: InterferenceCheckFinal/interference-box.ipynb
 #  - 36 total
-#params_sub['subject_sideL'] = pd.read_csv(
-#                                get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/subs_ok.csv'
-#                            ).subs_ok.to_list()
+params_sub['subject_sideL'] = pd.read_csv(
+                                PROJECT_ROOT / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/subs_ok.csv'
+                            ).subs_ok.to_list()
 #params_sub['subject_sideL'] = ['50000R', '50017L', '50034R', '15283R'] # S/M/L Contact Area & 15283R~500,000cells
 
 # ALL CMC SUBJECTS
@@ -94,14 +94,14 @@ params_sub = params['subjects']
                                '15882R', '15282R', '50045R', '14685R']"""
 
 
-params_sub['bone_arbone']   = ['tpm-mc1'] # target_bone - articulating_bone
+params_sub['bone_arbone']   = ['tpm-mc1', 'mc1-tpm'] # target_bone - articulating_bone
 
 
 
 # ••••••••••••••••••••• 2DMESH ••••••••••••••••••••• #
 params_2D = params['2Dmesh']
 
-params_2D['overwrite']          = False # overwrite output meshes if they already exist (if params_glob['allow_overwrite'])
+params_2D['overwrite']          = True # overwrite output meshes if they already exist (if params_glob['allow_overwrite'])
 
 params_2D['input_bone_mesh']    = None # filepath
 params_2D['input_arbone_mesh']  = None # filepath
