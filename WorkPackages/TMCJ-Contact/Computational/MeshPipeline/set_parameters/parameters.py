@@ -34,7 +34,7 @@ params = {
 params_glob = params['global']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
-params_glob['output_root']     = 'outputs/ParamOptimisation/fullRuns/study4'                                        # -------- *** -------- #
+params_glob['output_root']     = 'outputs/ParamOptimisation/fullRuns/study4'          # -------- *** -------- #
 
 params_glob['allow_overwrite'] = False # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
@@ -70,6 +70,9 @@ params_sub = params['subjects']
 #params_sub['subject_sideL'] = ['50029R', '15006R', '15294R'] #  4th -> 6th highest cell counts
 #params_sub['subject_sideL'] = ['14548R', '50016L', '22306R'] # normal cell counts range of thicknesses
 
+#study5
+#params_sub['subject_sideL'] = ['14727R', '15294R', '50018L']          # -------- *** -------- #
+#params_sub['subject_sideL'] = ['50001R', '14613R', '50016L']
 
 # all CMC subjects that pass both bone and cartilage interference checks for final params (TMCJ-Contact 2Dmesh->cartilage)
 #  - see: InterferenceCheckFinal/interference-box.ipynb
@@ -77,7 +80,7 @@ params_sub = params['subjects']
 #params_sub['subject_sideL'] = pd.read_csv(
 #                                get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/MeshPipeline/subs_ok.csv'
 #                            ).subs_ok.to_list()
-
+#params_sub['subject_sideL'] = ['50000R', '50017L', '50034R', '15283R'] # S/M/L Contact Area & 15283R~500,000cells
 
 # ALL CMC SUBJECTS
 #  - 46 total
@@ -168,7 +171,7 @@ params_cart['clamp_height']       = 0.06 # minimum cartilage height (study 4)
 params_cart['use_remeshed_arbone']= True # results in smoother cartilage surface and better 3Dmesh quality
 
 params_cart['taper_width']        = 1.5 # width of cartilage taper region
-params_cart['p_h']                = 8.5 # shape of taper height (1=linear , higher = steeper taper)
+params_cart['p_h']                = [8.5] # shape of taper height (1=linear , higher = steeper taper)
 params_cart['p_v']                = 1 # shape of vector ratio (1=linear) - normal to midpoint vector ratio for taper region extrusion
 params_cart['smooth_iters']       = 100 # looked at this in ArticularGap4-box - might be different for different tri density?
 params_cart['n_iters']            = 5 # n isotropic remeshing iterations for cartilage remesh
@@ -209,7 +212,7 @@ params_3D['cgal_params'] = {
 
         # edge size linearly increases from d_taper to cartilage boundary
         "d_taper": params_cart['taper_width'], # width of cartilage taper region that doesn't use height based size
-        "taper_size": 0.2, # target max edge length (or circumradius?) at cartilage boundary
+        "taper_size": [0.2], # target max edge length (or circumradius?) at cartilage boundary
                     # if n_tets=3; 0.2 gives reasonable transition for starting at average of 0.5mm (0.1->0.7)
                     # ••••••••• CHANGE IF CHANGE n_tets •••••••••• #
 
@@ -252,8 +255,8 @@ params_3D['cgal_params'] = {
     # if flags are set to [True, False] then corresponding params are only looped over when flag==True 
     # - see main.py
     "optimisation": { # This determines which of the following optimisation steps are used
-        "odt": False,    # not had good results with odt - makes worst worse to make avg better?
-        "lloyd": True,   # does good stuff - smoothes improves qaulity
+        "odt": [False],    # not had good results with odt - makes worst worse to make avg better?
+        "lloyd": [True],   # does good stuff - smoothes improves qaulity
         "perturb": True, # does good stuff - improves dihedral angles of worst elements
         "exude": True    # does something  - removes slivers
     },
@@ -263,7 +266,7 @@ params_3D['cgal_params'] = {
         "max_iteration_number": 0, # 0 means that there is no limit (default)
         "convergence": 0.0, # default = 0.02 
         "do_freeze": True, # default True
-        "freeze_bound": 0.0005 # default 0.01
+        "freeze_bound": [0.0005] # default 0.01
     },
 
     "lloyd": {
@@ -271,7 +274,7 @@ params_3D['cgal_params'] = {
         "max_iteration_number": 0, # 0 means that there is no limit (default) - hits this if 50 and con 0.005, f_b 0.01, t_l 120
         "convergence": 0.0, # default = 0.02 (if None == freeze_bound)
         "do_freeze": True, # default True
-        "freeze_bound": 0.0005 # default 0.01 
+        "freeze_bound": [0.0005] # default 0.01 
     },           # I think setting freeze bound == convergence means essentially it runs till all vertices are frozen
                     # - or can't improve anymore
                  # So just let it run

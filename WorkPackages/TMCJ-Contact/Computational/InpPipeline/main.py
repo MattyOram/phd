@@ -6,6 +6,7 @@ import signal
 import copy
 from pathlib import Path
 import time
+from phd_helpers.paths import PROJECT_ROOT
 
 def to_text(x):
     if x is None:
@@ -155,17 +156,21 @@ def set_nested(d, path, value):
     for key in path[:-1]:
         d = d[key]
     d[path[-1]] = value
-
+    
 def unwrap_singles(d, parent_key=None):
     if isinstance(d, dict):
         return {k: unwrap_singles(v, k) for k, v in d.items()}
 
     elif isinstance(d, list):
         # poses=[[...]] -> poses=[...]
-        if parent_key in always_list and is_list_of_lists(d) and len(d) == 1:
+        if parent_key == 'poses' and is_list_of_lists(d) and len(d) == 1:
             return unwrap_singles(d[0])
 
-        # any single-item list -> scalar/item
+        # poses=[x] should stay a list
+        if parent_key == 'poses':
+            return [unwrap_singles(v) for v in d]
+
+        # any other single-item list -> scalar/item
         if len(d) == 1:
             return unwrap_singles(d[0])
 
@@ -220,9 +225,7 @@ def write_param_files(params, output_dir):
 
 
 
-from phd_helpers.paths import get_project_root
-
-InpPipeline_root = get_project_root() / 'WorkPackages/TMCJ-Contact/Computational/InputFilePipeline'
+InpPipeline_root = PROJECT_ROOT / 'WorkPackages/TMCJ-Contact/Computational/inpPipeline'
 
 # LOAD PARAMETERS #
 print('\nUpdating parameters.json')
@@ -268,8 +271,8 @@ if subs_sides is not None:
 else:
     subs = get_subs(mesh_root)
 
-subs = [x for x in subs if x == '14548R']
-for sub in subs[:1]: 
+#subs = [x for x in subs if x == '14548R']
+for sub in subs: 
     print(f"\nSUBJECT: {sub}")
     sub_path = mesh_root / sub
     mesh_paths_tpm = list(sub_path.glob('tpm-mc1/3Dmesh/mesh*.vtu'))

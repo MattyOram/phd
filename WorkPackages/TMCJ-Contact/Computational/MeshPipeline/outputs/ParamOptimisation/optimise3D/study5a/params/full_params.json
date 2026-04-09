@@ -1,8 +1,8 @@
 {
   "global": {
-    "output_root": "outputs/ParamOptimisation/fullRuns/study4",
+    "output_root": "outputs/ParamOptimisation/optimise3D/study5a",
     "allow_overwrite": false,
-    "step_timeout": 1200,
+    "step_timeout": 600,
     "steps": {
       "2Dmesh": true,
       "cartilage": true,
@@ -12,13 +12,12 @@
   },
   "subjects": {
     "subject_sideL": [
-      "50000R",
-      "50017L",
-      "50034R",
-      "15283R"
+      "14727R",
+      "15294R",
+      "50018L"
     ],
     "bone_arbone": [
-      "mc1-tpm"
+      "tpm-mc1"
     ]
   },
   "2Dmesh": {
@@ -78,6 +77,8 @@
     "use_remeshed_arbone": true,
     "taper_width": 1.5,
     "p_h": [
+      3,
+      5,
       8.5
     ],
     "p_v": 1,
@@ -88,7 +89,7 @@
     "overwrite": true,
     "input_mesh": null,
     "output_filename": null,
-    "cgal_input_name": "3",
+    "cgal_input_name": "1",
     "save_cgal_inputs": false,
     "cgal_path": "/Users/maro/Library/CloudStorage/OneDrive-UniversityofLeeds/PhD-wrist/WorkPackages/WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/3Dmesh",
     "postprocess": true,
@@ -100,7 +101,8 @@
         "max_size": 1.0,
         "d_taper": 1.5,
         "taper_size": [
-          0.2
+          0.2,
+          0.3
         ],
         "h_bone_max": 1.0,
         "d0": 6
@@ -119,10 +121,12 @@
       },
       "optimisation": {
         "odt": [
-          false
+          false,
+          true
         ],
         "lloyd": [
-          true
+          true,
+          false
         ],
         "perturb": true,
         "exude": true
@@ -133,15 +137,17 @@
         "convergence": 0.0,
         "do_freeze": true,
         "freeze_bound": [
+          0.001,
           0.0005
         ]
       },
       "lloyd": {
-        "time_limit": 600,
+        "time_limit": 300,
         "max_iteration_number": 0,
         "convergence": 0.0,
         "do_freeze": true,
         "freeze_bound": [
+          0.001,
           0.0005
         ]
       },

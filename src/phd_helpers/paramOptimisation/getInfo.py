@@ -98,7 +98,7 @@ def combine_metric_dfs(out_dir, prefix = ['study1a', 'study1b', 'study1c']):
     df_bone = pd.concat(df_bone).copy()
     df_cart = pd.concat(df_cart).copy()
     df_qual = pd.concat(df_qual).copy()
-    df_qual['total_tets'] = df_qual['bone_n_cells'] + df_qual['cart_n_cells']
+    #df_qual['total_tets'] = df_qual['bone_n_cells'] + df_qual['cart_n_cells']
 
     return df_bone, df_cart, df_qual
 

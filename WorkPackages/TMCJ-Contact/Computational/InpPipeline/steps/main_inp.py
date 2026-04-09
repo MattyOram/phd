@@ -334,7 +334,10 @@ for pose in poses:
 
     # WRITE INPUT FILE
     print(f"Writing input file - ({pose.upper()})")
-    b.write_input_file(savepath_inp / f"{run_id_mesh}-{pose}-{run_id}.inp")
+    inp_name = f'{run_id_mesh}-{pose}-{run_id}'
+    inp_dir = savepath_inp / inp_name
+    inp_dir.mkdir(parents=True, exist_ok=True)
+    b.write_input_file( inp_dir / (inp_name+'.inp'))
 
     print("\nComplete")
 

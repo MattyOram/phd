@@ -71,10 +71,14 @@ def unwrap_singles(d, parent_key=None):
 
     elif isinstance(d, list):
         # poses=[[...]] -> poses=[...]
-        if parent_key == "poses" and is_list_of_lists(d) and len(d) == 1:
+        if parent_key == 'poses' and is_list_of_lists(d) and len(d) == 1:
             return unwrap_singles(d[0])
 
-        # any single-item list -> scalar/item
+        # poses=[x] should stay a list
+        if parent_key == 'poses':
+            return [unwrap_singles(v) for v in d]
+
+        # any other single-item list -> scalar/item
         if len(d) == 1:
             return unwrap_singles(d[0])
 

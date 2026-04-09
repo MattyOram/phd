@@ -1,0 +1,59 @@
+{
+  "general": {
+    "mesh_root": "../MeshPipeline/outputs/ParamOptimisation/fullRuns/study4",
+    "subjects": [
+      "50000R",
+      "50017L",
+      "50034R"
+    ],
+    "output_root": "outputs/testing/SML-1",
+    "timeout": 60
+  },
+  "inp": {
+    "poses": [
+      "neutral"
+    ],
+    "save_meshes": false,
+    "target_dist": 0.01,
+    "tpm_patch_params": [
+      "euclidean",
+      3
+    ],
+    "mc1_patch_params": [
+      "euclidean",
+      3
+    ],
+    "element_order": "linear",
+    "bone_element_type": "C3D4",
+    "cartilage_element_type": "C3D4H",
+    "bone_material": {
+      "E": 1629,
+      "nu": 0.4
+    },
+    "bone_density": null,
+    "cartilage_material": {
+      "C10": 0.091,
+      "D1": 0.0
+    },
+    "cartilage_density": null,
+    "cartilage_friction": 0.0,
+    "bone_vol_id": 1,
+    "cartilage_vol_id": 2,
+    "cartilage_surf_id": -2,
+    "mc1_disp_x": -0.8,
+    "max_force": 50.0,
+    "total_step_time": 0.8,
+    "initial_increment": 0.01,
+    "min_increment": 1e-10,
+    "max_increment": 0.025,
+    "step_type": "STATIC",
+    "nlgeom": "YES",
+    "unsymm": "YES",
+    "convert_sdi": [
+      "NO"
+    ],
+    "equil_iters": 16,
+    "sdi_iters": 15,
+    "increment_attemps": 5
+  }
+}

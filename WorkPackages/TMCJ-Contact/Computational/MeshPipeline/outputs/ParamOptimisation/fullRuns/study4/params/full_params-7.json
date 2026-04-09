@@ -2,7 +2,7 @@
   "global": {
     "output_root": "outputs/ParamOptimisation/fullRuns/study4",
     "allow_overwrite": false,
-    "step_timeout": 1200,
+    "step_timeout": 600,
     "steps": {
       "2Dmesh": true,
       "cartilage": true,
@@ -137,7 +137,7 @@
         ]
       },
       "lloyd": {
-        "time_limit": 600,
+        "time_limit": 300,
         "max_iteration_number": 0,
         "convergence": 0.0,
         "do_freeze": true,

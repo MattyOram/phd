@@ -15,10 +15,10 @@ params_gen = params['general']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 params_gen['mesh_root']    = '../MeshPipeline/outputs/ParamOptimisation/fullRuns/study4' # output_root in MeshPipeline
-params_gen['subjects']     = None # provide list of subjects or set to None for all available subjects 
+params_gen['subjects']     = ['50000R', '50017L', '50034R'] # provide list of subjects or set to None for all available subjects 
                                                                 # (assumes Meshpipeline dir layout)
 
-params_gen['output_root']  = 'outputs/testing/test1'  # output dir for input files and meshes        # -------- *** -------- #
+params_gen['output_root']  = 'outputs/testing/SML-1'  # output dir for input files and meshes        # -------- *** -------- #
 
 params_gen['timeout'] = 60 # (s) overall time limit just in case
 
@@ -35,7 +35,7 @@ params_gen['timeout'] = 60 # (s) overall time limit just in case
 params_inp = params['inp']
 
 #params_inp['poses'] = ['adduction','abduction','flexion','extension','pinch','grasp','jar','neutral']
-params_inp['poses'] = ['jar','neutral']
+params_inp['poses'] = ['neutral']
 
 params_inp['save_meshes'] = False # can parse from inp files - also will currently overwrite for each run_id
 

@@ -1,13 +1,16 @@
 {
   "general": {
     "mesh_root": "../MeshPipeline/outputs/ParamOptimisation/fullRuns/study4",
-    "subjects": null,
-    "output_root": "outputs/testing/test1",
+    "subjects": [
+      "5000R",
+      "50017L",
+      "50034R"
+    ],
+    "output_root": "outputs/testing/SML-1",
     "timeout": 60
   },
   "inp": {
     "poses": [
-      "jar",
       "neutral"
     ],
     "save_meshes": false,
