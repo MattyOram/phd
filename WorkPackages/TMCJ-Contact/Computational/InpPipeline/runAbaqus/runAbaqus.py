@@ -27,17 +27,19 @@ if not os.path.isfile(src_inp_path):
 
 documents_dir = os.path.join(os.path.expanduser('~'), 'Documents')
 
+abaqus_cmd = r"C:\SIMULIA\Commands\abaqus.BAT"
 
 with tempfile.TemporaryDirectory(prefix=f'abaqus_{job_name}_', dir=documents_dir) as tmp_dir:
     # Copy input file into temp working directory
     tmp_inp_path = os.path.join(tmp_dir, inp_file)
     shutil.copy2(src_inp_path, tmp_inp_path)
 
-
     # ------ RUN ABAQUS ------------------------------------------------ #
     cmd = [
-        'abaqus',
-        f'job={job_name}',
+        "cmd",
+        "/c",
+        abaqus_cmd,
+        f"job={job_name}",
         f'input={inp_file}',   # relative to cwd=tmp_dir
         'interactive',
         'ask_delete=OFF',
@@ -51,8 +53,10 @@ with tempfile.TemporaryDirectory(prefix=f'abaqus_{job_name}_', dir=documents_dir
     tmp_odb_path = os.path.join(tmp_dir, job_name + '.odb')
 
     cmd = [
-        'abaqus',
-        'python',
+        "cmd",
+        "/c",
+        abaqus_cmd,
+        "python",
         postprocess_file,
         tmp_odb_path
     ]
