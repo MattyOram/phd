@@ -34,7 +34,7 @@ src_inp_path = inp_dir / inp_file
 file_dir = Path(__file__).resolve().parent
 postprocess_file = file_dir / "AbaqusPostProcessing" / "main_odb2csv.py"
 
-env = os.environ.copy()
+#env = os.environ.copy()
 
 if not src_inp_path.is_file():
     raise FileNotFoundError(f"Input file not found: {src_inp_path}")
@@ -61,7 +61,7 @@ with tempfile.TemporaryDirectory(prefix=f"abaqus_{job_name}_", dir=documents_dir
         "ask_delete=OFF",
         "cpus=8",
     ]
-    subprocess.run(cmd, cwd=tmp_dir, env=env, check=True)
+    subprocess.run(cmd, cwd=tmp_dir, check=True)
 
 
     # ------ POSTPROCESS ------------------------------------------------ #
@@ -75,7 +75,7 @@ with tempfile.TemporaryDirectory(prefix=f"abaqus_{job_name}_", dir=documents_dir
         str(postprocess_file),
         str(tmp_odb_path),
     ]
-    subprocess.run(cmd, cwd=tmp_dir, env=env, check=True)
+    subprocess.run(cmd, cwd=tmp_dir, check=True)
 
 
     # ------ COPY RESULTS BACK ------------------------------------------ #
