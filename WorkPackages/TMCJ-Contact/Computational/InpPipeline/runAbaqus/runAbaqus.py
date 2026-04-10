@@ -85,8 +85,6 @@ with tempfile.TemporaryDirectory(prefix=f"abaqus_{job_name}_", dir=documents_dir
         if src.is_file():
             shutil.copy2(src, dst)
         elif src.is_dir():
-            if dst.exists():
-                shutil.rmtree(dst)
-            shutil.copytree(src, dst)
+            shutil.copytree(src, dst, dirs_exist_ok=True)
 
     # temp dir deleted automatically
