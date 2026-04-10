@@ -286,7 +286,7 @@ if __name__ == "__main__":
         params = json.load(f)
 
     taper_width = params['cartilage']['taper_width']
-    id_2d, id_cart = 0, 0
+    #id_2d, id_cart = 0, 0
     subs = params['subjects']['subject_sideL']
     bone_pairs = params['subjects']['bone_arbone']
     parts = ['bone', 'cart']
@@ -307,11 +307,11 @@ if __name__ == "__main__":
 
             bone, arbone = bone_pair.split('-')
             path_mesh = root_dir / f'meshes/{subject}{sideL}/{bone_pair}'
-            run_ids = np.sort([int(p.name.split('-')[-1][:-4]) for p in (path_mesh / '3Dmesh').iterdir() if p.suffix == '.vtu'])
+            run_ids = np.sort([p.name.rstrip('.vtu').lstrip('mesh-') for p in (path_mesh / '3Dmesh').iterdir() if p.suffix == '.vtu'])
 
             for run_id in tqdm(run_ids):
-
-                mesh_dict = build_mesh_dict(path_mesh, [id_2d, id_cart, run_id], bone, stl_path, taper_width)
+                id_2d, id_cart, id_3d = run_id.split('-')
+                mesh_dict = build_mesh_dict(path_mesh, [id_2d, id_cart, id_3d], bone, stl_path, taper_width)
 
                 for part in parts: # bone, cart
                     
