@@ -52,9 +52,19 @@ CADmodels/*
 *.msh
 *.mesh
 *.ply
+# abaqus files
 *.inp
+*.com
+*.dat
+*.msg
+*.odb
+*.prt
+*.env
+#*.sta # maybe keep
+
 
 # random csv files
 **/metric_dfs/*
 **/Interference-smooth/*
 **/notebooks/MeshPipeline/ParamOptimisation/**/outputs/study*/*
+**/resultCSVs/*.csv

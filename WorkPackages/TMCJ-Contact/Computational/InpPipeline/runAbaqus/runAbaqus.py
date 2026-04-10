@@ -2,15 +2,31 @@ import subprocess
 import os
 import shutil
 import tempfile
+import sys
+
+args = sys.argv
+if len(args) == 1:
+    sub = '14548R'
+    pose = 'neutral'
+    run_id = '0'
+    run_id_mesh = '0-0-0'
+    inp_root = 'outputs/testing/test2' # output_root of InpPipeline parameters
+elif len(args) == 6:
+    sub = args[1]
+    pose = args[2]
+    run_id = args[3]
+    run_id_mesh = args[4]
+    inp_root = args[5]
+else:
+    raise ValueError(
+        'Pass all 5 args. Or 0 args and set them in the script: '
+        'sub pose run_id run_id_mesh inp_root'
+    )
 
 
-sub = '50034R'
-pose = 'neutral'
-run_id = '0'
-run_id_mesh = '0-0-0'
 
 job_name = f'{run_id_mesh}-{pose}-{run_id}'
-relative_path = f'outputs/testing/SML-1/inpFiles/{sub}/inp/{job_name}'
+relative_path = os.path.join(inp_root, 'inpFiles', sub, 'inp', job_name)
 inp_file = job_name + '.inp'
 
 
@@ -18,7 +34,7 @@ inp_dir = os.path.abspath(relative_path)
 src_inp_path = os.path.join(inp_dir, inp_file)
 
 file_dir = os.path.dirname(os.path.abspath(__file__))
-postprocess_file = os.path.join(file_dir, 'abaqusPostProcessing', 'main_odb2csv.py')
+postprocess_file = os.path.join(file_dir, 'AbaqusPostProcessing', 'main_odb2csv.py')
 
 env = os.environ.copy()
 
@@ -33,6 +49,8 @@ with tempfile.TemporaryDirectory(prefix=f'abaqus_{job_name}_', dir=documents_dir
     # Copy input file into temp working directory
     tmp_inp_path = os.path.join(tmp_dir, inp_file)
     shutil.copy2(src_inp_path, tmp_inp_path)
+
+
 
     # ------ RUN ABAQUS ------------------------------------------------ #
     cmd = [
@@ -76,4 +94,4 @@ with tempfile.TemporaryDirectory(prefix=f'abaqus_{job_name}_', dir=documents_dir
                 shutil.rmtree(dst)
             shutil.copytree(src, dst)
 
-# temp dir deleted automatically
+    # temp dir deleted automatically
