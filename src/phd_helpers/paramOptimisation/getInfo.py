@@ -11,6 +11,7 @@ import json
 #studies = ['a', 'b', 'c'] # individual study identifier (end of dir name of output_root in set_parameters)
 
 def get_params3d(root_dir, study_prefix='study1', studies=('a', 'b', 'c'), extra_params=None, full_param_file='full_params.json'):
+    """Now also works for 2d and cartilage steps"""
     root_dir = Path(root_dir)
     extra_params = extra_params or []
 
@@ -42,26 +43,39 @@ def get_params3d(root_dir, study_prefix='study1', studies=('a', 'b', 'c'), extra
                 bone, arbone = bone_pair.split('-')
                 path_mesh = study_dir / f'meshes/{subject}{sideL}/{bone_pair}'
                 run_ids = np.sort([
-                    int(p.name.split('-')[-1][:-4])
+                    p.name.lstrip('mesh-').rstrip('.vtu')
                     for p in (path_mesh / '3Dmesh').iterdir()
                     if p.suffix == '.vtu'
                 ])
 
                 for run_id in run_ids:
-                    param3d_path = root_dir / f'{study_name}/params/3Dmesh/{run_id}.json'
+                    id1, id2, id3 = run_id.split('-')
+                    param3d_path = root_dir / f'{study_name}/params/3Dmesh/{id3}.json'
                     with open(param3d_path, 'r') as f:
                         param3d = json.load(f)
+                    param_cart_path = root_dir / f'{study_name}/params/cartilage/{id2}.json'
+                    with open(param_cart_path, 'r') as f:
+                        param_cart = json.load(f)
+                    param2d_path = root_dir / f'{study_name}/params/cartilage/{id1}.json'
+                    with open(param2d_path, 'r') as f:
+                        param2d = json.load(f)
 
                     row = {
                         'sub': sub,
                         'bone': bone,
-                        'run_id': str(param3d['run_id'])+pf_id+study,
+                        'run_id': run_id+pf_id+study,
                     }
 
                     for path in extra_params:
                         row[path] = get_nested(param3d, path)
                     if '_loop' in param3d:
                         for param, val in param3d['_loop'].items():
+                            row[param] = val
+                    if '_loop' in param_cart:
+                        for param, val in param_cart['_loop'].items():
+                            row[param] = val
+                    if '_loop' in param2d:
+                        for param, val in param2d['_loop'].items():
                             row[param] = val
 
                     rows.append(row)
@@ -82,7 +96,7 @@ def get_runtimes(root_dir, study_prefix='study1', studies=['a', 'b', 'c'], full_
 
         runtimes = runtimes[runtimes['step']=='3Dmesh'].copy()
         runtimes['bone'] = runtimes['bones'].apply(lambda x: x.split('-')[0])
-        runtimes['run_id'] = runtimes['run_ids'].apply(lambda x: str(x[-1]))
+        runtimes['run_id'] = runtimes['run_ids'].apply(lambda x: '-'.join([str(y) for y in x]))
         runtimes['pf_id'] = runtimes['full_params'].apply(lambda x: '-0' if '-' not in x else '-'+x.split('.')[0].split('-')[-1])
         runtimes['run_id'] = runtimes['run_id'] + runtimes['pf_id'] + study
         run_dfs.append(runtimes[['subject', 'bone', 'run_id', 'runtime']].copy())
