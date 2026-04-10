@@ -21,7 +21,7 @@ params_gen['subjects']     = ['50000R', '50017L', '50034R'] # provide list of su
 
 params_gen['output_root']  = 'outputs/testing/SML-1'  # output dir for input files and meshes        # -------- *** -------- #
 
-params_gen['timeout'] = 60 # (s) overall time limit just in case
+params_gen['timeout'] = 180 # (s) overall time limit just in case
 
 
 
@@ -35,8 +35,12 @@ params_gen['timeout'] = 60 # (s) overall time limit just in case
 # ------- INPUT FILE ---------------------------------------------------------------------------------------- #
 params_inp = params['inp']
 
-#params_inp['poses'] = ['adduction','abduction','flexion','extension','pinch','grasp','jar','neutral']
-params_inp['poses'] = ['neutral']
+params_inp['poses'] = [
+            'adduction','abduction','flexion','extension',
+            'pinch','grasp','jar','jar_load','pinch_load','grasp_load',
+            #'neutral'
+            ]
+#params_inp['poses'] = ['neutral']
 
 params_inp['save_meshes'] = False # can parse from inp files - also will currently overwrite for each run_id
 
@@ -44,7 +48,7 @@ params_inp['save_meshes'] = False # can parse from inp files - also will current
 params_inp['target_dist'] = 0.01 # gap between cartilage at start of simulation
 
 params_inp['tpm_patch_params'] = ("euclidean", 3) # distance of BC patch from cartilage boundary
-params_inp['mc1_patch_params'] = ("euclidean", 3) # distance of BC patch from cartilage boundary
+params_inp['mc1_patch_params'] = ("euclidean", 5) # distance of BC patch from cartilage boundary
 
 # ELEMENT ORDER
 params_inp['element_order'] = 'linear' # or 'quad'
@@ -81,7 +85,7 @@ params_inp['max_force'] = 50.0    # end analysis at this force
 # STEP PARAMS
 params_inp['total_step_time'] = abs(params_inp['mc1_disp_x']) # set to total displacement so that increment params don't have to change with displacement
 params_inp['initial_increment'] = params_inp['target_dist']         # starting point is 0.01mm from contact
-params_inp['min_increment'] = 1e-10
+params_inp['min_increment'] = 1e-5
 params_inp['max_increment'] = 0.025
 
 params_inp['step_type']   = "STATIC"

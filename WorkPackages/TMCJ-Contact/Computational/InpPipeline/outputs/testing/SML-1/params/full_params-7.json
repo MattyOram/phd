@@ -7,7 +7,7 @@
       "50034R"
     ],
     "output_root": "outputs/testing/SML-1",
-    "timeout": 600
+    "timeout": 60
   },
   "inp": {
     "poses": [
