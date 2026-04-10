@@ -56,7 +56,7 @@ def get_params3d(root_dir, study_prefix='study1', studies=('a', 'b', 'c'), extra
                     param_cart_path = root_dir / f'{study_name}/params/cartilage/{id2}.json'
                     with open(param_cart_path, 'r') as f:
                         param_cart = json.load(f)
-                    param2d_path = root_dir / f'{study_name}/params/cartilage/{id1}.json'
+                    param2d_path = root_dir / f'{study_name}/params/2Dmesh/{id1}.json'
                     with open(param2d_path, 'r') as f:
                         param2d = json.load(f)
 
