@@ -61,12 +61,20 @@ target_dist = params['target_dist'] # gap between cartilage at start of simulati
 tpm_patch_params = params['tpm_patch_params']
 mc1_patch_params = params['mc1_patch_params']
 
-# ELEMENT ORDER
-element_order = params['element_order']
 
 # ELEMENT TYPES
-bone_element_type = params['bone_element_type']
-cartilage_element_type = params['cartilage_element_type']
+bone_element_type = params['element_type']
+if bone_element_type == 'C3D10':
+    element_order = 'quad'
+elif bone_element_type == 'C3D4':
+    element_order = 'linear'
+else:
+    raise AssertionError(f'Element type not recognised: {bone_element_type}')
+
+cartilage_element_type = params['element_type']
+if params['cartilage_hybrid']:
+    cartilage_element_type += 'H'
+
 
 # BONE PROPERTIES
 bone_material = params['bone_material']
