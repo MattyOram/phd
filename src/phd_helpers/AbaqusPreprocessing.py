@@ -46,7 +46,7 @@ def position_mc1_tpm(mc1, tpm, target_dist=0.01, raise_error=False):
     if raise_error:
         if not interference_check:
             raise RuntimeError(f"Bones not positioned correctly - Interference found")
-        if round(final_dist, 3) != target_dist:
+        if abs(final_dist - target_dist) > 0.005:
             raise RuntimeError(f"Bones not positioned correctly - final dist = {final_dist:.4f}")
 
 
