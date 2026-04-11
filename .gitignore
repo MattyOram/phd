@@ -66,5 +66,5 @@ CADmodels/*
 # random csv files
 **/metric_dfs/*
 **/Interference-smooth/*
-**/notebooks/MeshPipeline/ParamOptimisation/**/outputs/study*/*
+**/notebooks/MeshPipeline/ParamOptimisation/**/outputs/*
 **/resultCSVs/*.csv
