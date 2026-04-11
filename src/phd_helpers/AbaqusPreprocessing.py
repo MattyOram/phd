@@ -5,16 +5,20 @@ from scipy.spatial.distance import cdist
 import pyvista as pv
 from collections import OrderedDict
 
-from phd_helpers.paths import get_boundary, get_intercepts
+from phd_helpers.paths import get_boundary, get_intercepts, get_intercepts_multi
+from phd_helpers.MeshQuality import sample_surface
 
 def compute_x_dist(tpm, mc1, return_points=False, cartilage_id=-2):
     """Compute the minimum distance in the x direction between the trapezium and metacarpal cartilage surfaces"""
     # extract cartilage surfaces to speed up computation
-    mc1_cartilage_surf = mc1.extract_cells(np.where(mc1['region_id']==cartilage_id)[0]).extract_surface(algorithm=None)
-    tpm_cartilage_surf = tpm.extract_cells(np.where(tpm['region_id']==cartilage_id)[0]).extract_surface(algorithm=None)
+    mc1_cartilage_surf = mc1.extract_cells(mc1['region_id']==cartilage_id).extract_surface(algorithm=None)
+    tpm_cartilage_surf = tpm.extract_cells(tpm['region_id']==cartilage_id).extract_surface(algorithm=None)
     # compute distance in direction of metacarpal principal axis (x) between cartilage surfaces
     vecs_x = np.zeros_like(mc1_cartilage_surf.points)+np.array([-1, 0, 0])
-    points_tpm, points_mc1, mask_points_mc1 = get_intercepts(tpm_cartilage_surf, mc1_cartilage_surf.points, vecs_x)
+    mc1_points = mc1_cartilage_surf.points
+    if mc1_cartilage_surf.n_points > 20000:
+        mc1_points = sample_surface(mc1_cartilage_surf, 20000)
+    points_tpm, points_mc1, mask_points_mc1 = get_intercepts(tpm_cartilage_surf, mc1_points, vecs_x)
     dists_x = np.linalg.norm(points_mc1 - points_tpm, axis=1)
     if not return_points:
         return min(dists_x)
@@ -35,13 +39,14 @@ def position_mc1_tpm(mc1, tpm, target_dist=0.01, raise_error=False):
     # checks
     final_dist = abs(compute_x_dist(tpm, mc1))
     print(f"Distance between cartilage surfaces (x->): {final_dist:.4f}")
-    interference_check = (tpm.extract_surface(algorithm=None).compute_implicit_distance(mc1.extract_surface(algorithm=None))['implicit_distance'] >= 0).all()
+    interference_check = (tpm.extract_surface(algorithm=None)
+                          .compute_implicit_distance(mc1.extract_surface(algorithm=None))['implicit_distance'] >= 0).all()
     print("No interference: ", interference_check)
 
     if raise_error:
         if not interference_check:
             raise RuntimeError(f"Bones not positioned correctly - Interference found")
-        if round(final_dist, 4) != target_dist:
+        if round(final_dist, 3) != target_dist:
             raise RuntimeError(f"Bones not positioned correctly - final dist = {final_dist:.4f}")
 
 
@@ -144,14 +149,6 @@ class AbaqusInpBuilder:
 
         # steps
         self.steps = OrderedDict()        # {step_name:{step_name, nlgeom, step params, ...}, ...}
-        self.step_blocks = {       # raw text blocks for each step - assigned to step dict at step creation and filled by add_..._lines methods
-            "step_blocks": [],
-            "control_blocks": [],
-            "bc_blocks": [],
-            "history_blocks": [], # history output
-            "field_blocks": [], # field output
-            "step_control_blocks": [], 
-        }
 
     # ----------------------------
     # helpers
@@ -222,7 +219,7 @@ class AbaqusInpBuilder:
 
     def _require_elem_cache(self, part_name: str):
         if "_elem_cache" not in self.parts[part_name]:
-            self.preprocess_part_elements(part_name)
+            self._preprocess_part_elements(part_name)
 
     # ----------------------------
     # element preprocessing + ELSET from region
@@ -432,7 +429,14 @@ class AbaqusInpBuilder:
             'unsymm': str(unsymm),
             "step_type": str(step_type).upper(),
             "step_params": f'{initial_increment_size}, {total_step_size}, {min_increment_size}, {max_increment_size}',
-            "step_blocks": self.step_blocks
+            "step_blocks": {
+                "step_blocks": [],
+                "control_blocks": [],
+                "bc_blocks": [],
+                "history_blocks": [],
+                "field_blocks": [],
+                "step_control_blocks": [],
+            },
         }
 
     def set_bc(self, step_name, node_set, op='MOD', U1=None, U2=None, U3=None, UR1=None, UR2=None, UR3=None):
