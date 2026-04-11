@@ -289,7 +289,7 @@ for sub in subs:
 
             param_path = loop_param_dir / f'{run_id}.json'
             args = [
-                'steps/main_inp.py',
+                InpPipeline_root / 'steps/main_inp.py',
                 root_dir,
                 param_path,
                 sub_path,
