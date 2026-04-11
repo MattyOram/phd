@@ -136,7 +136,7 @@ def expand_params(params):
         flag_path = conditional_flag_path(path)
 
         if flag_path is not None:
-            flag_value = get_nested(param, flag_path)
+            flag_value = first_unwrapped(get_nested(param, flag_path))
 
             if flag_value is False:
                 # Step disabled: do not sweep this parameter block
