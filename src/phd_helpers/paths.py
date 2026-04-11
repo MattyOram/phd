@@ -385,7 +385,7 @@ def get_intercepts(surface, start_points, vectors, ray_length=100, offset=0):
 
     surface_intercepts = np.zeros_like(start_points)
     intercept_mask = np.zeros(len(start_points))
-    for idx in range(start_points.shape[0]-1):
+    for idx in range(len(start_points)):
         ray_start = start_points[idx] + vectors[idx]*offset
         ray_end = ray_start + vectors[idx] * ray_length
         point, face = surface.ray_trace(ray_start, ray_end)
@@ -394,6 +394,30 @@ def get_intercepts(surface, start_points, vectors, ray_length=100, offset=0):
             intercept_mask[idx] = 1
 
     intercept_mask = intercept_mask.astype('bool')
+    return surface_intercepts[intercept_mask], start_points[intercept_mask], intercept_mask
+
+def get_intercepts_multi(surface, start_points, vectors, offset=0.0):
+    """
+    Version using PyVista multi_ray_trace. NEEDS embree
+    """
+    start_points = np.asarray(start_points, dtype=float)
+    vectors = np.asarray(vectors, dtype=float)
+
+    origins = start_points + vectors * offset
+
+    points, ray_ids, _ = surface.multi_ray_trace(
+        origins,
+        vectors,
+        first_point=True,   # closest only
+        retry=False,        # says that it sometimes misses some
+    )
+
+    intercept_mask = np.zeros(len(start_points), dtype=bool)
+    surface_intercepts = np.zeros_like(start_points)
+
+    intercept_mask[ray_ids] = True
+    surface_intercepts[ray_ids] = points
+
     return surface_intercepts[intercept_mask], start_points[intercept_mask], intercept_mask
 
 ########################################  intersection ##########################################
