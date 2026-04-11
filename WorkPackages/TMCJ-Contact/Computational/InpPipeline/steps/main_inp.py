@@ -133,7 +133,7 @@ mc1_mesh = transform_mesh(mc1_mesh, mc1_axes, mc1_centroid, inverse=True)
 
 if element_order == 'quad':
     print("Converting to quadratic elements")
-    tpm_mesh_nue = linear_to_quadratic_mesh(tpm_mesh_neu)
+    tpm_mesh_neu = linear_to_quadratic_mesh(tpm_mesh_neu)
     mc1_mesh = linear_to_quadratic_mesh(mc1_mesh)
 
 print('Complete\n')
