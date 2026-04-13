@@ -112,7 +112,7 @@ def get_subs(mesh_root):
     return [x.name for x in mesh_root.iterdir() if x.is_dir()]
 
 def extract_mesh_run_id(mesh_path: Path):
-    return mesh_path.name.split('.')[0].strip('mesh-')
+    return mesh_path.name.removeprefix("mesh-").removesuffix(".vtu")
 
 
 
