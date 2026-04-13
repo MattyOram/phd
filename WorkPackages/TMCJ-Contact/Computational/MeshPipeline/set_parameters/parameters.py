@@ -34,7 +34,7 @@ params = {
 params_glob = params['global']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
-params_glob['output_root']     = 'outputs/ParamOptimisation/meshInd/study1f'             # -------- ••• -------- #
+params_glob['output_root']     = 'outputs/meshInd/study2'             # -------- ••• -------- #
 #params_glob['output_root'] = 'outputs/holes'
 
 params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
@@ -93,7 +93,7 @@ params_sub['subject_sideL'] = ['50000R'] # smallest contact area rank
                                '15882R', '15282R', '50045R', '14685R']"""
 
 
-params_sub['bone_arbone']   = ['tpm-mc1'] # target_bone - articulating_bone
+params_sub['bone_arbone']   = ['mc1-tpm'] # target_bone - articulating_bone
 
 
 
@@ -189,7 +189,7 @@ params_3D['overwrite']          = True # overwrite postprocessed output mesh if 
 params_3D['input_mesh']         = None # filepath
 
 params_3D['output_filename']    = None # mesh filename (.vtu) (if keep_cgal_copy=True, cgal copy is auto given .mesh)
-params_3D['cgal_input_name']    = '1'   # filename add on for cgal inputs (assign unique per subprocess name!)    # -------- ••• -------- #
+params_3D['cgal_input_name']    = '2'   # filename add on for cgal inputs (assign unique per subprocess name!)    # -------- ••• -------- #
                                     # - CAN'T HAVE MUTIPLE PROCESSESS WITH THE SAME OUTPUT_ROOT 
                                     #   - that updates the cgal_input_name for the previously running one 
                                     # - shouldn't write all combos to file, should just pass full_params_id and combo id to each run
@@ -206,7 +206,7 @@ params_3D['keep_cgal_copy']     = False # keep copy of cgals ouput mesh - (pre p
 params_3D['cgal_params'] = { 
     # Sizing field params
     "sizing_field": {
-        "n_tets": [3],        # number of tetrahedrons accross thickness of cartilage
+        "n_tets": [1, 2, 3],        # number of tetrahedrons accross thickness of cartilage
         "min_size": params_cart['clamp_height'],   # min target circumradius within main cartilage region
         "max_size": 1.0,   # max target circumradius within main cartilage region
 
@@ -253,8 +253,8 @@ params_3D['cgal_params'] = {
     # if flags are set to [True, False] then corresponding params are only looped over when flag==True 
     # - see main.py
     "optimisation": { # This determines which of the following optimisation steps are used
-        "odt": [False],    # idk
-        "lloyd": True,   # makes the mesh look very good - but think it just gets in the way of perturb sometimes
+        "odt": [True],    # can be great but can also delete tets if cart height close to cell size
+        "lloyd": [False],   # makes the mesh look very good - but think it just gets in the way of perturb sometimes
         "perturb": True, # does good stuff - improves dihedral angles of worst elements
         "exude": True    # does something  - removes slivers
     },
