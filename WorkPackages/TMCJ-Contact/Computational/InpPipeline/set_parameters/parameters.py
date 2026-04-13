@@ -15,13 +15,14 @@ params_gen = params['general']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 #params_gen['mesh_root']    = '../MeshPipeline/outputs/ParamOptimisation/fullRuns/study4' # output_root in MeshPipeline
-params_gen['mesh_root']    = 'outputs/StMmLt'
+params_gen['mesh_root']    = '../MeshPipeline/outputs/meshInd/study1-final'
 
 #params_gen['subjects']  = ['14548R']
-params_gen['subjects']     = ['22306R', '50037L', '14874R'] # provide list of subjects or set to None for all available subjects 
+#params_gen['subjects']     = ['22306R', '50037L', '14874R'] # provide list of subjects or set to None for all available subjects 
                                                                 # (assumes Meshpipeline dir layout)
+params_gen['subjects'] = ['50000R']              
 
-params_gen['output_root']  = 'outputs/StMmLt-inps'  # output dir for input files and meshes        # -------- *** -------- #
+params_gen['output_root']  = 'outputs/meshInd/study1'  # output dir for input files and meshes        # -------- *** -------- #
 
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
 
@@ -47,10 +48,10 @@ params_inp['poses'] = [
 params_inp['save_meshes'] = False # can parse from inp files - also will currently overwrite for each run_id
 
 # PRE-PROCESSING #
-params_inp['target_dist'] = 0.01 # gap between cartilage at start of simulation
+params_inp['target_dist'] = 0.02 # gap between cartilage at start of simulation
 
 params_inp['tpm_patch_params'] = ("euclidean", 3) # distance of BC patch from cartilage boundary
-params_inp['mc1_patch_params'] = ("euclidean", 5) # distance of BC patch from cartilage boundary
+params_inp['mc1_patch_params'] = ("euclidean", 6) # distance of BC patch from cartilage boundary
 
 # ELEMENT ORDER - now inferred from element type
 #params_inp['element_order'] = 'quad' # 'linear' (4 node) or 'quad' (10 node (~8x linear node count))

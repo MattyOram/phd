@@ -7,12 +7,12 @@ import subprocess
 
 
 inp_root = Path(sys.argv[1]) # output_root of InpPipeline parameters
-inps = np.array(list(inp_root.glob('**/*.inp')))
+inps = np.sort(list(inp_root.glob('**/*.inp')))
 
 # ------ SELECT INPUT FILES (if None runs all) ------------------------------------------------ #
 
 subjects     = None # e.g. ['14548R', '50000R', ...]
-poses        = ['flexion', 'extension', 'abduction', 'adduction'] # e.g. ['neutral', 'flexion', ...]
+poses        = None # e.g. ['neutral', 'flexion', ...]
 run_ids      = None # strings e.g. ['0', '1', ...]
 run_ids_mesh = None # strings e.g. ['0-0-0', '0-0-1', ...]
 
@@ -29,7 +29,7 @@ def get_pose(path: Path)->str:
 def get_id(path: Path)->str:
     return path.with_suffix('').name.split('-')[-1]
 def get_id_mesh(path: Path)->str:
-    return ('-').join(path.with_suffix('').name.split('-')[:3])
+    return ('-').join(path.with_suffix('').name.split('-')[:-2])
 
 # get mask of inputs if selected above
 sub_mask = np.ones(len(inps), dtype=bool)

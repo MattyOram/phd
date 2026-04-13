@@ -1,0 +1,48 @@
+{
+  "poses": [
+    "neutral"
+  ],
+  "save_meshes": false,
+  "target_dist": 0.02,
+  "tpm_patch_params": [
+    "euclidean",
+    3
+  ],
+  "mc1_patch_params": [
+    "euclidean",
+    6
+  ],
+  "element_type": "C3D10",
+  "cartilage_hybrid": true,
+  "bone_material": {
+    "E": 1629,
+    "nu": 0.4
+  },
+  "bone_density": null,
+  "cartilage_material": {
+    "C10": 0.091,
+    "D1": 0.0
+  },
+  "cartilage_density": null,
+  "cartilage_friction": 0.0,
+  "bone_vol_id": 1,
+  "cartilage_vol_id": 2,
+  "cartilage_surf_id": -2,
+  "mc1_disp_x": -0.8,
+  "max_force": 50.0,
+  "total_step_time": 0.8,
+  "initial_increment": 0.025,
+  "min_increment": 1e-05,
+  "max_increment": 0.025,
+  "step_type": "STATIC",
+  "nlgeom": "YES",
+  "unsymm": "YES",
+  "convert_sdi": "NO",
+  "equil_iters": 16,
+  "sdi_iters": 15,
+  "increment_attemps": 5,
+  "_loop": {
+    "element_type": "C3D10"
+  },
+  "run_id": 1
+}

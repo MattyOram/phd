@@ -60,7 +60,7 @@ with tempfile.TemporaryDirectory(prefix=f"abaqus_{job_name}_", dir=documents_dir
         "interactive",
         "ask_delete=OFF",
         "cpus=8",
-        'memory="56 gb"'
+        'memory="56gb"'
     ]
     subprocess.run(cmd, cwd=tmp_dir, check=True)
 
