@@ -8,7 +8,7 @@ from collections import OrderedDict
 from phd_helpers.paths import get_boundary, get_intercepts, get_intercepts_multi
 from phd_helpers.MeshQuality import sample_surface
 
-def compute_x_dist(tpm, mc1, return_points=False, cartilage_id=-2):
+def compute_x_dist(tpm, mc1, return_points=False, cartilage_id=-2, n_samples=20000):
     """Compute the minimum distance in the x direction between the trapezium and metacarpal cartilage surfaces"""
     # extract cartilage surfaces to speed up computation
     mc1_cartilage_surf = mc1.extract_cells(mc1['region_id']==cartilage_id).extract_surface(algorithm=None)
@@ -16,8 +16,9 @@ def compute_x_dist(tpm, mc1, return_points=False, cartilage_id=-2):
     # compute distance in direction of metacarpal principal axis (x) between cartilage surfaces
     vecs_x = np.zeros_like(mc1_cartilage_surf.points)+np.array([-1, 0, 0])
     mc1_points = mc1_cartilage_surf.points
-    if mc1_cartilage_surf.n_points > 20000:
-        mc1_points = sample_surface(mc1_cartilage_surf, 20000)
+    if mc1_cartilage_surf.n_points > n_samples:
+        print(f'sampling surface ({n_samples})')
+        mc1_points = sample_surface(mc1_cartilage_surf, n_samples)
     points_tpm, points_mc1, mask_points_mc1 = get_intercepts(tpm_cartilage_surf, mc1_points, vecs_x)
     dists_x = np.linalg.norm(points_mc1 - points_tpm, axis=1)
     if not return_points:
