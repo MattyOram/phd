@@ -18,12 +18,12 @@ params_gen = params['general']
 params_gen['mesh_root']    = 'outputs/StMmLt'
 
 #params_gen['subjects']  = ['14548R']
-params_gen['subjects']     = ['22306R', '50037L'] # provide list of subjects or set to None for all available subjects 
+params_gen['subjects']     = ['22306R', '50037L', '14874R'] # provide list of subjects or set to None for all available subjects 
                                                                 # (assumes Meshpipeline dir layout)
 
 params_gen['output_root']  = 'outputs/StMmLt-inps'  # output dir for input files and meshes        # -------- *** -------- #
 
-params_gen['timeout'] = 600 # (s) overall time limit just in case
+params_gen['timeout'] = 1200 # (s) per inp time limit just in case
 
 
 
@@ -87,8 +87,8 @@ params_inp['max_force'] = 50.0    # end analysis at this force
 
 # STEP PARAMS
 params_inp['total_step_time'] = abs(params_inp['mc1_disp_x']) # set to total displacement so that increment params don't have to change with displacement
-params_inp['initial_increment'] = params_inp['target_dist']         # starting point is 0.01mm from contact
-params_inp['min_increment'] = 1e-5
+params_inp['initial_increment'] = params_inp['target_dist']+0.005        # starting point is 0.01mm from contact
+params_inp['min_increment'] = 1e-5                                          # +0.005 cos that's precision of initial position
 params_inp['max_increment'] = 0.025
 
 params_inp['step_type']   = "STATIC"

@@ -1,6 +1,6 @@
 {
   "global": {
-    "output_root": "outputs/ParamOptimisation/meshInd/study1f",
+    "output_root": "outputs/ParamOptimisation/meshInd/study1d",
     "allow_overwrite": true,
     "step_timeout": 1200,
     "steps": {
@@ -91,7 +91,7 @@
     "cgal_params": {
       "sizing_field": {
         "n_tets": [
-          3
+          2
         ],
         "min_size": 0.015,
         "max_size": 1.0,

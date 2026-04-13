@@ -116,6 +116,13 @@ Study 3 - figure out feasable n_tets / d0 / h_min combos
 study 4 - look at if higher facet_distances improve element quality and still keep max_d's reasonable 
 study 5 - find perturb sliver bounda and lloyd freeze_bound for each subject
 
+
+# LLOYD ODT BAD
+
+## optimiseV2:
+ - start over without lloyd and odt
+
+
 FIGURE OUT - how many cells FEA memory can handle or what the runtimes are
 
 I CAN PICK SUBJECTS TODAY AS LONG AS I PICK ONES THAT HAVE REASONABLE CELL COUNTS RELATIVE TO THE LOWEST

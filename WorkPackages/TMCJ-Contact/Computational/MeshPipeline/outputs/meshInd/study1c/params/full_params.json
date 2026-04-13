@@ -1,6 +1,6 @@
 {
   "global": {
-    "output_root": "outputs/ParamOptimisation/meshInd/study1f",
+    "output_root": "outputs/ParamOptimisation/meshInd/study1c",
     "allow_overwrite": true,
     "step_timeout": 1200,
     "steps": {
@@ -91,7 +91,7 @@
     "cgal_params": {
       "sizing_field": {
         "n_tets": [
-          3
+          2
         ],
         "min_size": 0.015,
         "max_size": 1.0,
@@ -118,7 +118,7 @@
         "odt": [
           false
         ],
-        "lloyd": true,
+        "lloyd": false,
         "perturb": true,
         "exude": true
       },
@@ -140,19 +140,10 @@
       },
       "lloyd": {
         "time_limit": 180,
-        "max_iteration_number": [
-          10,
-          20,
-          30
-        ],
+        "max_iteration_number": 0,
         "convergence": 0.0,
         "do_freeze": true,
-        "freeze_bound": [
-          0.01,
-          0.001,
-          0.0005,
-          0.0001
-        ]
+        "freeze_bound": 0.001
       },
       "perturb": {
         "time_limit": 180,

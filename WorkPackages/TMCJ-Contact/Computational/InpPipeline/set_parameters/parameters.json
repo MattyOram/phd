@@ -3,10 +3,11 @@
     "mesh_root": "outputs/StMmLt",
     "subjects": [
       "22306R",
-      "50037L"
+      "50037L",
+      "14874R"
     ],
     "output_root": "outputs/StMmLt-inps",
-    "timeout": 600
+    "timeout": 1200
   },
   "inp": {
     "poses": [
@@ -44,7 +45,7 @@
     "mc1_disp_x": -0.8,
     "max_force": 50.0,
     "total_step_time": 0.8,
-    "initial_increment": 0.01,
+    "initial_increment": 0.015,
     "min_increment": 1e-05,
     "max_increment": 0.025,
     "step_type": "STATIC",

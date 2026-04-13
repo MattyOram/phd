@@ -1,8 +1,8 @@
 {
   "global": {
-    "output_root": "outputs/ParamOptimisation/meshInd/study1f",
-    "allow_overwrite": true,
-    "step_timeout": 1200,
+    "output_root": "outputs/ParamOptimisation/optimiseV2/StMmLt-study1h",
+    "allow_overwrite": false,
+    "step_timeout": 600,
     "steps": {
       "2Dmesh": true,
       "cartilage": true,
@@ -12,14 +12,14 @@
   },
   "subjects": {
     "subject_sideL": [
-      "50000R"
+      "22306R"
     ],
     "bone_arbone": [
       "tpm-mc1"
     ]
   },
   "2Dmesh": {
-    "overwrite": false,
+    "overwrite": true,
     "input_bone_mesh": null,
     "input_arbone_mesh": null,
     "output_filename": null,
@@ -49,7 +49,7 @@
     "remesh_iters": 5
   },
   "cartilage": {
-    "overwrite": false,
+    "overwrite": true,
     "input_bone_mesh": null,
     "input_arbone_mesh": null,
     "output_filename": null,
@@ -74,7 +74,11 @@
     "clamp_height": 0.015,
     "use_remeshed_arbone": true,
     "taper_width": 1.5,
-    "p_h": 8.5,
+    "p_h": [
+      5,
+      8.5,
+      12
+    ],
     "p_v": 1,
     "smooth_iters": 100,
     "n_iters": 5
@@ -83,31 +87,34 @@
     "overwrite": true,
     "input_mesh": null,
     "output_filename": null,
-    "cgal_input_name": "1",
+    "cgal_input_name": "2",
     "save_cgal_inputs": false,
     "cgal_path": "/Users/maro/Library/CloudStorage/OneDrive-UniversityofLeeds/PhD-wrist/WorkPackages/WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/3Dmesh",
     "postprocess": true,
     "keep_cgal_copy": false,
     "cgal_params": {
       "sizing_field": {
-        "n_tets": [
-          3
-        ],
+        "n_tets": 3,
         "min_size": 0.015,
         "max_size": 1.0,
         "d_taper": 1.5,
-        "taper_size": 0.25,
+        "taper_size": [
+          0.2,
+          0.3,
+          0.4
+        ],
         "h_bone_max": 1.0,
         "d0": [
+          3,
           6
         ]
       },
       "facet_distance": {
-        "fd_cart_near": 0.2,
-        "fd_cart_far": 0.1,
+        "fd_cart_near": 0.5,
+        "fd_cart_far": null,
         "fd_edge_loop": null,
         "d0_cart": 0,
-        "fd_bone": 1.0
+        "fd_bone": 2.0
       },
       "criteria": {
         "facet_angle": 30,
@@ -115,52 +122,39 @@
         "manifold_with_boundary": false
       },
       "optimisation": {
-        "odt": [
-          false
-        ],
-        "lloyd": true,
+        "odt": false,
+        "lloyd": false,
         "perturb": true,
         "exude": true
       },
       "odt": {
         "time_limit": 300,
-        "max_iteration_number": [
-          10,
-          20,
-          30
-        ],
+        "max_iteration_number": 0,
         "convergence": 0.0,
         "do_freeze": true,
-        "freeze_bound": [
-          0.01,
-          0.001,
-          0.0005,
-          0.0001
-        ]
+        "freeze_bound": 0.0005
       },
       "lloyd": {
-        "time_limit": 180,
-        "max_iteration_number": [
-          10,
-          20,
-          30
-        ],
+        "time_limit": 600,
+        "max_iteration_number": 0,
         "convergence": 0.0,
         "do_freeze": true,
-        "freeze_bound": [
-          0.01,
-          0.001,
-          0.0005,
-          0.0001
-        ]
+        "freeze_bound": 0.0005
       },
       "perturb": {
-        "time_limit": 180,
-        "sliver_bound": 30
+        "time_limit": 120,
+        "sliver_bound": [
+          30,
+          40
+        ]
       },
       "exude": {
-        "time_limit": 180,
-        "sliver_bound": 0
+        "time_limit": 120,
+        "sliver_bound": [
+          0,
+          10,
+          20
+        ]
       }
     }
   },

@@ -1,6 +1,6 @@
 {
   "global": {
-    "output_root": "outputs/ParamOptimisation/meshInd/study1f",
+    "output_root": "outputs/ParamOptimisation/meshInd/study1a",
     "allow_overwrite": true,
     "step_timeout": 1200,
     "steps": {
@@ -91,12 +91,16 @@
     "cgal_params": {
       "sizing_field": {
         "n_tets": [
-          3
+          1
         ],
         "min_size": 0.015,
         "max_size": 1.0,
         "d_taper": 1.5,
-        "taper_size": 0.25,
+        "taper_size": [
+          0.2,
+          0.25,
+          0.3
+        ],
         "h_bone_max": 1.0,
         "d0": [
           6
@@ -115,10 +119,8 @@
         "manifold_with_boundary": false
       },
       "optimisation": {
-        "odt": [
-          false
-        ],
-        "lloyd": true,
+        "odt": false,
+        "lloyd": false,
         "perturb": true,
         "exude": true
       },
@@ -132,7 +134,6 @@
         "convergence": 0.0,
         "do_freeze": true,
         "freeze_bound": [
-          0.01,
           0.001,
           0.0005,
           0.0001
@@ -140,19 +141,10 @@
       },
       "lloyd": {
         "time_limit": 180,
-        "max_iteration_number": [
-          10,
-          20,
-          30
-        ],
+        "max_iteration_number": 0,
         "convergence": 0.0,
         "do_freeze": true,
-        "freeze_bound": [
-          0.01,
-          0.001,
-          0.0005,
-          0.0001
-        ]
+        "freeze_bound": 0.001
       },
       "perturb": {
         "time_limit": 180,
