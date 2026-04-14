@@ -24,6 +24,7 @@ params_gen['subjects'] = ['50000R']
 
 params_gen['output_root']  = 'outputs/meshInd/study1'  # output dir for input files and meshes        # -------- *** -------- #
 
+params_gen['overwrite'] = False
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
 
 
@@ -45,7 +46,7 @@ params_inp['poses'] = [
             ]
 #params_inp['poses'] = ['neutral']
 
-params_inp['save_meshes'] = False # can parse from inp files - also will currently overwrite for each run_id
+#params_inp['save_meshes'] = False # can parse from inp files - also will currently overwrite for each run_id
 
 # PRE-PROCESSING #
 params_inp['target_dist'] = 0.02 # gap between cartilage at start of simulation
@@ -74,7 +75,7 @@ params_inp['cartilage_material'] = {
                         "D1": 0.0         
                     }
 params_inp['cartilage_density']  = None
-params_inp['cartilage_friction'] = 0.0
+params_inp['cartilage_friction'] = 0.0 # friction coefficient of 0.005 (Charnley, 1960)
 
 # REGION IDs
 params_inp['bone_vol_id']       = 1
@@ -95,7 +96,7 @@ params_inp['max_increment'] = 0.025
 params_inp['step_type']   = "STATIC"
 params_inp['nlgeom']      = "YES" # non-linear geometry
 params_inp['unsymm']      = "YES" # store unsymmetric matrix
-params_inp['convert_sdi'] = ["NO"] #force a new iteration if severe discontinuities occur during an iteration, regardless of the magnitude of the penetration and force errors
+params_inp['convert_sdi'] = "NO" # if "NO" force a new iteration if severe discontinuities occur during an iteration, regardless of the magnitude of the penetration and force errors
 
 params_inp['equil_iters']       = 16 # default=16 - upper limit on the number of consecutive equilibrium iterations (without severe discontinuities) (4)
 params_inp['sdi_iters']         = 15 # deafult=12 - maximum number of severe discontinuity iterations allowed in an increment if CONVERT SDI=NO (7)

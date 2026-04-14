@@ -37,6 +37,7 @@ stl_path = get_subject_stl_path(subject, sideL)
 savepath_inp = output_dir / f'inpFiles/{sub}/inp' 
 savepath_inp.mkdir(parents=True, exist_ok=True)
 
+overwrite = params['overwrite']
 # --------------------- PATHS --------------------- #
 #####################################################
 
@@ -51,10 +52,10 @@ savepath_inp.mkdir(parents=True, exist_ok=True)
 #setting = 'interactive'
 
 # PRE-PROCESSING #
-save_mesh = params['save_meshes']
-if save_mesh:
-    savepath_mesh = output_dir / f'inpFiles/{sub}/mesh' 
-    savepath_mesh.mkdir(parents=True, exist_ok=True)
+#save_mesh = params['save_meshes']
+#if save_mesh:
+#    savepath_mesh = output_dir / f'inpFiles/{sub}/mesh' 
+#    savepath_mesh.mkdir(parents=True, exist_ok=True)
 
 target_dist = params['target_dist'] # gap between cartilage at start of simulation
 
@@ -156,10 +157,10 @@ mc1_RP_loc = mc1_mesh.points.mean(axis=0)
 print("Computing mc1 bone surface patch for RP coupling")
 mc1_patch_nodes = bone_surface_patch_nodes(mc1_mesh, mc1_patch_params[1], mc1_patch_params[0], only_full_face_nodes=True)
 
-if save_mesh:
-    # save input mesh (with bc_patch array)(linear versions) # wastes memory but makes life easier?
-    print('Saving input mesh ("mc1-positioned.vtu) (with linear elements)')
-    quadratic_to_linear_mesh(mc1_mesh).save(savepath_mesh / f"{run_id_mesh}-mc1_positioned.vtu")
+#if save_mesh:
+#    # save input mesh (with bc_patch array)(linear versions) # wastes memory but makes life easier?
+#    print('Saving input mesh ("mc1-positioned.vtu) (with linear elements)')
+#    quadratic_to_linear_mesh(mc1_mesh).save(savepath_mesh / f"{run_id_mesh}-mc1_positioned.vtu")
 
 for pose in poses:
 
@@ -189,10 +190,10 @@ for pose in poses:
     print("Computing tpm bone surface patch for RP coupling")
     tpm_patch_nodes = bone_surface_patch_nodes(tpm_mesh, tpm_patch_params[1], tpm_patch_params[0], only_full_face_nodes=True)
 
-    if save_mesh:
-        # save input mesh (positioned with bc_patch array)(linear versions) # wastes memory but makes life easier?
-        print(f'Saving input mesh ("tpm-{pose}.vtu") (with linear elements)')
-        quadratic_to_linear_mesh(tpm_mesh).save(savepath_mesh / f"{run_id_mesh}-tpm_{pose}.vtu") 
+    #if save_mesh:
+    #    # save input mesh (positioned with bc_patch array)(linear versions) # wastes memory but makes life easier?
+    #    print(f'Saving input mesh ("tpm-{pose}.vtu") (with linear elements)')
+    #    quadratic_to_linear_mesh(tpm_mesh).save(savepath_mesh / f"{run_id_mesh}-tpm_{pose}.vtu") 
 
     print('\nComplete\n')
 
@@ -353,7 +354,11 @@ for pose in poses:
     inp_name = f'{run_id_mesh}-{pose}-{run_id}'
     inp_dir = savepath_inp / inp_name
     inp_dir.mkdir(parents=True, exist_ok=True)
-    b.write_input_file( inp_dir / (inp_name+'.inp'))
+    inp_file = inp_dir / (inp_name+'.inp')
+    if inp_file.exists() and not overwrite:
+        raise(f'{inp_file} already exists and overwrite is false')
+    else:
+        b.write_input_file(inp_file)
 
     print("\nComplete")
 
