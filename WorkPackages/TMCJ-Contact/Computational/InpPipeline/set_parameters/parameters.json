@@ -8,10 +8,10 @@
     "timeout": 1200
   },
   "inp": {
+    "overwrite": false,
     "poses": [
       "neutral"
     ],
-    "save_meshes": false,
     "target_dist": 0.02,
     "tpm_patch_params": [
       "euclidean",
@@ -49,9 +49,7 @@
     "step_type": "STATIC",
     "nlgeom": "YES",
     "unsymm": "YES",
-    "convert_sdi": [
-      "NO"
-    ],
+    "convert_sdi": "NO",
     "equil_iters": 16,
     "sdi_iters": 15,
     "increment_attemps": 5

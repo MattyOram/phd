@@ -1,8 +1,8 @@
 {
+  "overwrite": false,
   "poses": [
     "neutral"
   ],
-  "save_meshes": false,
   "target_dist": 0.02,
   "tpm_patch_params": [
     "euclidean",

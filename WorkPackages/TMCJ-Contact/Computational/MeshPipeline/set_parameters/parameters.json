@@ -1,6 +1,6 @@
 {
   "global": {
-    "output_root": "outputs/meshInd/study1h",
+    "output_root": "outputs/meshInd/study1i",
     "allow_overwrite": true,
     "step_timeout": 1200,
     "steps": {
@@ -15,6 +15,7 @@
       "50000R"
     ],
     "bone_arbone": [
+      "tpm-mc1",
       "mc1-tpm"
     ]
   },
@@ -83,7 +84,7 @@
     "overwrite": true,
     "input_mesh": null,
     "output_filename": null,
-    "cgal_input_name": "2",
+    "cgal_input_name": "1",
     "save_cgal_inputs": false,
     "cgal_path": "/Users/maro/Library/CloudStorage/OneDrive-UniversityofLeeds/PhD-wrist/WorkPackages/WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/3Dmesh",
     "postprocess": true,
@@ -91,9 +92,8 @@
     "cgal_params": {
       "sizing_field": {
         "n_tets": [
-          1,
-          2,
-          3
+          1.5,
+          2.5
         ],
         "min_size": 0.015,
         "max_size": 1.0,
@@ -118,16 +118,17 @@
       },
       "optimisation": {
         "odt": [
-          true
+          false
         ],
         "lloyd": [
+          true,
           false
         ],
         "perturb": true,
         "exude": true
       },
       "odt": {
-        "time_limit": 300,
+        "time_limit": 180,
         "max_iteration_number": [
           10,
           20,
