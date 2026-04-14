@@ -151,8 +151,10 @@ print("Computing mc1 RP location (mean of points)")
 mc1_RP_loc = mc1_mesh.points.mean(axis=0)
 
 # get nodes to form surface for coupling with reference point
+# - nodes aren't used anymore, use mesh.cell_data['bc_patch] to directly create surface 
+# (requires: only_full_face_nodes=True)
 print("Computing mc1 bone surface patch for RP coupling")
-mc1_patch_nodes = bone_surface_patch_nodes(mc1_mesh, mc1_patch_params[1], mc1_patch_params[0], True)
+mc1_patch_nodes = bone_surface_patch_nodes(mc1_mesh, mc1_patch_params[1], mc1_patch_params[0], only_full_face_nodes=True)
 
 if save_mesh:
     # save input mesh (with bc_patch array)(linear versions) # wastes memory but makes life easier?
@@ -182,8 +184,10 @@ for pose in poses:
     tpm_RP_loc = tpm_mesh.points.mean(axis=0)
 
     # get nodes to form surface for coupling with reference point
+    # - nodes aren't used anymore, use mesh.cell_data['bc_patch] to directly create surface 
+    # (requires: only_full_face_nodes=True)
     print("Computing tpm bone surface patch for RP coupling")
-    tpm_patch_nodes = bone_surface_patch_nodes(tpm_mesh, tpm_patch_params[1], tpm_patch_params[0], True)
+    tpm_patch_nodes = bone_surface_patch_nodes(tpm_mesh, tpm_patch_params[1], tpm_patch_params[0], only_full_face_nodes=True)
 
     if save_mesh:
         # save input mesh (positioned with bc_patch array)(linear versions) # wastes memory but makes life easier?
@@ -228,8 +232,11 @@ for pose in poses:
     b.create_solid_section("mc1", "mc1_CARTILAGE", "CARTILAGE")
 
     # SURFACES FOR BONE CONSTRAINTS
-    b.add_surface_from_nodes("tpm", tpm_patch_nodes, "tpm_PATCH_NODES", "tpm_PATCH_SURF")
-    b.add_surface_from_nodes("mc1", mc1_patch_nodes, "mc1_PATCH_NODES", "mc1_PATCH_SURF")
+    #b.add_surface_from_nodes("tpm", tpm_patch_nodes, "tpm_PATCH_NODES", "tpm_PATCH_SURF")
+    #b.add_surface_from_nodes("mc1", mc1_patch_nodes, "mc1_PATCH_NODES", "mc1_PATCH_SURF")
+    # SURFACES FOR BONE CONSTRAINTS
+    b.add_surface_from_cell_data("tpm", "bc_patch", 1, "tpm_PATCH_SURF")
+    b.add_surface_from_cell_data("mc1", "bc_patch", 1, "mc1_PATCH_SURF")
 
     # RPs FOR SURFACE PATCH COUPLING
     b.create_reference_point("RP_tpm", node_id=9000001, xyz=tpm_RP_loc)
@@ -240,8 +247,11 @@ for pose in poses:
     b.add_rp_surface_coupling("CP_mc1", "RP_mc1", "mc1", "mc1_PATCH_SURF", coupling_type="KINEMATIC")
 
     # CARTILAGE SURFACES FOR CONTACT
-    b.add_surface_from_region_id("tpm", cartilage_surf_id, "tpm_CART_SURF")
-    b.add_surface_from_region_id("mc1", cartilage_surf_id, "mc1_CART_SURF")
+    #b.add_surface_from_region_id("tpm", cartilage_surf_id, "tpm_CART_SURF")
+    #b.add_surface_from_region_id("mc1", cartilage_surf_id, "mc1_CART_SURF")
+    b.add_surface_from_cell_data("tpm", "region_id", cartilage_surf_id, "tpm_CART_SURF")
+    b.add_surface_from_cell_data("mc1", "region_id", cartilage_surf_id, "mc1_CART_SURF")
+
 
     # CONTACT
     b.set_contact(
