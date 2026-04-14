@@ -24,7 +24,6 @@ params_gen['subjects'] = ['50000R']
 
 params_gen['output_root']  = 'outputs/meshInd/study1'  # output dir for input files and meshes        # -------- *** -------- #
 
-params_gen['overwrite'] = False
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
 
 
@@ -38,6 +37,8 @@ params_gen['timeout'] = 1200 # (s) per inp time limit just in case
 
 # ------- INPUT FILE ---------------------------------------------------------------------------------------- #
 params_inp = params['inp']
+
+params_inp['overwrite'] = False
 
 params_inp['poses'] = [
             #'adduction','abduction','flexion','extension',
