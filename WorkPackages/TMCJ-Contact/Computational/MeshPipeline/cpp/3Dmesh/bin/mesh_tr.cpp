@@ -84,7 +84,7 @@ struct BoneCartField
   int sp_interface  = 3;
 
   // Cartilage sizing params
-  int n_tets     = 3;    // number of tetrahedrons accross thickness of cartilage
+  FT  n_tets     = 2.0;    // number of tetrahedrons accross thickness of cartilage
   FT  min_size   = 0.02; // min target edge length (or circumradius?) within main cartilage region
   FT  max_size   = 0.50; // min target edge length (or circumradius?) within main cartilage region
 
@@ -122,7 +122,7 @@ struct BoneCartField
   // For cartilage outer: d_outer = 0
   FT cartilage_main_size(FT d_iface, FT d_outer) const {
     const FT h = d_iface + d_outer;
-    const FT target = h / FT(std::max(1, n_tets));
+    const FT target = h / (std::max)(FT(1), n_tets);
     return std::clamp(target, min_size, max_size);
   }
 
