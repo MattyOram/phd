@@ -170,9 +170,9 @@ class AbaqusInpBuilder:
     @classmethod
     def _map_tris2faces(
         cls,
-        tet_full_ids, tet_conn_full,
-        tri_conn_full, tri_regions,
-        cartilage_outer_tri_region_id,
+        tet_full_ids,
+        tet_conn_full,
+        tri_conn_selected,
         fullcell_to_eid,
         part_name,
     ):
@@ -183,14 +183,12 @@ class AbaqusInpBuilder:
                 key = tuple(sorted(corners[list(loc)]))
                 face_map.setdefault(key, (int(full_cid), face_label))
 
-        cart_tri = tri_conn_full[tri_regions == cartilage_outer_tri_region_id]
-        if cart_tri.size == 0:
-            raise ValueError(
-                f"{part_name}: no TRIANGLE cells found with region_id == {cartilage_outer_tri_region_id}"
-            )
+        tri_conn_selected = np.asarray(tri_conn_selected, dtype=int)
+        if tri_conn_selected.size == 0:
+            raise ValueError(f"{part_name}: no selected TRIANGLE cells found")
 
         abaqus_faces = set()
-        for tri in cart_tri:
+        for tri in tri_conn_selected:
             tri_corners = np.asarray(tri, dtype=int)[:3]  # tri3/tri6
             key = tuple(sorted(tri_corners))
             hit = face_map.get(key)
@@ -202,7 +200,7 @@ class AbaqusInpBuilder:
                 abaqus_faces.add((eid, face))
 
         if not abaqus_faces:
-            raise ValueError(f"{part_name}: no cartilage surface faces matched to tet faces")
+            raise ValueError(f"{part_name}: no selected surface faces matched to tet faces")
         return abaqus_faces
 
     def _ensure_part_buckets(self, part_name: str):
@@ -359,13 +357,34 @@ class AbaqusInpBuilder:
         self.create_nset(part_name, nset_name, nodes.tolist())
         self.create_surface_from_nset(part_name, surface_name, nset_name)
 
-    def add_surface_from_region_id(self, part_name: str, tri_region_id: int, surface_name: str):
+    #def add_surface_from_region_id(self, part_name: str, tri_region_id: int, surface_name: str):
+    #    self._require_elem_cache(part_name)
+    #    c = self.parts[part_name]["_elem_cache"]
+    #    abaqus_faces = self._map_tris2faces(
+    #        c["tet_full_ids"], c["tet_conn_full"],
+    #        c["tri_conn_full"], c["tri_regions"],
+    #        int(tri_region_id),
+    #        c["fullcell_to_eid"],
+    #        part_name,
+    #    )
+    #    self.create_surface_from_element_faces(part_name, surface_name, sorted(abaqus_faces))
+
+    def add_surface_from_cell_data(self, part_name: str, cell_data_name: str, value, surface_name: str):
         self._require_elem_cache(part_name)
         c = self.parts[part_name]["_elem_cache"]
+        mesh = self.parts[part_name]["mesh"]
+
+        if cell_data_name not in mesh.cell_data:
+            raise KeyError(f"{part_name}: mesh.cell_data['{cell_data_name}'] is missing")
+
+        tri_full_ids, tri_conn_full = self._get_cells_of_type(mesh, self.tri_celltype)
+        tri_values = np.asarray(mesh.cell_data[cell_data_name])[tri_full_ids]
+        tri_conn_selected = tri_conn_full[tri_values == value]
+
         abaqus_faces = self._map_tris2faces(
-            c["tet_full_ids"], c["tet_conn_full"],
-            c["tri_conn_full"], c["tri_regions"],
-            int(tri_region_id),
+            c["tet_full_ids"],
+            c["tet_conn_full"],
+            tri_conn_selected,
             c["fullcell_to_eid"],
             part_name,
         )
