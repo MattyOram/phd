@@ -1,0 +1,180 @@
+{
+  "global": {
+    "output_root": "outputs/meshInd/study2b",
+    "allow_overwrite": true,
+    "step_timeout": 1200,
+    "steps": {
+      "2Dmesh": true,
+      "cartilage": true,
+      "3Dmesh": true,
+      "manifold": false
+    }
+  },
+  "subjects": {
+    "subject_sideL": [
+      "50017L"
+    ],
+    "bone_arbone": [
+      "tpm-mc1",
+      "mc1-tpm"
+    ]
+  },
+  "2Dmesh": {
+    "overwrite": false,
+    "input_bone_mesh": null,
+    "input_arbone_mesh": null,
+    "output_filename": null,
+    "cgal_input_name": null,
+    "cgal_path": "/Users/maro/Library/CloudStorage/OneDrive-UniversityofLeeds/PhD-wrist/WorkPackages/WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/2Dmesh",
+    "poses": [
+      [
+        "adduction",
+        "abduction",
+        "flexion",
+        "extension",
+        "pinch",
+        "grasp",
+        "jar",
+        "neutral"
+      ]
+    ],
+    "taubin_iters": 50,
+    "save_smoothed_mesh": true,
+    "output_filename_smooth": null,
+    "remesh_arbone": true,
+    "max_gap_remesh": 2.5,
+    "adjacent_cells": true,
+    "fine_edge_length": 0.2,
+    "coarse_edge_length": 0.4,
+    "grad_width": 8,
+    "remesh_iters": 5
+  },
+  "cartilage": {
+    "overwrite": false,
+    "input_bone_mesh": null,
+    "input_arbone_mesh": null,
+    "output_filename": null,
+    "cgal_input_name": null,
+    "cgal_path": "/Users/maro/Library/CloudStorage/OneDrive-UniversityofLeeds/PhD-wrist/WorkPackages/WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/2Dmesh",
+    "save_orig_smooth": true,
+    "remesh_cartilage": true,
+    "edge_length": null,
+    "poses": [
+      [
+        "adduction",
+        "abduction",
+        "flexion",
+        "extension",
+        "pinch",
+        "grasp",
+        "jar",
+        "neutral"
+      ]
+    ],
+    "max_gap_cartilage": 2,
+    "clamp_height": 0.015,
+    "use_remeshed_arbone": true,
+    "taper_width": 1.5,
+    "p_h": 8.5,
+    "p_v": 1,
+    "smooth_iters": 100,
+    "n_iters": 5
+  },
+  "3Dmesh": {
+    "overwrite": true,
+    "input_mesh": null,
+    "output_filename": null,
+    "cgal_input_name": "2",
+    "save_cgal_inputs": false,
+    "cgal_path": "/Users/maro/Library/CloudStorage/OneDrive-UniversityofLeeds/PhD-wrist/WorkPackages/WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/3Dmesh",
+    "postprocess": true,
+    "keep_cgal_copy": false,
+    "cgal_params": {
+      "sizing_field": {
+        "n_tets": [
+          1,
+          2,
+          3
+        ],
+        "min_size": 0.015,
+        "max_size": 1.0,
+        "d_taper": 1.5,
+        "taper_size": 0.25,
+        "h_bone_max": 1.0,
+        "d0": [
+          6
+        ]
+      },
+      "facet_distance": {
+        "fd_cart_near": 0.2,
+        "fd_cart_far": 0.1,
+        "fd_edge_loop": null,
+        "d0_cart": 0,
+        "fd_bone": 1.0
+      },
+      "criteria": {
+        "facet_angle": 30,
+        "cell_radius_edge_ratio": 3,
+        "manifold_with_boundary": false
+      },
+      "optimisation": {
+        "odt": [
+          false
+        ],
+        "lloyd": [
+          true,
+          false
+        ],
+        "perturb": true,
+        "exude": true
+      },
+      "odt": {
+        "time_limit": 180,
+        "max_iteration_number": [
+          10,
+          20,
+          30
+        ],
+        "convergence": 0.0,
+        "do_freeze": true,
+        "freeze_bound": [
+          0.01,
+          0.001,
+          0.0005,
+          0.0001
+        ]
+      },
+      "lloyd": {
+        "time_limit": 180,
+        "max_iteration_number": [
+          10,
+          20,
+          30
+        ],
+        "convergence": 0.0,
+        "do_freeze": true,
+        "freeze_bound": [
+          0.01,
+          0.001,
+          0.0005,
+          0.0001
+        ]
+      },
+      "perturb": {
+        "time_limit": 180,
+        "sliver_bound": 30
+      },
+      "exude": {
+        "time_limit": 180,
+        "sliver_bound": 0
+      }
+    }
+  },
+  "manifold": {
+    "input_mesh": null,
+    "output_filename": null,
+    "require_manifold": true,
+    "max_area": 0.05,
+    "max_loc": 0.2
+  }
+}
