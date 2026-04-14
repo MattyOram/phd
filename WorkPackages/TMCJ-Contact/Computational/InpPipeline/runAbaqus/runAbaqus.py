@@ -66,18 +66,20 @@ with tempfile.TemporaryDirectory(prefix=f"abaqus_{job_name}_", dir=documents_dir
 
 
     # ------ POSTPROCESS ------------------------------------------------ #
-    tmp_odb_path = tmp_dir / f"{job_name}.odb"
+    try:
+        tmp_odb_path = tmp_dir / f"{job_name}.odb"
 
-    cmd = [
-        "cmd",
-        "/c",
-        str(abaqus_cmd),
-        "python",
-        str(postprocess_file),
-        str(tmp_odb_path),
-    ]
-    subprocess.run(cmd, cwd=tmp_dir, check=True)
-
+        cmd = [
+            "cmd",
+            "/c",
+            str(abaqus_cmd),
+            "python",
+            str(postprocess_file),
+            str(tmp_odb_path),
+        ]
+        subprocess.run(cmd, cwd=tmp_dir, check=True)
+    except:
+        print("Failed to postprocess")
 
     # ------ COPY RESULTS BACK ------------------------------------------ #
     for src in tmp_dir.iterdir():
