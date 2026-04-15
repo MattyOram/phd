@@ -1,7 +1,9 @@
 {
   "general": {
     "mesh_root": "outputs/element_count",
-    "subjects": null,
+    "subjects": [
+      "50000R"
+    ],
     "output_root": "outputs/element_count-inp",
     "timeout": 1200
   },

@@ -1,0 +1,63 @@
+{
+  "overwrite": true,
+  "input_mesh": null,
+  "output_filename": null,
+  "cgal_input_name": "1",
+  "save_cgal_inputs": false,
+  "cgal_path": "/Users/maro/Library/CloudStorage/OneDrive-UniversityofLeeds/PhD-wrist/WorkPackages/WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/3Dmesh",
+  "postprocess": true,
+  "keep_cgal_copy": false,
+  "cgal_params": {
+    "sizing_field": {
+      "n_tets": 1.5,
+      "min_size": 0.015,
+      "max_size": 1.0,
+      "d_taper": 1.5,
+      "taper_size": 0.25,
+      "h_bone_max": 1.0,
+      "d0": 6
+    },
+    "facet_distance": {
+      "fd_cart_near": 0.2,
+      "fd_cart_far": 0.1,
+      "fd_edge_loop": null,
+      "d0_cart": 0,
+      "fd_bone": 1.0
+    },
+    "criteria": {
+      "facet_angle": 30,
+      "cell_radius_edge_ratio": 3,
+      "manifold_with_boundary": false
+    },
+    "optimisation": {
+      "odt": false,
+      "lloyd": false,
+      "perturb": true,
+      "exude": true
+    },
+    "odt": {
+      "time_limit": 180,
+      "max_iteration_number": 10,
+      "convergence": 0.0,
+      "do_freeze": true,
+      "freeze_bound": 0.01
+    },
+    "lloyd": {
+      "time_limit": 180,
+      "max_iteration_number": 10,
+      "convergence": 0.0,
+      "do_freeze": true,
+      "freeze_bound": 0.01
+    },
+    "perturb": {
+      "time_limit": 180,
+      "sliver_bound": 30
+    },
+    "exude": {
+      "time_limit": 180,
+      "sliver_bound": 0
+    }
+  },
+  "_loop": {},
+  "run_id": 0
+}

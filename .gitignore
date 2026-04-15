@@ -60,6 +60,10 @@ CADmodels/*
 *.odb
 *.prt
 *.env
+*.023
+*.cax
+*.mdl
+*.sim
 #*.sta # maybe keep
 
 

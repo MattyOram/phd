@@ -34,8 +34,8 @@ params = {
 params_glob = params['global']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
-params_glob['output_root']     = 'outputs/meshInd/study1i'             # -------- ••• -------- #
-#params_glob['output_root'] = 'outputs/holes'
+#params_glob['output_root']     = 'outputs/meshInd/study1i'             # -------- ••• -------- #
+params_glob['output_root'] = 'outputs/element_count'
 
 params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
@@ -72,7 +72,7 @@ params_sub = params['subjects']
 #params_sub['subject_sideL'] = ['22306R'] # Mmed
 #params_sub['subject_sideL'] = ['50037L'] # Lthick
 
-params_sub['subject_sideL'] = ['50000R'] # smallest contact area rank
+#params_sub['subject_sideL'] = ['50000R'] # smallest contact area rank
 #params_sub['subject_sideL'] = ['50017L'] # middle
 #params_sub['subject_sideL'] = ['50034R'] # largest contact area rank
 
@@ -208,7 +208,7 @@ params_3D['keep_cgal_copy']     = False # keep copy of cgals ouput mesh - (pre p
 params_3D['cgal_params'] = { 
     # Sizing field params
     "sizing_field": {
-        "n_tets": [1.5, 2.5],        # number of tetrahedrons accross thickness of cartilage
+        "n_tets": 1.5,        # number of tetrahedrons accross thickness of cartilage
         "min_size": params_cart['clamp_height'],   # min target circumradius within main cartilage region
         "max_size": 1.0,   # max target circumradius within main cartilage region
 
@@ -256,7 +256,7 @@ params_3D['cgal_params'] = {
     # - see main.py
     "optimisation": { # This determines which of the following optimisation steps are used
         "odt": [False],    # can be great but can also delete tets if cart height close to cell size
-        "lloyd": [True, False],   # makes the mesh look very good - but think it just gets in the way of perturb sometimes
+        "lloyd": [False],   # makes the mesh look very good - but think it just gets in the way of perturb sometimes
         "perturb": True, # does good stuff - improves dihedral angles of worst elements
         "exude": True    # does something  - removes slivers
     },

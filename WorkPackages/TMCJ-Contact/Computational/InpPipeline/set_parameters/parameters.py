@@ -15,14 +15,15 @@ params_gen = params['general']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 #params_gen['mesh_root']    = '../MeshPipeline/outputs/ParamOptimisation/fullRuns/study4' # output_root in MeshPipeline
-params_gen['mesh_root']    = '../MeshPipeline/outputs/meshInd/study1-final'
+#params_gen['mesh_root']    = '../MeshPipeline/outputs/meshInd/study1-final'
+params_gen['mesh_root']    = 'outputs/element_count'
 
 #params_gen['subjects']  = ['14548R']
 #params_gen['subjects']     = ['22306R', '50037L', '14874R'] # provide list of subjects or set to None for all available subjects 
                                                                 # (assumes Meshpipeline dir layout)
-params_gen['subjects'] = ['50000R']              
+params_gen['subjects'] = None              
 
-params_gen['output_root']  = 'outputs/meshInd/study1'  # output dir for input files and meshes        # -------- *** -------- #
+params_gen['output_root']  = 'outputs/element_count-inp'  # output dir for input files and meshes        # -------- *** -------- #
 
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
 
@@ -59,7 +60,7 @@ params_inp['mc1_patch_params'] = ("euclidean", 6) # distance of BC patch from ca
 #params_inp['element_order'] = 'quad' # 'linear' (4 node) or 'quad' (10 node (~8x linear node count))
 
 # ELEMENT TYPES
-params_inp['element_type']      = ["C3D4", "C3D10"]
+params_inp['element_type']      = ["C3D10"]
 params_inp['cartilage_hybrid']  = True # e.g. C3D10H
 #params_inp['cartilage_element_type'] = "C3D10H"
 
