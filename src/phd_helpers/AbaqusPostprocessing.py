@@ -1,6 +1,14 @@
 import numpy as np
 import pandas as pd
+import re
+from pathlib import Path
 
+def parse_wallclock_time(dat_file):
+    text = Path(dat_file).read_text(errors="ignore")
+    matches = re.findall(r"WALLCLOCK TIME \(SEC\)\s*=\s*([0-9]+(?:\.[0-9]+)?)", text)
+    if not matches:
+        raise ValueError("Could not find WALLCLOCK TIME in .dat file")
+    return float(matches[-1])
 
 def get_history_path(DIR, step=0):
     return DIR / (f"history_step-{step}.csv")
