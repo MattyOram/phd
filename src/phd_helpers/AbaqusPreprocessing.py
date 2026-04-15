@@ -1,6 +1,8 @@
 import numpy as np
 import gdist
 from scipy.spatial.distance import cdist
+from pathlib import Path
+import re
 
 import pyvista as pv
 from collections import OrderedDict
@@ -101,6 +103,43 @@ def bone_surface_patch_nodes(mesh, patch_dist, distance_measure="euclidean", onl
     mesh.point_data['bc_patch'][bone_patch_nodes] = 1
 
     return bone_patch_nodes
+
+
+def parse_memory_estimate(dat_file):
+    """
+    Parse Abaqus .dat file MEMORY ESTIMATE table.
+
+    Returns:
+        {
+            "process": 1,
+            "minimum_memory_required_mb": 354,
+            "memory_to_minimize_io_mb": 3380,
+        }
+    """
+    text = Path(dat_file).read_text(errors="ignore")
+
+    pattern = re.compile(
+        r"""
+        M\s*E\s*M\s*O\s*R\s*Y\s+E\s*S\s*T\s*I\s*M\s*A\s*T\s*E   # heading
+        .*?                                                    # table header
+        ^\s*(\d+)\s+                                           # process
+        [0-9.E+-]+\s+                                          # floating point ops
+        (\d+)\s+                                               # minimum memory (MB)
+        (\d+)                                                  # memory to minimize I/O (MB)
+        \s*$
+        """,
+        re.IGNORECASE | re.DOTALL | re.MULTILINE | re.VERBOSE,
+    )
+
+    m = pattern.search(text)
+    if not m:
+        raise ValueError("Could not find Abaqus MEMORY ESTIMATE table in .dat file")
+
+    return {
+        "process": int(m.group(1)),
+        "minimum_memory_required_gb": int(m.group(2))/1e3,
+        "memory_to_minimize_io_gb": int(m.group(3))/1e3,
+    }
 
 
 
