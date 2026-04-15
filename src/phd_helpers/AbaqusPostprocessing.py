@@ -10,6 +10,13 @@ def parse_wallclock_time(dat_file):
         raise ValueError("Could not find WALLCLOCK TIME in .dat file")
     return float(matches[-1])
 
+def parse_final_step_time(sta_file):
+    text = Path(sta_file).read_text(errors="ignore")
+    matches = re.findall(r"^\s*\d+\s+\d+\s+\d+\s+\d+\s+\d+\s+\d+\s+([0-9]+(?:\.[0-9]+)?)", text, re.MULTILINE)
+    if not matches:
+        raise ValueError("Could not find step-time rows in .sta file")
+    return float(matches[-1])
+
 def get_history_path(DIR, step=0):
     return DIR / (f"history_step-{step}.csv")
 
