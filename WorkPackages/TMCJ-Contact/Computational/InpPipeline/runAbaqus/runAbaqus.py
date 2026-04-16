@@ -5,6 +5,8 @@ import tempfile
 import sys
 from pathlib import Path
 
+datacheck = True # just run pre.exe run datacheck 
+
 args = sys.argv
 if len(args) == 1:
     sub = "14548R"
@@ -62,24 +64,35 @@ with tempfile.TemporaryDirectory(prefix=f"abaqus_{job_name}_", dir=documents_dir
         "cpus=8",
         'memory="28gb"'
     ]
-    subprocess.run(cmd, cwd=tmp_dir, check=True)
-
-
-    # ------ POSTPROCESS ------------------------------------------------ #
-    try:
-        tmp_odb_path = tmp_dir / f"{job_name}.odb"
-
+    if datacheck:
         cmd = [
             "cmd",
             "/c",
             str(abaqus_cmd),
-            "python",
-            str(postprocess_file),
-            str(tmp_odb_path),
+            f"job={job_name}",
+            f"input={inp_file}",   # relative to cwd=tmp_dir
+            "datacheck",
+            "interactive"
         ]
-        subprocess.run(cmd, cwd=tmp_dir, check=True)
-    except:
-        print("Failed to postprocess")
+    subprocess.run(cmd, cwd=tmp_dir, check=True)
+
+
+    # ------ POSTPROCESS ------------------------------------------------ #
+    if not datacheck:
+        try:
+            tmp_odb_path = tmp_dir / f"{job_name}.odb"
+
+            cmd = [
+                "cmd",
+                "/c",
+                str(abaqus_cmd),
+                "python",
+                str(postprocess_file),
+                str(tmp_odb_path),
+            ]
+            subprocess.run(cmd, cwd=tmp_dir, check=True)
+        except:
+            print("Failed to postprocess")
 
     # ------ COPY RESULTS BACK ------------------------------------------ #
     for src in tmp_dir.iterdir():
