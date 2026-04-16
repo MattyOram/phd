@@ -41,8 +41,5 @@
   "equil_iters": 16,
   "sdi_iters": 15,
   "increment_attemps": 5,
-  "_loop": {
-    "element_type": "C3D4"
-  },
   "run_id": 0
 }

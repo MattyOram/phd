@@ -14,7 +14,7 @@ inps = np.sort(list(inp_root.glob('**/*.inp')))
 subjects     = None # e.g. ['14548R', '50000R', ...]
 poses        = None # e.g. ['neutral', 'flexion', ...]
 run_ids      = None # strings e.g. ['0', '1', ...]
-run_ids_mesh = ['15T', '25T'] # strings e.g. ['0-0-0', '0-0-1', ...]
+run_ids_mesh = ['35T', '4T'] # strings e.g. ['0-0-0', '0-0-1', ...]
 
 # --------------------------------------------------------------------------------------------- #
 

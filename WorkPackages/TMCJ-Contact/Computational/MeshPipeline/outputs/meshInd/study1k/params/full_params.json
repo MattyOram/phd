@@ -1,6 +1,6 @@
 {
   "global": {
-    "output_root": "outputs/meshInd/study1l",
+    "output_root": "outputs/meshInd/study1k",
     "allow_overwrite": true,
     "step_timeout": 1200,
     "steps": {
@@ -84,7 +84,7 @@
     "overwrite": true,
     "input_mesh": null,
     "output_filename": null,
-    "cgal_input_name": "2",
+    "cgal_input_name": "1",
     "save_cgal_inputs": false,
     "cgal_path": "/Users/maro/Library/CloudStorage/OneDrive-UniversityofLeeds/PhD-wrist/WorkPackages/WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/3Dmesh",
     "postprocess": true,
@@ -118,9 +118,10 @@
       },
       "optimisation": {
         "odt": [
-          true
+          false
         ],
         "lloyd": [
+          true,
           false
         ],
         "perturb": true,

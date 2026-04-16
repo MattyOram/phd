@@ -41,6 +41,11 @@ CADmodels/*
 **/MeshPipeline/**/outputs-redo/**/params/*
 !**/MeshPipeline/**/outputs-redo/**/params/*.json
 
+**/InpPipeline/**/outputs/**/inpFiles/*
+**/InpPipeline/**/outputs/**/params/*
+**/InpPipeline/**/outputs/**/reports/*
+!**/InpPipeline/**/outputs/**/params/*.json
+
 # mesh files
 *.obj
 *.stl
@@ -64,6 +69,7 @@ CADmodels/*
 *.cax
 *.mdl
 *.sim
+*.stt
 #*.sta # maybe keep
 
 

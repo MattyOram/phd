@@ -34,8 +34,8 @@ params = {
 params_glob = params['global']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
-#params_glob['output_root']     = 'outputs/meshInd/study1i'             # -------- ••• -------- #
-params_glob['output_root'] = 'outputs/element_count'
+params_glob['output_root']     = 'outputs/optimise_d0/study1a'             # -------- ••• -------- #
+#params_glob['output_root'] = 'outputs/element_count'
 
 params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
@@ -75,6 +75,8 @@ params_sub = params['subjects']
 #params_sub['subject_sideL'] = ['50000R'] # smallest contact area rank
 #params_sub['subject_sideL'] = ['50017L'] # middle
 #params_sub['subject_sideL'] = ['50034R'] # largest contact area rank
+
+params_sub['subject_sideL'] = ['14874R', '22306R', '50037L', '50000R', '50017L', '50034R']
 
 # all CMC subjects that pass both bone and cartilage interference checks for final params (TMCJ-Contact 2Dmesh->cartilage)
 #  - see: InterferenceCheckFinal/interference-box.ipynb
@@ -208,7 +210,7 @@ params_3D['keep_cgal_copy']     = False # keep copy of cgals ouput mesh - (pre p
 params_3D['cgal_params'] = { 
     # Sizing field params
     "sizing_field": {
-        "n_tets": 1.5,        # number of tetrahedrons accross thickness of cartilage
+        "n_tets": [1.5],        # number of tetrahedrons accross thickness of cartilage
         "min_size": params_cart['clamp_height'],   # min target circumradius within main cartilage region
         "max_size": 1.0,   # max target circumradius within main cartilage region
 
@@ -218,7 +220,7 @@ params_3D['cgal_params'] = {
 
         # bone ramp - bone surface/volume mesh grows with distance from interface
         "h_bone_max": 1.0,  # max circumradius - bone surface/volumetric mesh
-        "d0": [6]         # distance of growth region from interface circumradius to h_bone_max             
+        "d0": [4, 5, 6]         # distance of growth region from interface circumradius to h_bone_max             
     },                      # - ~8->10 mm covers whole tpm from tmcj saddle
 
     # Surface facet distance params - max deviation from origial mesh surface
@@ -256,7 +258,7 @@ params_3D['cgal_params'] = {
     # - see main.py
     "optimisation": { # This determines which of the following optimisation steps are used
         "odt": [False],    # can be great but can also delete tets if cart height close to cell size
-        "lloyd": [False],   # makes the mesh look very good - but think it just gets in the way of perturb sometimes
+        "lloyd": [True, False],   # makes the mesh look very good - but think it just gets in the way of perturb sometimes
         "perturb": True, # does good stuff - improves dihedral angles of worst elements
         "exude": True    # does something  - removes slivers
     },
