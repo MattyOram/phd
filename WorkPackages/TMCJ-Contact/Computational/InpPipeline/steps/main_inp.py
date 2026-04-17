@@ -106,6 +106,7 @@ step_type = params['step_type']
 nlgeom = params['nlgeom']
 unsymm = params['unsymm']
 convert_sdi = params['convert_sdi']
+extrapolation = params['extrapolation']
 
 equil_iters = params['equil_iters']
 sdi_iters = params['sdi_iters']
@@ -270,7 +271,8 @@ for pose in poses:
         max_increment_size = max_increment, 
         nlgeom = nlgeom,
         convert_sdi = convert_sdi,
-        unsymm=unsymm
+        unsymm=unsymm,
+        extrapolation=extrapolation
     )
 
     # CONTROLS
