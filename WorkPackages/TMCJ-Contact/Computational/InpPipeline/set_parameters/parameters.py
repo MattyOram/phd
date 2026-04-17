@@ -14,18 +14,18 @@ params = {
 params_gen = params['general']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
-params_gen['mesh_root']    = '../MeshPipeline/outputs/ParamOptimisation/optimise_d0/d5best' # output_root in MeshPipeline
-#params_gen['mesh_root']    = '../MeshPipeline/outputs/meshInd/study1-final'
+#params_gen['mesh_root']    = '../MeshPipeline/outputs/ParamOptimisation/optimise_d0/d5best' # output_root in MeshPipeline
 #params_gen['mesh_root']    = 'outputs/element_count'
-#params_gen['mesh_root']    = '../../../../Computational/MeshPipeline/outputs/initialFEAstuff/15T3Tbest'
+params_gen['mesh_root']    = '../../../../Computational/MeshPipeline/outputs/ParamOptimisation/optimise_d0/d5best'
 
 #params_gen['subjects']  = ['14548R']
 #params_gen['subjects']     = ['22306R', '50037L', '14874R'] # provide list of subjects or set to None for all available subjects 
                                                                 # (assumes Meshpipeline dir layout)
-params_gen['subjects'] = ['50000R', '50017L', '50034R']  # Contact area         
+#params_gen['subjects'] = ['50000R', '50017L', '50034R']  # Contact area         
+params_gen['subjects'] = ['50000R']
 
-params_gen['output_root']  = 'outputs/initialFEAstuff/poses_d5CAsubs'  # output dir for input files and meshes        # -------- *** -------- #
-#params_gen['output_root']  = 'outputs/15T3T_T10-inp'
+#params_gen['output_root']  = 'outputs/initialFEAstuff/poses_d5CAsubs'  # output dir for input files and meshes        # -------- *** -------- #
+params_gen['output_root']  = 'outputs/tweak_50000R_ext/study1-inp'
 
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
 
@@ -49,14 +49,13 @@ params_inp['overwrite'] = False
             #'neutral'
 #            ]
 
-params_inp['poses'] = [
-            'adduction', 'abduction', 'flexion', 'extension', 'pinch_load'
-            ]
+#params_inp['poses'] = ['adduction', 'abduction', 'flexion', 'extension', 'pinch_load']
+params_inp['poses'] = ['extension']
 
 #params_inp['save_meshes'] = False # can parse from inp files - also will currently overwrite for each run_id
 
 # PRE-PROCESSING #
-params_inp['target_dist'] = 0.02 # gap between cartilage at start of simulation
+params_inp['target_dist'] = 0.01 # gap between cartilage at start of simulation
 
 params_inp['tpm_patch_params'] = ("euclidean", 3) # distance of BC patch from cartilage boundary
 params_inp['mc1_patch_params'] = ("euclidean", 6) # distance of BC patch from cartilage boundary
@@ -66,8 +65,7 @@ params_inp['mc1_patch_params'] = ("euclidean", 6) # distance of BC patch from ca
 
 # ELEMENT TYPES
 params_inp['element_type']      = ["C3D10"]
-params_inp['cartilage_hybrid']  = True # e.g. C3D10H
-#params_inp['cartilage_element_type'] = "C3D10H"
+params_inp['cartilage_element_suffix']  = ['H', 'MH'] # e.g. H for C3D10H
 
 # BONE PROPERTIES
 params_inp['bone_material'] = {
@@ -82,7 +80,7 @@ params_inp['cartilage_material'] = {
                         "D1": 0.0         
                     }
 params_inp['cartilage_density']  = None
-params_inp['cartilage_friction'] = 0.0 # friction coefficient of 0.005 (Charnley, 1960)
+params_inp['cartilage_friction'] = [0.0, 0.01] # friction coefficient of 0.005 (Charnley, 1960)
 
 # REGION IDs
 params_inp['bone_vol_id']       = 1
@@ -96,14 +94,14 @@ params_inp['max_force'] = 50.0    # end analysis at this force
 
 # STEP PARAMS
 params_inp['total_step_time'] = abs(params_inp['mc1_disp_x']) # set to total displacement so that increment params don't have to change with displacement
-params_inp['initial_increment'] = params_inp['target_dist']+0.005        # +0.005 cos that's precision of initial position
+params_inp['initial_increment'] = params_inp['target_dist']        # +0.005 cos that's precision of initial position
 params_inp['min_increment'] = 0.001                                          
-params_inp['max_increment'] = 0.025
+params_inp['max_increment'] = [0.01, 0.025]
 
 params_inp['step_type']   = "STATIC"
 params_inp['nlgeom']      = "YES" # non-linear geometry
 params_inp['unsymm']      = "YES" # store unsymmetric matrix
-params_inp['convert_sdi'] = "NO" # if "NO" force a new iteration if severe discontinuities occur during an iteration, regardless of the magnitude of the penetration and force errors
+params_inp['convert_sdi'] = ["NO", "YES"] # if "NO" force a new iteration if severe discontinuities occur during an iteration, regardless of the magnitude of the penetration and force errors
 
 params_inp['equil_iters']       = 16 # default=16 - upper limit on the number of consecutive equilibrium iterations (without severe discontinuities) (4)
 params_inp['sdi_iters']         = 15 # deafult=12 - maximum number of severe discontinuity iterations allowed in an increment if CONVERT SDI=NO (7)

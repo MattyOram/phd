@@ -72,9 +72,7 @@ elif bone_element_type == 'C3D4':
 else:
     raise AssertionError(f'Element type not recognised: {bone_element_type}')
 
-cartilage_element_type = params['element_type']
-if params['cartilage_hybrid']:
-    cartilage_element_type += 'H'
+cartilage_element_type = params['element_type'] + params['cartilage_element_suffix']
 
 
 # BONE PROPERTIES
