@@ -307,14 +307,14 @@ for pose in poses:
         "RF1"
     ]
     )
-    #b.add_history_output_lines(
-    #    step_name,
-    #    [
-    #    "*OUTPUT, HISTORY",
-    #    "*CONTACT OUTPUT, SURFACE=tpm_INST.tpm_CART_SURF",
-    #    "CAREA"
-    #]
-    #) # don't remember when this was added or if it was verified to work
+    b.add_history_output_lines(
+        step_name,
+        [
+        "*OUTPUT, HISTORY, OP=ADD",
+        "*CONTACT OUTPUT",
+        "CAREA"
+        ]
+    )
 
     # FIELD OUTPUTS
     b.add_field_output_lines(
