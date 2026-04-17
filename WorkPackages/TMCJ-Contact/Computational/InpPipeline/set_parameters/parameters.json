@@ -1,16 +1,22 @@
 {
   "general": {
-    "mesh_root": "../MeshPipeline/outputs/meshInd/study1-final",
+    "mesh_root": "../MeshPipeline/outputs/ParamOptimisation/optimise_d0/d5best",
     "subjects": [
-      "50000R"
+      "50000R",
+      "50017L",
+      "50034R"
     ],
-    "output_root": "outputs/meshInd/study1",
+    "output_root": "outputs/initialFEAstuff/poses_d5CAsubs",
     "timeout": 1200
   },
   "inp": {
     "overwrite": false,
     "poses": [
-      "neutral"
+      "adduction",
+      "abduction",
+      "flexion",
+      "extension",
+      "pinch_load"
     ],
     "target_dist": 0.02,
     "tpm_patch_params": [
@@ -22,7 +28,7 @@
       6
     ],
     "element_type": [
-      "C3D4"
+      "C3D10"
     ],
     "cartilage_hybrid": true,
     "bone_material": {

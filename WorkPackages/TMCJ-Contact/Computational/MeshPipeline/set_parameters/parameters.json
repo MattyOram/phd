@@ -1,6 +1,6 @@
 {
   "global": {
-    "output_root": "outputs/meshInd/study1l",
+    "output_root": "outputs/initialFEAstuff/15T3Tb",
     "allow_overwrite": true,
     "step_timeout": 1200,
     "steps": {
@@ -12,7 +12,7 @@
   },
   "subjects": {
     "subject_sideL": [
-      "50000R"
+      "14548R"
     ],
     "bone_arbone": [
       "tpm-mc1",
@@ -92,8 +92,8 @@
     "cgal_params": {
       "sizing_field": {
         "n_tets": [
-          3.5,
-          4.0
+          1.5,
+          3
         ],
         "min_size": 0.015,
         "max_size": 1.0,

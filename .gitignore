@@ -41,6 +41,8 @@ CADmodels/*
 **/MeshPipeline/**/outputs-redo/**/params/*
 !**/MeshPipeline/**/outputs-redo/**/params/*.json
 
+**/meshInd/**/outputs/*
+
 **/InpPipeline/**/outputs/**/inpFiles/*
 **/InpPipeline/**/outputs/**/params/*
 **/InpPipeline/**/outputs/**/reports/*

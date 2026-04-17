@@ -5,7 +5,7 @@ import tempfile
 import sys
 from pathlib import Path
 
-datacheck = True # just run pre.exe run datacheck 
+datacheck = False # just run pre.exe run datacheck 
 
 args = sys.argv
 if len(args) == 1:

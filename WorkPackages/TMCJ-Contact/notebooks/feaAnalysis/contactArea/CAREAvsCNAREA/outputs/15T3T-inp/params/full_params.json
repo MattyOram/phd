@@ -1,10 +1,8 @@
 {
   "general": {
     "mesh_root": "outputs/element_count",
-    "subjects": [
-      "50000R"
-    ],
-    "output_root": "outputs/element_count-inp",
+    "subjects": null,
+    "output_root": "outputs/15T3T_T4-inp",
     "timeout": 1200
   },
   "inp": {
@@ -22,6 +20,7 @@
       6
     ],
     "element_type": [
+      "C3D4",
       "C3D10"
     ],
     "cartilage_hybrid": true,

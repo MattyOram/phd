@@ -9,7 +9,7 @@
   "keep_cgal_copy": false,
   "cgal_params": {
     "sizing_field": {
-      "n_tets": 1.5,
+      "n_tets": 1,
       "min_size": 0.015,
       "max_size": 1.0,
       "d_taper": 1.5,
@@ -58,6 +58,8 @@
       "sliver_bound": 0
     }
   },
-  "_loop": {},
+  "_loop": {
+    "cgal_params.sizing_field.n_tets": 1
+  },
   "run_id": 0
 }
