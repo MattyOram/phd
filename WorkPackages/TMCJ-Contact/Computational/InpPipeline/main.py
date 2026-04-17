@@ -284,6 +284,7 @@ for sub in subs:
         
 
         for run_id in range(run_count+1):
+            run_id = f'{run_id:02}'
             print(f"\t\tRUN ID: {run_id}")
             t0 = time.perf_counter()
 
