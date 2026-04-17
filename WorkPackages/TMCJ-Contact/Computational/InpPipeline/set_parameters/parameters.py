@@ -90,18 +90,19 @@ params_inp['cartilage_surf_id'] = -2
 # DISPLACEMENT / FORCE LIMITS
 params_inp['mc1_disp_x']  = -0.80 # end analysis at this displacement     - starting point is 0.01mm from contact
 #Forces = [10.0, 20.0]   # refine step time to hit these forces - would need to set user defined DT REFINEMENT - not worth it right now
-params_inp['max_force'] = 50.0    # end analysis at this force
+params_inp['max_force'] = 70.0    # end analysis at this force
 
 # STEP PARAMS
 params_inp['total_step_time'] = abs(params_inp['mc1_disp_x']) # set to total displacement so that increment params don't have to change with displacement
 params_inp['initial_increment'] = params_inp['target_dist']        # +0.005 cos that's precision of initial position
 params_inp['min_increment'] = 0.001                                          
-params_inp['max_increment'] = [0.01, 0.025]
+params_inp['max_increment'] = [0.025, 0.01]
 
 params_inp['step_type']   = "STATIC"
 params_inp['nlgeom']      = "YES" # non-linear geometry
 params_inp['unsymm']      = "YES" # store unsymmetric matrix
 params_inp['convert_sdi'] = ["NO", "YES"] # if "NO" force a new iteration if severe discontinuities occur during an iteration, regardless of the magnitude of the penetration and force errors
+params_inp['extrapolation'] = [None, "NO"] # set to None for default (deafault = "LINEAR" I think)
 
 params_inp['equil_iters']       = 16 # default=16 - upper limit on the number of consecutive equilibrium iterations (without severe discontinuities) (4)
 params_inp['sdi_iters']         = 15 # deafult=12 - maximum number of severe discontinuity iterations allowed in an increment if CONVERT SDI=NO (7)

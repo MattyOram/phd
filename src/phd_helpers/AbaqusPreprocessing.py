@@ -479,15 +479,17 @@ class AbaqusInpBuilder:
         max_increment_size: float,
         nlgeom: str = "YES",
         convert_sdi: str = "NO",
-        unsymm: str = "YES"
+        unsymm: str = "YES",
+        extrapolation: str | None = None,
     ):
         self.steps[step_name] = {
             "step_name": str(step_name),
             "nlgeom": str(nlgeom),
             "convert_sdi": str(convert_sdi),
-            'unsymm': str(unsymm),
+            "unsymm": str(unsymm),
+            "extrapolation": None if extrapolation is None else str(extrapolation).upper(),
             "step_type": str(step_type).upper(),
-            "step_params": f'{initial_increment_size}, {total_step_size}, {min_increment_size}, {max_increment_size}',
+            "step_params": f"{initial_increment_size}, {total_step_size}, {min_increment_size}, {max_increment_size}",
             "step_blocks": {
                 "step_blocks": [],
                 "control_blocks": [],
@@ -691,9 +693,14 @@ class AbaqusInpBuilder:
 
             # step blocks
             for step in self.steps.values():
-                f.write(
-                    f"*STEP, NAME={step['step_name']}, NLGEOM={step['nlgeom']}, CONVERT SDI={step['convert_sdi']}, UNSYMM={step['unsymm']}\n"
-                    )
+                step_line = (
+                    f"*STEP, NAME={step['step_name']}, NLGEOM={step['nlgeom']}, "
+                    f"CONVERT SDI={step['convert_sdi']}, UNSYMM={step['unsymm']}"
+                )
+                if step.get("extrapolation"):
+                    step_line += f", EXTRAPOLATION={step['extrapolation']}"
+                f.write(step_line + "\n")
+                
 
                 f.write(f"*{step['step_type']}\n")
                 f.write(step["step_params"].rstrip("\n") + "\n")
