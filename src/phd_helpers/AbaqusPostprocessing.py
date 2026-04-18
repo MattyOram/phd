@@ -370,6 +370,8 @@ ABAQUS_ELEM_TO_VTK = {
     "C3D10": pv.CellType.QUADRATIC_TETRA,
     "C3D4H": pv.CellType.TETRA,
     "C3D10H": pv.CellType.QUADRATIC_TETRA,
+    "C3D4MH": pv.CellType.TETRA,
+    "C3D10MH": pv.CellType.QUADRATIC_TETRA,
 }
 
 
