@@ -65,9 +65,9 @@ mc1_patch_params = params['mc1_patch_params']
 
 # ELEMENT TYPES
 bone_element_type = params['element_type']
-if bone_element_type == 'C3D10':
+if  'C3D10' in bone_element_type:
     element_order = 'quad'
-elif bone_element_type == 'C3D4':
+elif 'C3D4' in bone_element_type:
     element_order = 'linear'
 else:
     raise AssertionError(f'Element type not recognised: {bone_element_type}')
@@ -309,7 +309,7 @@ for pose in poses:
     b.add_history_output_lines(
         step_name,
         [
-        "*OUTPUT, HISTORY, SENSOR, NAME=mc1_RF1",
+        "*OUTPUT, HISTORY, SENSOR, NAME=mc1_RF1, OP=NEW",
         "*NODE OUTPUT, NSET=RP_mc1",
         "RF1"
     ]
@@ -317,7 +317,7 @@ for pose in poses:
     b.add_history_output_lines(
         step_name,
         [
-        "*OUTPUT, HISTORY, OP=ADD",
+        "*OUTPUT, HISTORY",
         "*CONTACT OUTPUT",
         "CAREA"
         ]
@@ -325,7 +325,7 @@ for pose in poses:
     b.add_history_output_lines(
         step_name,
         [
-            "*OUTPUT, HISTORY, OP=ADD",
+            "*OUTPUT, HISTORY",
             "*ENERGY OUTPUT",
             "ALLIE, ALLSD"
         ]
@@ -335,7 +335,7 @@ for pose in poses:
     b.add_field_output_lines(
         step_name,
         [
-        "*OUTPUT, FIELD",
+        "*OUTPUT, FIELD, OP=NEW",
         "**",
         "*NODE OUTPUT",
         "U, COORD",

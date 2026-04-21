@@ -155,7 +155,9 @@ class AbaqusInpBuilder:
 
     ELEMENT_TYPE_MAP = {
         'C3D4': 10,
-        'C3D10': 24
+        'C3D10': 24,
+        'C3D4M': 10,
+        'C3D10M': 24
     }
 
     def __init__(self):
