@@ -19,9 +19,11 @@ field_list = [
     "CPRESS",
     "CSTATUS",
     "U",
-    "S"
+    "VF",
+    "S",
 ]
 position_list = [
+    NODAL,
     NODAL,
     NODAL,
     NODAL,

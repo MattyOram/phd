@@ -338,7 +338,7 @@ for pose in poses:
         "*OUTPUT, FIELD, OP=NEW",
         "**",
         "*NODE OUTPUT",
-        "U, COORD",
+        "U, COORD, VF",
         "**",
         "*ELEMENT OUTPUT, POSITION=INTEGRATION POINTS",
         "S, LE, COORD",
