@@ -481,6 +481,9 @@ class AbaqusInpBuilder:
         convert_sdi: str = "NO",
         unsymm: str = "YES",
         extrapolation: str | None = None,
+        stabilize: bool = False,
+        stabilize_factor: float | None = None,
+        allsdtol: float | None = None,
     ):
         self.steps[step_name] = {
             "step_name": str(step_name),
@@ -488,6 +491,9 @@ class AbaqusInpBuilder:
             "convert_sdi": str(convert_sdi),
             "unsymm": str(unsymm),
             "extrapolation": None if extrapolation is None else str(extrapolation).upper(),
+            "stabilize": bool(stabilize),
+            "stabilize_factor": stabilize_factor,
+            "allsdtol": allsdtol,
             "step_type": str(step_type).upper(),
             "step_params": f"{initial_increment_size}, {total_step_size}, {min_increment_size}, {max_increment_size}",
             "step_blocks": {
@@ -700,9 +706,22 @@ class AbaqusInpBuilder:
                 if step.get("extrapolation"):
                     step_line += f", EXTRAPOLATION={step['extrapolation']}"
                 f.write(step_line + "\n")
-                
 
-                f.write(f"*{step['step_type']}\n")
+                if step["step_type"] == "STATIC" and step.get("stabilize", False):
+                    static_line = "*STATIC"
+
+                    if step.get("stabilize_factor") is not None:
+                        static_line += f", STABILIZE={step['stabilize_factor']}"
+                    else:
+                        static_line += ", STABILIZE"
+
+                    if step.get("allsdtol") is not None:
+                        static_line += f", ALLSDTOL={step['allsdtol']}"
+
+                    f.write(static_line + "\n")
+                else:
+                    f.write(f"*{step['step_type']}\n")
+
                 f.write(step["step_params"].rstrip("\n") + "\n")
                 f.write("**\n")
 

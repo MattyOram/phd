@@ -107,6 +107,10 @@ nlgeom = params['nlgeom']
 unsymm = params['unsymm']
 convert_sdi = params['convert_sdi']
 extrapolation = params['extrapolation']
+#stabilisation
+stabilize = params['stabilize']
+stabilize_factor = params['stabilize_factor']
+allsdtol = params['allsdtol']
 
 equil_iters = params['equil_iters']
 sdi_iters = params['sdi_iters']
@@ -265,14 +269,17 @@ for pose in poses:
     b.create_step(
         step_name = step_name,
         step_type = step_type,
-        initial_increment_size = initial_increment,     # starting point is 0.01mm from contact
-        total_step_size = total_step_time, # set to total displacement so that increment params don't have to change with displacement
+        initial_increment_size = initial_increment, 
+        total_step_size = total_step_time, 
         min_increment_size = min_increment,
         max_increment_size = max_increment, 
         nlgeom = nlgeom,
         convert_sdi = convert_sdi,
         unsymm=unsymm,
-        extrapolation=extrapolation
+        extrapolation=extrapolation,
+        stabilize=stabilize,
+        stabilize_factor=stabilize_factor,
+        allsdtol=allsdtol,
     )
 
     # CONTROLS
@@ -313,6 +320,14 @@ for pose in poses:
         "*OUTPUT, HISTORY, OP=ADD",
         "*CONTACT OUTPUT",
         "CAREA"
+        ]
+    )
+    b.add_history_output_lines(
+        step_name,
+        [
+            "*OUTPUT, HISTORY, OP=ADD",
+            "*ENERGY OUTPUT",
+            "ALLIE, ALLSD"
         ]
     )
 

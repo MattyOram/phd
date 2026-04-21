@@ -25,7 +25,7 @@ params_gen['mesh_root']    = '../../../../Computational/MeshPipeline/outputs/Par
 params_gen['subjects'] = ['50000R']
 
 #params_gen['output_root']  = 'outputs/initialFEAstuff/poses_d5CAsubs'  # output dir for input files and meshes        # -------- *** -------- #
-params_gen['output_root']  = 'outputs/tweak_50000R_ext/study1-inp'
+params_gen['output_root']  = 'outputs/tweak_50000R_ext/study2-inp'
 
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
 
@@ -64,8 +64,8 @@ params_inp['mc1_patch_params'] = ("euclidean", 6) # distance of BC patch from ca
 #params_inp['element_order'] = 'quad' # 'linear' (4 node) or 'quad' (10 node (~8x linear node count))
 
 # ELEMENT TYPES
-params_inp['element_type']      = ["C3D10"]
-params_inp['cartilage_element_suffix']  = ['H', 'MH'] # e.g. H for C3D10H
+params_inp['element_type']      = "C3D10"
+params_inp['cartilage_element_suffix']  = ['MH'] # e.g. H for C3D10H
 
 # BONE PROPERTIES
 params_inp['bone_material'] = {
@@ -80,7 +80,7 @@ params_inp['cartilage_material'] = {
                         "D1": 0.0         
                     }
 params_inp['cartilage_density']  = None
-params_inp['cartilage_friction'] = [0.0, 0.01] # friction coefficient of 0.005 (Charnley, 1960)
+params_inp['cartilage_friction'] = [0.01] # friction coefficient of 0.005 (Charnley, 1960)
 
 # REGION IDs
 params_inp['bone_vol_id']       = 1
@@ -96,13 +96,17 @@ params_inp['max_force'] = 70.0    # end analysis at this force
 params_inp['total_step_time'] = abs(params_inp['mc1_disp_x']) # set to total displacement so that increment params don't have to change with displacement
 params_inp['initial_increment'] = params_inp['target_dist']        # +0.005 cos that's precision of initial position
 params_inp['min_increment'] = 0.001                                          
-params_inp['max_increment'] = [0.025, 0.01]
+params_inp['max_increment'] = [0.01]
 
 params_inp['step_type']   = "STATIC"
 params_inp['nlgeom']      = "YES" # non-linear geometry
 params_inp['unsymm']      = "YES" # store unsymmetric matrix
-params_inp['convert_sdi'] = ["NO", "YES"] # if "NO" force a new iteration if severe discontinuities occur during an iteration, regardless of the magnitude of the penetration and force errors
-params_inp['extrapolation'] = [None, "NO"] # set to None for default (deafault = "LINEAR" I think)
+params_inp['convert_sdi'] = "YES" # if "NO" force a new iteration if severe discontinuities occur during an iteration, regardless of the magnitude of the penetration and force errors
+params_inp['extrapolation'] = None # set to None for default (default = "LINEAR" I think)
+# stabilize
+params_inp['stabilize'] = True # default = False (see: https://docs.software.vt.edu/abaqusv2024/English/SIMACAEANLRefMap/simaanl-c-nonlineareqns.htm#simaanl-c-nonlineareqns-stabilize-over)
+params_inp['stabilize_factor'] = 2e-4 # default = 2e-4
+params_inp['allsdtol'] = 0.05 # default = 0.05
 
 params_inp['equil_iters']       = 16 # default=16 - upper limit on the number of consecutive equilibrium iterations (without severe discontinuities) (4)
 params_inp['sdi_iters']         = 15 # deafult=12 - maximum number of severe discontinuity iterations allowed in an increment if CONVERT SDI=NO (7)

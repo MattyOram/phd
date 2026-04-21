@@ -4,7 +4,7 @@
     "subjects": [
       "50000R"
     ],
-    "output_root": "outputs/tweak_50000R_ext/study1-inp",
+    "output_root": "outputs/tweak_50000R_ext/study2-inp",
     "timeout": 1200
   },
   "inp": {
@@ -21,11 +21,8 @@
       "euclidean",
       6
     ],
-    "element_type": [
-      "C3D10"
-    ],
+    "element_type": "C3D10",
     "cartilage_element_suffix": [
-      "H",
       "MH"
     ],
     "bone_material": {
@@ -39,7 +36,6 @@
     },
     "cartilage_density": null,
     "cartilage_friction": [
-      0.0,
       0.01
     ],
     "bone_vol_id": 1,
@@ -51,20 +47,16 @@
     "initial_increment": 0.01,
     "min_increment": 0.001,
     "max_increment": [
-      0.025,
       0.01
     ],
     "step_type": "STATIC",
     "nlgeom": "YES",
     "unsymm": "YES",
-    "convert_sdi": [
-      "NO",
-      "YES"
-    ],
-    "extrapolation": [
-      null,
-      "NO"
-    ],
+    "convert_sdi": "YES",
+    "extrapolation": null,
+    "stabilize": true,
+    "stabilize_factor": 0.0002,
+    "allsdtol": 0.05,
     "equil_iters": 16,
     "sdi_iters": 15,
     "increment_attemps": 5
