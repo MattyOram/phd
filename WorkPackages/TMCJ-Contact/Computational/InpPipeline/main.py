@@ -216,7 +216,7 @@ def write_param_files(params, output_dir):
 
     last_run_id = -1
     for param in expand_params(params):
-        out_path = output_dir / f"{param['run_id']}.json"
+        out_path = output_dir / f"{param['run_id']:02}.json"
         with open(out_path, "w") as f:
             json.dump(param, f, indent=2)
         last_run_id = param["run_id"]
