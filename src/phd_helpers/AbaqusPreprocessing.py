@@ -458,14 +458,48 @@ class AbaqusInpBuilder:
     # ----------------------------
     # contact methods
     # ----------------------------
-    def set_contact(self, interaction_name, surfaces, friction=0.0):
-        """
-        pairs: list of (part_a, surf_a, part_b, surf_b)
-        """
+    def set_contact(
+        self,
+        interaction_name,
+        surfaces,
+        friction=0.0,
+        pressure_overclosure="HARD",
+        normal_data=None,
+    ):
         self.contacts[interaction_name] = {
+            "mode": "general_contact",
             "interaction_name": str(interaction_name),
             "friction": float(friction),
             "pairs": list(surfaces or []),
+            "pressure_overclosure": str(pressure_overclosure).upper(),
+            "normal_data": normal_data,
+        }
+
+    def set_contact_pair(
+        self,
+        interaction_name,
+        secondary_part,
+        secondary_surface,
+        main_part,
+        main_surface,
+        friction=0.0,
+        sliding="FINITE",
+        formulation="SURFACE TO SURFACE",
+        pressure_overclosure="HARD",
+        normal_data=None,
+    ):
+        self.contacts[interaction_name] = {
+            "mode": "contact_pair",
+            "interaction_name": str(interaction_name),
+            "friction": float(friction),
+            "secondary_part": str(secondary_part),
+            "secondary_surface": str(secondary_surface),
+            "main_part": str(main_part),
+            "main_surface": str(main_surface),
+            "sliding": str(sliding).upper(),          # "FINITE" or "SMALL"
+            "formulation": str(formulation).upper(),  # "SURFACE TO SURFACE"
+            "pressure_overclosure": str(pressure_overclosure).upper(),
+            "normal_data": normal_data,
         }
 
     # ----------------------------
@@ -681,19 +715,40 @@ class AbaqusInpBuilder:
                 f.write(f"{contact['friction']}\n")
                 f.write("**\n")
 
-                f.write("*CONTACT\n")
-                f.write("*CONTACT INCLUSIONS\n")
-                for (pa, sa, pb, sb) in contact["pairs"]:
-                    inst_a = self.parts[pa]["instance_name"]
-                    inst_b = self.parts[pb]["instance_name"]
-                    f.write(f"{inst_a}.{sa}, {inst_b}.{sb}\n")
+                if contact.get("mode") == "contact_pair":
+                    sec_inst = self.parts[contact["secondary_part"]]["instance_name"]
+                    main_inst = self.parts[contact["main_part"]]["instance_name"]
 
-                f.write("*CONTACT PROPERTY ASSIGNMENT\n")
-                for (pa, sa, pb, sb) in contact["pairs"]:
-                    inst_a = self.parts[pa]["instance_name"]
-                    inst_b = self.parts[pb]["instance_name"]
-                    f.write(f"{inst_a}.{sa}, {inst_b}.{sb}, {contact['interaction_name']}\n")
-                f.write("**\n")
+                    pair_line = (
+                        f"*CONTACT PAIR, INTERACTION={contact['interaction_name']}, "
+                        f"TYPE={contact['formulation']}"
+                    )
+
+                    if contact["sliding"] == "SMALL":
+                        pair_line += ", SMALL SLIDING"
+
+                    f.write(pair_line + "\n")
+                    f.write(
+                        f"{sec_inst}.{contact['secondary_surface']}, "
+                        f"{main_inst}.{contact['main_surface']}\n"
+                    )
+                    f.write("**\n")
+
+                else:
+                    # old general contact path
+                    f.write("*CONTACT\n")
+                    f.write("*CONTACT INCLUSIONS\n")
+                    for (pa, sa, pb, sb) in contact["pairs"]:
+                        inst_a = self.parts[pa]["instance_name"]
+                        inst_b = self.parts[pb]["instance_name"]
+                        f.write(f"{inst_a}.{sa}, {inst_b}.{sb}\n")
+
+                    f.write("*CONTACT PROPERTY ASSIGNMENT\n")
+                    for (pa, sa, pb, sb) in contact["pairs"]:
+                        inst_a = self.parts[pa]["instance_name"]
+                        inst_b = self.parts[pb]["instance_name"]
+                        f.write(f"{inst_a}.{sa}, {inst_b}.{sb}, {contact['interaction_name']}\n")
+                    f.write("**\n")
 
             # ==================================================
             # STEP + BCs + OUTPUTS
