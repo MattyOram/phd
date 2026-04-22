@@ -25,7 +25,7 @@ params_gen['mesh_root']    = '../../../../Computational/MeshPipeline/outputs/Par
 params_gen['subjects'] = ['50000R']
 
 #params_gen['output_root']  = 'outputs/initialFEAstuff/poses_d5CAsubs'  # output dir for input files and meshes        # -------- *** -------- #
-params_gen['output_root']  = 'outputs/tweak_50000R_ext/study3-inp'
+params_gen['output_root']  = 'outputs/tweak_50000R_ext/study4-inp'
 
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
 
@@ -64,7 +64,7 @@ params_inp['mc1_patch_params'] = ("euclidean", 6) # distance of BC patch from ca
 #params_inp['element_order'] = 'quad' # 'linear' (4 node) or 'quad' (10 node (~8x linear node count))
 
 # ELEMENT TYPES
-params_inp['element_type']      = "C3D10M" # M-Modified ARE INCOMPATIBLE WITH THE REGULAR TETRAHEDRAL ELEMENTS IF THEY SHARE THE SAME NODES
+params_inp['element_type']      = ["C3D10", "C3D10M"] # M-Modified ARE INCOMPATIBLE WITH THE REGULAR TETRAHEDRAL ELEMENTS IF THEY SHARE THE SAME NODES
 params_inp['cartilage_element_suffix']  = ['H'] # e.g. H for C3D10H
 
 # BONE PROPERTIES
@@ -77,10 +77,10 @@ params_inp['bone_density'] = None
 # CARTILAGE PROPERTIES
 params_inp['cartilage_material'] = {
                         "C10": 0.091,
-                        "D1": [0.0, 0.02]     # 0.0 = incompressible          
+                        "D1": [0.0]     # 0.0 = incompressible          
                     }
 params_inp['cartilage_density']  = None
-params_inp['cartilage_friction'] = [0.01, 0.0] # friction coefficient of 0.005 (Charnley, 1960)
+params_inp['cartilage_friction'] = [0.01] # friction coefficient of 0.005 (Charnley, 1960)
 
 # REGION IDs
 params_inp['bone_vol_id']       = 1
@@ -90,11 +90,11 @@ params_inp['cartilage_surf_id'] = -2
 # CONTACT
 params_inp['contact_type'] = "explicit" # "general" or "explicit"
 # if type == "general"
-params_inp['sliding'] = "FINITE" # "FINITE" or "SMALL" (default is finite)
-params_inp['overclosure'] = 'HARD' # 'HARD', 'LINEAR', 'EXPONENTIAL', "TABULAR"
-params_inp['normal_data'] = None # e.g. None, 500 MPa, (c0, p0), [(overclosure, pressure), ...]
-#c0 controls how much penetration is needed before contact becomes stiff (0.001 mm)
-#p0 is the contact pressure at zero overclosure. - (p0 = 0.01 MPa ~ <1% of pressure in region at <50N RF)
+params_inp['sliding'] = ["FINITE", "SMALL"] # "FINITE" or "SMALL" (default is finite)
+params_inp['overclosure'] = ['EXPONENTIAL', 'HARD'] # 'HARD', 'LINEAR', 'EXPONENTIAL', "TABULAR"
+params_inp['normal_data'] = [[0.002, 0.02]] # e.g. None, 500 MPa, (c0, p0), [(overclosure, pressure), ...] #! ALWAYS LIST !#
+#c0 controls how much penetration is needed before contact becomes stiff (0.002 mm ~10% of min thickness and <0.5% of avg )
+#p0 is the contact pressure at zero overclosure. - (p0 = 0.02 MPa ~ <1% of pressure in region at <50N RF)
 
 # DISPLACEMENT / FORCE LIMITS
 params_inp['mc1_disp_x']  = -0.80 # end analysis at this displacement     - starting point is 0.01mm from contact
@@ -113,8 +113,8 @@ params_inp['unsymm']      = "YES" # store unsymmetric matrix
 params_inp['convert_sdi'] = "YES" # if "NO" force a new iteration if severe discontinuities occur during an iteration, regardless of the magnitude of the penetration and force errors
 params_inp['extrapolation'] = None # set to None for default (default = "LINEAR" I think)
 # stabilize
-params_inp['stabilize'] = [True] # default = False (see: https://docs.software.vt.edu/abaqusv2024/English/SIMACAEANLRefMap/simaanl-c-nonlineareqns.htm#simaanl-c-nonlineareqns-stabilize-over)
-params_inp['stabilize_factor'] = [5e-3, 5e-2] # default = 2e-4 - STABILIZE factor is the dissipated energy fraction for the automatic damping algorithm
+params_inp['stabilize'] = False # default = False (see: https://docs.software.vt.edu/abaqusv2024/English/SIMACAEANLRefMap/simaanl-c-nonlineareqns.htm#simaanl-c-nonlineareqns-stabilize-over)
+params_inp['stabilize_factor'] = 0.1 # default = 2e-4 - STABILIZE factor is the dissipated energy fraction for the automatic damping algorithm
 params_inp['allsdtol'] = 0.05 # default = 0.05
 
 params_inp['equil_iters']       = 16 # default=16 - upper limit on the number of consecutive equilibrium iterations (without severe discontinuities) (4)

@@ -19,7 +19,7 @@ field_list = [
     "CPRESS",
     "CSTATUS",
     "U",
-    "VF",
+    #"VF",
     "S",
 ]
 position_list = [
@@ -27,7 +27,7 @@ position_list = [
     NODAL,
     NODAL,
     NODAL,
-    NODAL,
+    #NODAL,
     INTEGRATION_POINT
 ]
 

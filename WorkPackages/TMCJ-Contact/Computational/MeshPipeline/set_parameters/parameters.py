@@ -35,7 +35,7 @@ params_glob = params['global']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 #params_glob['output_root']     = 'outputs/ParamOptimisation/optimise_d0/study1d'             # -------- ••• -------- #
-params_glob['output_root'] = 'outputs/initialFEAstuff/15T3Tb'
+params_glob['output_root'] = 'outputs/initialFEAstuff/35T/35Tc'
 
 params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
@@ -59,7 +59,7 @@ params_glob['steps'] = {
 params_sub = params['subjects']
 
 
-params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side 
+#params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side 
 
 # range of cartilage thickness and bone size
 #params_sub['subject_sideL'] = ['14548R', '50045R', '50021R'] # Smed, Lthin, Mthin
@@ -72,7 +72,7 @@ params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side
 #params_sub['subject_sideL'] = ['22306R'] # Mmed
 #params_sub['subject_sideL'] = ['50037L'] # Lthick
 
-#params_sub['subject_sideL'] = ['50000R'] # smallest contact area rank
+params_sub['subject_sideL'] = ['50000R'] # smallest contact area rank
 #params_sub['subject_sideL'] = ['50017L'] # middle
 #params_sub['subject_sideL'] = ['50034R'] # largest contact area rank
 
@@ -194,7 +194,7 @@ params_3D['overwrite']          = True # overwrite postprocessed output mesh if 
 params_3D['input_mesh']         = None # filepath
 
 params_3D['output_filename']    = None # mesh filename (.vtu) (if keep_cgal_copy=True, cgal copy is auto given .mesh)
-params_3D['cgal_input_name']    = '2'   # filename add on for cgal inputs (assign unique per subprocess name!)    # -------- ••• -------- #
+params_3D['cgal_input_name']    = '1'   # filename add on for cgal inputs (assign unique per subprocess name!)    # -------- ••• -------- #
                                     # - CAN'T HAVE MUTIPLE PROCESSESS WITH THE SAME OUTPUT_ROOT 
                                     #   - that updates the cgal_input_name for the previously running one 
                                     # - shouldn't write all combos to file, should just pass full_params_id and combo id to each run
@@ -211,9 +211,10 @@ params_3D['keep_cgal_copy']     = False # keep copy of cgals ouput mesh - (pre p
 params_3D['cgal_params'] = { 
     # Sizing field params
     "sizing_field": {
-        "n_tets": [1.5, 3],        # number of tetrahedrons accross thickness of cartilage
+        "cartilage_sizing_mode": 'thickness_or_max', # 'n_tets' or 'thickness_or_max'
+        "n_tets": [3.5],        # number of tetrahedrons accross thickness of cartilage
         "min_size": params_cart['clamp_height'],   # min target circumradius within main cartilage region
-        "max_size": 1.0,   # max target circumradius within main cartilage region
+        "max_size": 0.24,   # max target circumradius within main cartilage region
 
         # edge size linearly increases from d_taper to cartilage boundary
         "d_taper": params_cart['taper_width'], # width of cartilage taper region that doesn't use height based size
@@ -221,7 +222,7 @@ params_3D['cgal_params'] = {
 
         # bone ramp - bone surface/volume mesh grows with distance from interface
         "h_bone_max": 1.0,  # max circumradius - bone surface/volumetric mesh
-        "d0": [6]         # distance of growth region from interface circumradius to h_bone_max             
+        "d0": [5]         # distance of growth region from interface circumradius to h_bone_max             
     },                      # - ~8->10 mm covers whole tpm from tmcj saddle
 
     # Surface facet distance params - max deviation from origial mesh surface
@@ -231,7 +232,7 @@ params_3D['cgal_params'] = {
                                             # - and doesn't make any noticable difference to surface deviation
         "fd_cart_near": 0.2, # target max facet distance - at cartilage boundary
         "fd_cart_far": 0.1,  # target max facet distance - at > d_taper from boundary (if None==df_cart_near)
-         "fd_edge_loop": None, # target max facet distance - edge loop (if None==fd_cart_near)
+        "fd_edge_loop": None, # target max facet distance - edge loop (if None==fd_cart_near)
         "d0_cart": 0,       # distance over which cartilage fd grows from d_taper towards boundary (<d_taper)
 
         "fd_bone": 1.0,      # target max facet distance - bone
@@ -258,8 +259,8 @@ params_3D['cgal_params'] = {
     # if flags are set to [True, False] then corresponding params are only looped over when flag==True 
     # - see main.py
     "optimisation": { # This determines which of the following optimisation steps are used
-        "odt": [True],    # can be great but can also delete tets if cart height close to cell size
-        "lloyd": [False],   # makes the mesh look very good - but think it just gets in the way of perturb sometimes
+        "odt": [False],    # can be great but can also delete tets if cart height close to cell size
+        "lloyd": [True, False],   # makes the mesh look very good - but think it just gets in the way of perturb sometimes
         "perturb": True, # does good stuff - improves dihedral angles of worst elements
         "exude": True    # does something  - removes slivers
     },

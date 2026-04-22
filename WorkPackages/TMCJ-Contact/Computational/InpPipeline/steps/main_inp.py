@@ -275,10 +275,10 @@ for pose in poses:
     else:
         b.set_contact_pair( # explicit contact pair
             interaction_name="CART_CONTACT",
-            main_part="mc1",
-            main_surface="mc1_CART_SURF",
-            secondary_part="tpm",
-            secondary_surface="tpm_CART_SURF",
+            secondary_part="mc1",
+            secondary_surface="mc1_CART_SURF",
+            main_part="tpm",
+            main_surface="tpm_CART_SURF",
             friction=cartilage_friction,
             sliding=sliding,          
             formulation="SURFACE TO SURFACE",
