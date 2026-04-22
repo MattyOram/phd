@@ -464,7 +464,7 @@ class AbaqusInpBuilder:
         surfaces,
         friction=0.0,
         pressure_overclosure="HARD",
-        normal_data=None,
+        normal_data=[None],
     ):
         self.contacts[interaction_name] = {
             "mode": "general_contact",
@@ -486,7 +486,7 @@ class AbaqusInpBuilder:
         sliding="FINITE",
         formulation="SURFACE TO SURFACE",
         pressure_overclosure="HARD",
-        normal_data=None,
+        normal_data=[None],
     ):
         self.contacts[interaction_name] = {
             "mode": "contact_pair",
@@ -711,6 +711,32 @@ class AbaqusInpBuilder:
             for contact in self.contacts.values():
                 f.write("**\n** Contact definition\n**\n")
                 f.write(f"*SURFACE INTERACTION, NAME={contact['interaction_name']}\n")
+
+                # ----- normal behavior -----
+                poc = contact.get("pressure_overclosure", "HARD").upper()
+                normal_data = contact.get("normal_data", None)
+
+                if poc == "HARD":
+                    f.write("*SURFACE BEHAVIOR, PRESSURE-OVERCLOSURE=HARD\n")
+
+                elif poc == "LINEAR":
+                    f.write("*SURFACE BEHAVIOR, PRESSURE-OVERCLOSURE=LINEAR\n")
+                    f.write(f"{float(normal_data[0])}\n")   # stiffness [MPa/mm]
+
+                elif poc == "EXPONENTIAL":
+                    f.write("*SURFACE BEHAVIOR, PRESSURE-OVERCLOSURE=EXPONENTIAL\n")
+                    c0, p0 = normal_data                 # correct order: c0 first, p0 second
+                    f.write(f"{float(c0)}, {float(p0)}\n")
+
+                elif poc == "TABULAR":
+                    f.write("*SURFACE BEHAVIOR, PRESSURE-OVERCLOSURE=TABULAR\n")
+                    for overclosure, pressure in normal_data:
+                        f.write(f"{float(overclosure)}, {float(pressure)}\n")
+
+                else:
+                    raise ValueError(f"Unsupported pressure_overclosure: {poc}")
+
+                # ----- tangential behavior -----
                 f.write("*FRICTION\n")
                 f.write(f"{contact['friction']}\n")
                 f.write("**\n")
@@ -735,7 +761,7 @@ class AbaqusInpBuilder:
                     f.write("**\n")
 
                 else:
-                    # old general contact path
+                    # general contact path
                     f.write("*CONTACT\n")
                     f.write("*CONTACT INCLUSIONS\n")
                     for (pa, sa, pb, sb) in contact["pairs"]:

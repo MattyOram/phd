@@ -123,7 +123,7 @@ def is_list_of_lists(x):
         and all(isinstance(item, list) for item in x)
     )
 
-always_list = ['poses', 'tpm_patch_params', 'mc1_patch_params']
+always_list = ['poses', 'tpm_patch_params', 'mc1_patch_params', 'normal_data']
 
 def find_loops(d, path=()):
     loops = []
