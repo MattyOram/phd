@@ -84,15 +84,9 @@ struct BoneCartField
   int sp_interface  = 3;
 
   // Cartilage sizing params
-  enum class CartilageSizingMode {
-    N_TETS,
-    THICKNESS_OR_MAX
-  };
-
-  CartilageSizingMode cartilage_sizing_mode = CartilageSizingMode::N_TETS;
   FT  n_tets     = 2.0;    // number of tetrahedrons accross thickness of cartilage
   FT  min_size   = 0.02; // min target edge length (or circumradius?) within main cartilage region
-  FT  max_size   = 0.50; // max target edge length (or circumradius?) within main cartilage region
+  FT  max_size   = 0.50; // min target edge length (or circumradius?) within main cartilage region
 
   // size linearly increases from d_taper to cartilage boundary
   FT  d_taper    = 1.50; // width of cartilage taper region (region that doesn't use height based size)
@@ -122,39 +116,27 @@ struct BoneCartField
     return std::sqrt(cart_boundary_tree->squared_distance(p));
   }
 
-  // "Main" cartilage size dictated by the selected cartilage sizing mode.
+  // "Main" cartilage size dictated by height proxy, with min clamp.
   // For volume: d_iface + d_outer
   // For interface: d_iface = 0
   // For cartilage outer: d_outer = 0
   FT cartilage_main_size(FT d_iface, FT d_outer) const {
     const FT h = d_iface + d_outer;
-
-    if (cartilage_sizing_mode == CartilageSizingMode::THICKNESS_OR_MAX) {
-      return (std::min)(h, max_size);
-    }
-
     const FT target = h / (std::max)(FT(1), n_tets);
     return std::clamp(target, min_size, max_size);
   }
 
-  FT cartilage_near_size() const {
-    if (cartilage_sizing_mode == CartilageSizingMode::THICKNESS_OR_MAX) {
-      return max_size;
-    }
-    return taper_size;
-  }
-
-  // Smoothed cartilage size: main sizing in interior; within taper band smoothly blend from the near-region size.
+  // Smoothed cartilage size: main sizing in interior; within taper band smoothly blend from taper_size.
   FT cartilage_size_smoothed(const Point_3& p, FT d_iface, FT d_outer) const {
     const FT main = cartilage_main_size(d_iface, d_outer);
 
     const FT d_bnd = dist_to_cart_boundary(p);
     if (d_bnd >= d_taper) return main;
 
-    // Blend only inside taper region: boundary -> near-region size, at d_taper -> main
+    // Blend only inside taper region: boundary -> taper_size, at d_taper -> main
     //const FT t = smoothstep01(d_bnd / d_taper); // not linear eases in and out - makes some bad cells much worse?
     const FT t = clamp01(d_bnd / d_taper); // linear
-    return lerp(cartilage_near_size(), main, t);
+    return lerp(taper_size, main, t);
   }
 
   // Bone size: ramp from local value (matching cartilage at the interface nearby) up to h_bone_max.
@@ -496,18 +478,6 @@ int main(int argc, char** argv)
     return 1;
   }
   const json& s = jp["sizing_field"];
-
-  {
-    const std::string cartilage_sizing_mode = s.value("cartilage_sizing_mode", std::string("n_tets"));
-    if (cartilage_sizing_mode == "n_tets") {
-      field.cartilage_sizing_mode = BoneCartField::CartilageSizingMode::N_TETS;
-    } else if (cartilage_sizing_mode == "thickness_or_max") {
-      field.cartilage_sizing_mode = BoneCartField::CartilageSizingMode::THICKNESS_OR_MAX;
-    } else {
-      std::cerr << "ERROR: sizing_field.cartilage_sizing_mode must be 'n_tets' or 'thickness_or_max'\n";
-      return 1;
-    }
-  }
 
   field.n_tets     = s.value("n_tets",     field.n_tets); // number of tetrahedrons accross thickness of cartilage
   field.min_size   = s.value("min_size",   field.min_size); // min target edge length (or circumradius?) within main cartilage region
