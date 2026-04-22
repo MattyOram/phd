@@ -178,9 +178,10 @@ struct BoneCartField
 
   FT operator()(const Point_3& p, int dim, const Index& index) const
   {
-    // 1D features (boundary curves): use the taper value
+    // 1D features (boundary curves): preserve old behavior for n_tets,
+    // but use the near-region target for thickness_or_max.
     if (dim == 1) {
-      return taper_size;
+      return cartilage_near_size();
     }
 
     if (dim == 2) {
