@@ -96,6 +96,12 @@ mc1_disp_x  = params['mc1_disp_x']
                             # - would need to set user defined DT REFINEMENT - not worth it right now
 max_force = params['max_force']
 
+# CONTACT
+contact_type = params['contact_type']
+sliding = params['sliding']
+overclosure = params['overclosure']
+normal_data = params['normal_data']
+
 # STEP PARAMS
 total_step_time = params['total_step_time']
 initial_increment = params['initial_increment']
@@ -258,11 +264,27 @@ for pose in poses:
 
 
     # CONTACT
-    b.set_contact(
-        interaction_name = "CART_CONTACT",
-        friction = cartilage_friction,
-        surfaces = [("tpm", "tpm_CART_SURF", "mc1", "mc1_CART_SURF")], # [(part1, surface1, part2, surface2)]
-    )
+    if contact_type == 'general':
+        b.set_contact(
+            interaction_name="CART_CONTACT",
+            friction=cartilage_friction,
+            surfaces=[("tpm", "tpm_CART_SURF", "mc1", "mc1_CART_SURF")],
+            pressure_overclosure=overclosure,
+            normal_data=normal_data,
+        )
+    else:
+        b.set_contact_pair( # explicit contact pair
+            interaction_name="CART_CONTACT",
+            main_part="mc1",
+            main_surface="mc1_CART_SURF",
+            secondary_part="tpm",
+            secondary_surface="tpm_CART_SURF",
+            friction=cartilage_friction,
+            sliding=sliding,          
+            formulation="SURFACE TO SURFACE",
+            pressure_overclosure=overclosure,
+            normal_data=normal_data,
+        )
 
     # STEP
     step_name = "MOVE"

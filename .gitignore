@@ -49,6 +49,7 @@ CADmodels/*
 !**/InpPipeline/**/outputs/**/params/*.json
 
 *.json
+*.jsonl
 # mesh files
 *.obj
 *.stl
