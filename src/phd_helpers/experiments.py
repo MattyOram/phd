@@ -101,3 +101,18 @@ def force_per_frame(frames, sensor_area=1.6129):
     sensor area in mm^2
     """
     return frames.sum(axis=(1, 2)) * sensor_area
+
+def get_sensor_loc(mc1_mesh, guide_wall_z=10, sensor_offset_z=-1, sensor_size=14):
+    """
+    mc1_mesh: should be aligned with x-axis with cartilage toward negative end\n
+    guide_wall_z: z offset of guide inner wall (was 10(mm) for skinny ledge and -6.9(mm) for big ledge)\n
+    sensor_offset_z: z offset of sensor from guide_wall (~ -1 mm) -ive if guide_wall_z is +ive and vice verse\n
+    \n
+    returns: sensor centre coord (normal is (1, 0, 0))
+    """
+
+    sign = np.sign(sensor_offset_z)
+    x = mc1_mesh.points[:, 0].min()
+    z = guide_wall_z + (sign*(sensor_size/2)) + sensor_offset_z
+    return np.array([x, 0, z])
+

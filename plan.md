@@ -16,3 +16,13 @@ PLAN FEA SENSITIVITY STUDY
  - Make the results match
 
 ### Aire
+
+
+
+
+
+
+### Change mc1 position logic
+ - make position_cylinder_mc1() function
+     - can then easily use on guide to visually verify guide suitability for each subject.
+     - 10mm between top of cyclinder and tip of mc1 cartilage
