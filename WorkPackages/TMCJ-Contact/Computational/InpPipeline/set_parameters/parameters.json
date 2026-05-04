@@ -1,16 +1,16 @@
 {
   "general": {
-    "mesh_root": "../../../../Computational/MeshPipeline/outputs/ParamOptimisation/optimise_d0/d5best",
+    "mesh_root": "../MeshPipeline/outputs/initialFEAstuff/35T/35Tbest",
     "subjects": [
-      "50000R"
+      "14548R"
     ],
-    "output_root": "outputs/tweak_50000R_ext/study4-inp",
+    "output_root": "outputs/initialFEAstuff/accuracy/study1_35T4d5",
     "timeout": 1200
   },
   "inp": {
     "overwrite": true,
     "poses": [
-      "extension"
+      "neutral"
     ],
     "target_dist": 0.01,
     "tpm_patch_params": [
@@ -22,8 +22,7 @@
       6
     ],
     "element_type": [
-      "C3D10",
-      "C3D10M"
+      "C3D4"
     ],
     "cartilage_element_suffix": [
       "H"
@@ -46,13 +45,11 @@
     "bone_vol_id": 1,
     "cartilage_vol_id": 2,
     "cartilage_surf_id": -2,
-    "contact_type": "explicit",
-    "sliding": [
-      "FINITE",
-      "SMALL"
+    "contact_type": [
+      "explicit"
     ],
+    "sliding": "FINITE",
     "overclosure": [
-      "EXPONENTIAL",
       "HARD"
     ],
     "normal_data": [
@@ -61,9 +58,9 @@
         0.02
       ]
     ],
-    "mc1_disp_x": -0.8,
-    "max_force": 70.0,
-    "total_step_time": 0.8,
+    "mc1_disp_x": -1.0,
+    "max_force": 150.0,
+    "total_step_time": 1.0,
     "initial_increment": 0.01,
     "min_increment": 0.001,
     "max_increment": [

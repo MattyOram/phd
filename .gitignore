@@ -48,6 +48,10 @@ CADmodels/*
 **/InpPipeline/**/outputs/**/reports/*
 !**/InpPipeline/**/outputs/**/params/*.json
 
+# lab data
+**/Experimental/LabData/*
+**/Experimental/**/figs/*
+
 *.json
 *.jsonl
 # mesh files

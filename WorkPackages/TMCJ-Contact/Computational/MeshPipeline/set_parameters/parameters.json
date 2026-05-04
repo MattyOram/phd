@@ -1,6 +1,6 @@
 {
   "global": {
-    "output_root": "outputs/initialFEAstuff/35T/35Tc",
+    "output_root": "outputs/initialFEAstuff/35T/35Tg",
     "allow_overwrite": true,
     "step_timeout": 1200,
     "steps": {
@@ -12,7 +12,7 @@
   },
   "subjects": {
     "subject_sideL": [
-      "50000R"
+      "14548R"
     ],
     "bone_arbone": [
       "tpm-mc1",
@@ -84,19 +84,19 @@
     "overwrite": true,
     "input_mesh": null,
     "output_filename": null,
-    "cgal_input_name": "1",
+    "cgal_input_name": "2",
     "save_cgal_inputs": false,
     "cgal_path": "/Users/maro/Library/CloudStorage/OneDrive-UniversityofLeeds/PhD-wrist/WorkPackages/WorkPackages/TMCJ-Contact/Computational/MeshPipeline/cpp/3Dmesh",
     "postprocess": true,
     "keep_cgal_copy": false,
     "cgal_params": {
       "sizing_field": {
-        "cartilage_sizing_mode": "thickness_or_max",
+        "cartilage_sizing_mode": "n_tets",
         "n_tets": [
           3.5
         ],
         "min_size": 0.015,
-        "max_size": 0.24,
+        "max_size": 1.0,
         "d_taper": 1.5,
         "taper_size": 0.25,
         "h_bone_max": 1.0,
@@ -118,10 +118,9 @@
       },
       "optimisation": {
         "odt": [
-          false
+          true
         ],
         "lloyd": [
-          true,
           false
         ],
         "perturb": true,

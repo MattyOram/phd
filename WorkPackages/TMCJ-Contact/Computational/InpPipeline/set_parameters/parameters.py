@@ -14,18 +14,18 @@ params = {
 params_gen = params['general']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
-#params_gen['mesh_root']    = '../MeshPipeline/outputs/ParamOptimisation/optimise_d0/d5best' # output_root in MeshPipeline
+params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/35Tbest' # output_root in MeshPipeline
 #params_gen['mesh_root']    = 'outputs/element_count'
-params_gen['mesh_root']    = '../../../../Computational/MeshPipeline/outputs/ParamOptimisation/optimise_d0/d5best'
+#params_gen['mesh_root']    = '../../../../Computational/MeshPipeline/outputs/initialFEAstuff/35T/35Tbest'
 
 #params_gen['subjects']  = ['14548R']
 #params_gen['subjects']     = ['22306R', '50037L', '14874R'] # provide list of subjects or set to None for all available subjects 
                                                                 # (assumes Meshpipeline dir layout)
 #params_gen['subjects'] = ['50000R', '50017L', '50034R']  # Contact area         
-params_gen['subjects'] = ['50000R']
+params_gen['subjects'] = ['14548R']
 
-#params_gen['output_root']  = 'outputs/initialFEAstuff/poses_d5CAsubs'  # output dir for input files and meshes        # -------- *** -------- #
-params_gen['output_root']  = 'outputs/tweak_50000R_ext/study4-inp'
+params_gen['output_root']  = 'outputs/initialFEAstuff/accuracy/study1_35T4d5'  # output dir for input files and meshes        # -------- *** -------- #
+#params_gen['output_root']  = 'outputs/tweak_50000R_ext/study6-inp'
 
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
 
@@ -50,7 +50,7 @@ params_inp['overwrite'] = True
 #            ]
 
 #params_inp['poses'] = ['adduction', 'abduction', 'flexion', 'extension', 'pinch_load']
-params_inp['poses'] = ['extension']
+params_inp['poses'] = ['neutral']
 
 #params_inp['save_meshes'] = False # can parse from inp files - also will currently overwrite for each run_id
 
@@ -64,7 +64,7 @@ params_inp['mc1_patch_params'] = ("euclidean", 6) # distance of BC patch from ca
 #params_inp['element_order'] = 'quad' # 'linear' (4 node) or 'quad' (10 node (~8x linear node count))
 
 # ELEMENT TYPES
-params_inp['element_type']      = ["C3D10", "C3D10M"] # M-Modified ARE INCOMPATIBLE WITH THE REGULAR TETRAHEDRAL ELEMENTS IF THEY SHARE THE SAME NODES
+params_inp['element_type']      = ["C3D4"] # M-Modified ARE INCOMPATIBLE WITH THE REGULAR TETRAHEDRAL ELEMENTS IF THEY SHARE THE SAME NODES
 params_inp['cartilage_element_suffix']  = ['H'] # e.g. H for C3D10H
 
 # BONE PROPERTIES
@@ -88,18 +88,18 @@ params_inp['cartilage_vol_id']  = 2
 params_inp['cartilage_surf_id'] = -2
 
 # CONTACT
-params_inp['contact_type'] = "explicit" # "general" or "explicit"
+params_inp['contact_type'] = ["explicit"] # "general" or "explicit"
 # if type == "general"
-params_inp['sliding'] = ["FINITE", "SMALL"] # "FINITE" or "SMALL" (default is finite)
-params_inp['overclosure'] = ['EXPONENTIAL', 'HARD'] # 'HARD', 'LINEAR', 'EXPONENTIAL', "TABULAR"
+params_inp['sliding'] = "FINITE" # "FINITE" or "SMALL" (default is finite) - can't use SMALL
+params_inp['overclosure'] = ['HARD'] # 'HARD', 'LINEAR', 'EXPONENTIAL', "TABULAR"
 params_inp['normal_data'] = [[0.002, 0.02]] # e.g. None, 500 MPa, (c0, p0), [(overclosure, pressure), ...] #! ALWAYS LIST !#
 #c0 controls how much penetration is needed before contact becomes stiff (0.002 mm ~10% of min thickness and <0.5% of avg )
 #p0 is the contact pressure at zero overclosure. - (p0 = 0.02 MPa ~ <1% of pressure in region at <50N RF)
 
 # DISPLACEMENT / FORCE LIMITS
-params_inp['mc1_disp_x']  = -0.80 # end analysis at this displacement     - starting point is 0.01mm from contact
+params_inp['mc1_disp_x']  = -1.0 # end analysis at this displacement     - starting point is 0.01mm from contact
 #Forces = [10.0, 20.0]   # refine step time to hit these forces - would need to set user defined DT REFINEMENT - not worth it right now
-params_inp['max_force'] = 70.0    # end analysis at this force
+params_inp['max_force'] = 150.0    # end analysis at this force
 
 # STEP PARAMS
 params_inp['total_step_time'] = abs(params_inp['mc1_disp_x']) # set to total displacement so that increment params don't have to change with displacement
