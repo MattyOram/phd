@@ -21,6 +21,7 @@ field_list = [
     "U",
     #"VF",
     "S",
+    "LE"
 ]
 position_list = [
     NODAL,
@@ -28,6 +29,7 @@ position_list = [
     NODAL,
     NODAL,
     #NODAL,
+    INTEGRATION_POINT,
     INTEGRATION_POINT
 ]
 
