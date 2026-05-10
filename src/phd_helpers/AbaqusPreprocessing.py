@@ -596,9 +596,22 @@ class AbaqusInpBuilder:
                 if model == "elastic":
                     f.write("*ELASTIC\n")
                     f.write(f"{float(mat['props']['E'])}, {float(mat['props']['nu'])}\n")
-                elif model in ("neo_hooke", "neo_hookean", "neohooke"):
+
+                elif model == "neo_hookean":
                     f.write("*HYPERELASTIC, NEO HOOKE\n")
                     f.write(f"{float(mat['props']['C10'])}, {float(mat['props']['D1'])}\n")
+
+                elif model == "ogden":
+                    f.write(f"*HYPERELASTIC, OGDEN, N={int(mat['props']['n'])}\n")
+                    f.write(
+                        f"{float(mat['props']['mu1'])}, "
+                        f"{float(mat['props']['alpha1'])}, "
+                        #f"{float(mat['props']['mu2'])}, "
+                        #f"{float(mat['props']['alpha2'])}, "
+                        f"{float(mat['props']['D1'])}\n"
+                        #f"{float(mat['props']['D2'])}\n"
+                    )
+
                 else:
                     raise ValueError(f"Unknown material_model '{mat['model']}' for '{mat_name}'")
 

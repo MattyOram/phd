@@ -77,10 +77,12 @@ cartilage_element_type = params['element_type'] + params['cartilage_element_suff
 
 # BONE PROPERTIES
 bone_material = params['bone_material']
+bone_model = bone_material.pop('model')
 bone_density = params['bone_density']
 
 # CARTILAGE PROPERTIES
 cartilage_material = params['cartilage_material']
+cartilage_model = cartilage_material.pop('model')
 cartilage_density = params['cartilage_density']
 
 cartilage_friction = params['cartilage_friction']
@@ -222,8 +224,8 @@ for pose in poses:
     b.set_region_ids(bone_vol_id, cartilage_vol_id, cartilage_surf_id)
 
     # MATERIALS
-    b.create_material("BONE", "elastic", bone_material, density=bone_density)
-    b.create_material("CARTILAGE", "neo_hooke", cartilage_material, density=cartilage_density)
+    b.create_material("BONE", bone_model, bone_material, density=bone_density)
+    b.create_material("CARTILAGE", cartilage_model, cartilage_material, density=cartilage_density)
 
     # PARTS
     b.add_part_from_vtu("tpm", tpm_mesh, instance_name="tpm_INST", mode='mesh')
