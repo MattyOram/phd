@@ -12,7 +12,7 @@ PLAN FEA SENSITIVITY STUDY
 
 ### Accuracy study for 14548neutral35T-d5 
  - Compare current setup with experimental results
- - Do FE param sensitivity study for this subject
+ - Do FE param sensitivity study for this subject (try elastico material models that have different behaviour in tension)
  - Make the results match
 
 ### Aire

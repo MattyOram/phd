@@ -24,7 +24,7 @@ params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/35Tbes
 #params_gen['subjects'] = ['50000R', '50017L', '50034R']  # Contact area         
 params_gen['subjects'] = ['14548R']
 
-params_gen['output_root']  = 'outputs/initialFEAstuff/accuracy/study1_35T4d5'  # output dir for input files and meshes        # -------- *** -------- #
+params_gen['output_root']  = 'outputs/initialFEAstuff/sensitivity/study2_35T4d5'  # output dir for input files and meshes        # -------- *** -------- #
 #params_gen['output_root']  = 'outputs/tweak_50000R_ext/study6-inp'
 
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
@@ -69,18 +69,27 @@ params_inp['cartilage_element_suffix']  = ['H'] # e.g. H for C3D10H
 
 # BONE PROPERTIES
 params_inp['bone_material'] = {
-                        "E": 1629, # MPa
-                        "nu": 0.4
+                        "model": "elastic",
+                        "E": [1500, 3000], # MPa
+                        "nu": [0.25, 0.45]
                     }
 params_inp['bone_density'] = None
 
 # CARTILAGE PROPERTIES
+#params_inp['cartilage_material'] = {
+#                        "model":"neo_hookean",
+#                        "C10": [0.085, 0.11],
+#                        "D1": [0.0, 1.0]     # 0.0 = incompressible          
+#                    }
 params_inp['cartilage_material'] = {
-                        "C10": 0.091,
-                        "D1": [0.0]     # 0.0 = incompressible          
+                        "model":"ogden",
+                        "n": 1,
+                        "mu1": 0.2022,
+                        "alpha1": 3.1960,
+                        "D1": 0.0,             
                     }
 params_inp['cartilage_density']  = None
-params_inp['cartilage_friction'] = [0.01] # friction coefficient of 0.005 (Charnley, 1960)
+params_inp['cartilage_friction'] = [0.0, 1.0] # friction coefficient of 0.005 (Charnley, 1960)
 
 # REGION IDs
 params_inp['bone_vol_id']       = 1
@@ -99,7 +108,7 @@ params_inp['normal_data'] = [[0.002, 0.02]] # e.g. None, 500 MPa, (c0, p0), [(ov
 # DISPLACEMENT / FORCE LIMITS
 params_inp['mc1_disp_x']  = -1.0 # end analysis at this displacement     - starting point is 0.01mm from contact
 #Forces = [10.0, 20.0]   # refine step time to hit these forces - would need to set user defined DT REFINEMENT - not worth it right now
-params_inp['max_force'] = 150.0    # end analysis at this force
+params_inp['max_force'] = [50]    # end analysis at this force
 
 # STEP PARAMS
 params_inp['total_step_time'] = abs(params_inp['mc1_disp_x']) # set to total displacement so that increment params don't have to change with displacement
