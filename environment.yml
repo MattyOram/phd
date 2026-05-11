@@ -19,6 +19,8 @@ dependencies:
   - meshio
   - pymeshfix
   - vtk
+  - networkx
+  - lxml
 pip:
   - nest_asyncio2
   - tvb-gdist

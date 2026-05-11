@@ -52,6 +52,9 @@ CADmodels/*
 **/Experimental/LabData/*
 **/Experimental/**/figs/*
 
+# CAD files
+**/3Dprints/*
+
 *.json
 *.jsonl
 # mesh files
