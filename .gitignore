@@ -82,6 +82,7 @@ CADmodels/*
 *.sim
 *.stt
 #*.sta # maybe keep
+*.tar.gz
 
 
 # random csv files
