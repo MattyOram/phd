@@ -24,7 +24,7 @@ params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/35Tbes
 #params_gen['subjects'] = ['50000R', '50017L', '50034R']  # Contact area         
 params_gen['subjects'] = ['14548R']
 
-params_gen['output_root']  = 'outputs/initialFEAstuff/sensitivity/study2_35T4d5'  # output dir for input files and meshes        # -------- *** -------- #
+params_gen['output_root']  = 'outputs/initialFEAstuff/sensitivity/study4_35T4d5'  # output dir for input files and meshes        # -------- *** -------- #
 #params_gen['output_root']  = 'outputs/tweak_50000R_ext/study6-inp'
 
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
@@ -84,12 +84,12 @@ params_inp['bone_density'] = None
 params_inp['cartilage_material'] = {
                         "model":"ogden",
                         "n": 1,
-                        "mu1": 0.2022,
-                        "alpha1": 3.1960,
-                        "D1": 0.0,             
+                        "mu1": 0.1786,
+                        "alpha1": 0.2794,
+                        "D1": [0.0, 1.0],             
                     }
 params_inp['cartilage_density']  = None
-params_inp['cartilage_friction'] = [0.0, 1.0] # friction coefficient of 0.005 (Charnley, 1960)
+params_inp['cartilage_friction'] = [0.0, 1.0] # real cartilage friction coefficient ~ 0.005 (Charnley, 1960)
 
 # REGION IDs
 params_inp['bone_vol_id']       = 1
