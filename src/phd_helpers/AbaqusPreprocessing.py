@@ -601,16 +601,19 @@ class AbaqusInpBuilder:
                     f.write("*HYPERELASTIC, NEO HOOKE\n")
                     f.write(f"{float(mat['props']['C10'])}, {float(mat['props']['D1'])}\n")
 
+                # max of 8 values on each line!!! so only works up to n=2
                 elif model == "ogden":
-                    f.write(f"*HYPERELASTIC, OGDEN, N={int(mat['props']['n'])}\n")
-                    f.write(
-                        f"{float(mat['props']['mu1'])}, "
-                        f"{float(mat['props']['alpha1'])}, "
-                        #f"{float(mat['props']['mu2'])}, "
-                        #f"{float(mat['props']['alpha2'])}, "
-                        f"{float(mat['props']['D1'])}\n"
-                        #f"{float(mat['props']['D2'])}\n"
-                    )
+                    n = int(mat['props']['n'])
+                    f.write(f"*HYPERELASTIC, OGDEN, N={n}\n")
+
+                    for i in range(n):
+                        f.write(
+                            f"{float(mat['props'][f'mu{i+1}'])}, "
+                            f"{float(mat['props'][f'alpha{i+1}'])}, "
+                        )
+                    for i in range(n):
+                        end = "\n" if i == n - 1 else ", "
+                        f.write(f"{float(mat['props'][f'D{i+1}'])}{end}")
 
                 else:
                     raise ValueError(f"Unknown material_model '{mat['model']}' for '{mat_name}'")
