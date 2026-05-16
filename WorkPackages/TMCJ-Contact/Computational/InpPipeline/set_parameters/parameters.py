@@ -24,8 +24,8 @@ params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/35Tbes
 #params_gen['subjects'] = ['50000R', '50017L', '50034R']  # Contact area         
 params_gen['subjects'] = ['14548R']
 
-params_gen['output_root']  = 'outputs/initialFEAstuff/sensitivity/study4_35T4d5'  # output dir for input files and meshes        # -------- *** -------- #
-#params_gen['output_root']  = 'outputs/tweak_50000R_ext/study6-inp'
+params_gen['output_root']  = 'outputs/initialFEAstuff/sensitivity/study5d_35T4d5'  # output dir for input files and meshes        # -------- *** -------- #
+#params_gen['output_root']  = 'outputs/testing/ogden'
 
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
 
@@ -70,12 +70,12 @@ params_inp['cartilage_element_suffix']  = ['H'] # e.g. H for C3D10H
 # BONE PROPERTIES
 params_inp['bone_material'] = {
                         "model": "elastic",
-                        "E": [1500, 3000], # MPa
+                        "E": [1400, 3000], # MPa
                         "nu": [0.25, 0.45]
                     }
 params_inp['bone_density'] = None
 
-# CARTILAGE PROPERTIES
+# CARTILAGE PROPERTIES - "currently accepts 'neo-hookean' or 'ogden'"
 #params_inp['cartilage_material'] = {
 #                        "model":"neo_hookean",
 #                        "C10": [0.085, 0.11],
@@ -84,9 +84,12 @@ params_inp['bone_density'] = None
 params_inp['cartilage_material'] = {
                         "model":"ogden",
                         "n": 1,
-                        "mu1": 0.1786,
-                        "alpha1": 0.2794,
-                        "D1": [0.0, 1.0],             
+                        "mu1": 3.1759, 
+                        "alpha1": -0.6351,
+                        "mu2": -3.0012, 
+                        "alpha2": -0.6804,
+                        "D1": [0.0, 1.1841],  
+                        "D2": 0.0           
                     }
 params_inp['cartilage_density']  = None
 params_inp['cartilage_friction'] = [0.0, 1.0] # real cartilage friction coefficient ~ 0.005 (Charnley, 1960)
@@ -100,8 +103,9 @@ params_inp['cartilage_surf_id'] = -2
 params_inp['contact_type'] = ["explicit"] # "general" or "explicit"
 # if type == "general"
 params_inp['sliding'] = "FINITE" # "FINITE" or "SMALL" (default is finite) - can't use SMALL
-params_inp['overclosure'] = ['HARD'] # 'HARD', 'LINEAR', 'EXPONENTIAL', "TABULAR"
-params_inp['normal_data'] = [[0.002, 0.02]] # e.g. None, 500 MPa, (c0, p0), [(overclosure, pressure), ...] #! ALWAYS LIST !#
+params_inp['overclosure'] = 'HARD' # 'HARD', 'LINEAR', 'EXPONENTIAL', "TABULAR"
+params_inp['normal_data'] = [None]
+#params_inp['normal_data'] = [[0.002, 0.02]] # e.g. [None], [500] MPa, [(c0, p0)], [(overclosure, pressure), ...] #! ALWAYS LIST !
 #c0 controls how much penetration is needed before contact becomes stiff (0.002 mm ~10% of min thickness and <0.5% of avg )
 #p0 is the contact pressure at zero overclosure. - (p0 = 0.02 MPa ~ <1% of pressure in region at <50N RF)
 

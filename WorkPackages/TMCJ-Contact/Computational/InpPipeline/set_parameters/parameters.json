@@ -4,7 +4,7 @@
     "subjects": [
       "14548R"
     ],
-    "output_root": "outputs/initialFEAstuff/sensitivity/study4_35T4d5",
+    "output_root": "outputs/initialFEAstuff/sensitivity/study5d_35T4d5",
     "timeout": 1200
   },
   "inp": {
@@ -30,7 +30,7 @@
     "bone_material": {
       "model": "elastic",
       "E": [
-        1500,
+        1400,
         3000
       ],
       "nu": [
@@ -42,12 +42,15 @@
     "cartilage_material": {
       "model": "ogden",
       "n": 1,
-      "mu1": 0.1786,
-      "alpha1": 0.2794,
+      "mu1": 3.1759,
+      "alpha1": -0.6351,
+      "mu2": -3.0012,
+      "alpha2": -0.6804,
       "D1": [
         0.0,
-        1.0
-      ]
+        1.1841
+      ],
+      "D2": 0.0
     },
     "cartilage_density": null,
     "cartilage_friction": [
@@ -61,14 +64,9 @@
       "explicit"
     ],
     "sliding": "FINITE",
-    "overclosure": [
-      "HARD"
-    ],
+    "overclosure": "HARD",
     "normal_data": [
-      [
-        0.002,
-        0.02
-      ]
+      null
     ],
     "mc1_disp_x": -1.0,
     "max_force": [

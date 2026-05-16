@@ -90,3 +90,5 @@ CADmodels/*
 **/Interference-smooth/*
 **/notebooks/MeshPipeline/ParamOptimisation/**/outputs/*
 **/resultCSVs/*.csv
+# random image files
+**/AbaqusMaterialFits/*
