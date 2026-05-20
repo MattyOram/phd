@@ -4,7 +4,7 @@
     "subjects": [
       "14548R"
     ],
-    "output_root": "outputs/initialFEAstuff/sensitivity/study5d_35T4d5",
+    "output_root": "outputs/initialFEAstuff/sensitivity/study6e_35T4d5",
     "timeout": 1200
   },
   "inp": {
@@ -41,14 +41,14 @@
     "bone_density": null,
     "cartilage_material": {
       "model": "ogden",
-      "n": 1,
-      "mu1": 3.1759,
-      "alpha1": -0.6351,
-      "mu2": -3.0012,
-      "alpha2": -0.6804,
+      "n": 2,
+      "mu1": 0.1774,
+      "alpha1": 0.674,
+      "mu2": 0.0026,
+      "alpha2": 0.6738,
       "D1": [
         0.0,
-        1.1841
+        1.1495
       ],
       "D2": 0.0
     },
