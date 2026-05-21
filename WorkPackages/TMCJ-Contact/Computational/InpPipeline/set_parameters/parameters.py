@@ -24,7 +24,7 @@ params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/35Tbes
 #params_gen['subjects'] = ['50000R', '50017L', '50034R']  # Contact area         
 params_gen['subjects'] = ['14548R']
 
-params_gen['output_root']  = 'outputs/initialFEAstuff/sensitivity/study6e_35T4d5'  # output dir for input files and meshes        # -------- *** -------- #
+params_gen['output_root']  = 'outputs/initialFEAstuff/sensitivity/study7d_35T4d5'  # output dir for input files and meshes        # -------- *** -------- #
 #params_gen['output_root']  = 'outputs/testing/ogden'
 
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
@@ -84,11 +84,11 @@ params_inp['bone_density'] = None
 params_inp['cartilage_material'] = {
                         "model":"ogden",
                         "n": 2,
-                        "mu1": 0.1774, 
-                        "alpha1": 0.6740,
-                        "mu2": 0.0026, 
-                        "alpha2": 0.6738,
-                        "D1": [0.0, 1.1495],  
+                        "mu1": 0.17290, 
+                        "alpha1": 1.88654,
+                        "mu2": 0.01265, 
+                        "alpha2": -1.22573,
+                        "D1": [0.0, 1.11507],  
                         "D2": 0.0           
                     }
 params_inp['cartilage_density']  = None

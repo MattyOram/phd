@@ -4,7 +4,7 @@
     "subjects": [
       "14548R"
     ],
-    "output_root": "outputs/initialFEAstuff/sensitivity/study6e_35T4d5",
+    "output_root": "outputs/initialFEAstuff/sensitivity/study7d_35T4d5",
     "timeout": 1200
   },
   "inp": {
@@ -42,13 +42,13 @@
     "cartilage_material": {
       "model": "ogden",
       "n": 2,
-      "mu1": 0.1774,
-      "alpha1": 0.674,
-      "mu2": 0.0026,
-      "alpha2": 0.6738,
+      "mu1": 0.1729,
+      "alpha1": 1.88654,
+      "mu2": 0.01265,
+      "alpha2": -1.22573,
       "D1": [
         0.0,
-        1.1495
+        1.11507
       ],
       "D2": 0.0
     },
