@@ -4,8 +4,9 @@
     "subjects": [
       "14548R"
     ],
-    "output_root": "outputs/initialFEAstuff/sensitivity/study7d_35T4d5",
-    "timeout": 1200
+    "output_root": "outputs/initialFEAstuff/accuracy/study1_35T4d5_F",
+    "timeout": 1200,
+    "inp_build": "main_inpF.py"
   },
   "inp": {
     "overwrite": true,
@@ -30,32 +31,25 @@
     "bone_material": {
       "model": "elastic",
       "E": [
-        1400,
-        3000
+        1629
       ],
       "nu": [
-        0.25,
-        0.45
+        0.4
       ]
     },
     "bone_density": null,
     "cartilage_material": {
-      "model": "ogden",
-      "n": 2,
-      "mu1": 0.1729,
-      "alpha1": 1.88654,
-      "mu2": 0.01265,
-      "alpha2": -1.22573,
-      "D1": [
-        0.0,
-        1.11507
+      "model": "neo_hookean",
+      "C10": [
+        0.091
       ],
-      "D2": 0.0
+      "D1": [
+        0.0
+      ]
     },
     "cartilage_density": null,
     "cartilage_friction": [
-      0.0,
-      1.0
+      0.01
     ],
     "bone_vol_id": 1,
     "cartilage_vol_id": 2,
@@ -68,16 +62,16 @@
     "normal_data": [
       null
     ],
-    "mc1_disp_x": -1.0,
-    "max_force": [
-      50
-    ],
-    "total_step_time": 1.0,
+    "mc1_disp_x": -0.04,
+    "max_force": 150,
+    "total_step_time": 0.04,
     "initial_increment": 0.01,
     "min_increment": 0.001,
-    "max_increment": [
-      0.01
-    ],
+    "max_increment": 0.01,
+    "total_step_time_F": 145,
+    "initial_increment_F": 1,
+    "min_increment_F": 0.5,
+    "max_increment_F": 8,
     "step_type": "STATIC",
     "nlgeom": "YES",
     "unsymm": "YES",

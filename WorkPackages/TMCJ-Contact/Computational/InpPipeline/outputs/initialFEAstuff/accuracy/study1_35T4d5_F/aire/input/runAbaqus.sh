@@ -4,7 +4,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=8
 #SBATCH --mem=10G
-#SBATCH --array=1-N%1
+#SBATCH --array=1-1%1              
 #SBATCH --output=abaqus_%A_%a.out
 #SBATCH --error=abaqus_%A_%a.err
 #SBATCH --mail-type=BEGIN,END
@@ -26,9 +26,8 @@ JOB_NAME="${INPUT_FILE%.inp}"                               # remove .inp from t
 #echo "Task ID: $SLURM_ARRAY_TASK_ID"
 #echo "Started at: $(date)"
 
-# mpi and threads both ran within 3 mins of each other
 abaqus job=$JOB_NAME \
-       mp_mode=threads \        
+       mp_mode=threads \        # mpi and threads both ran within 3 mins of each other
        cpus=$SLURM_NTASKS \
        memory="9gb" \
        scratch=/mnt/scratch/$USER \

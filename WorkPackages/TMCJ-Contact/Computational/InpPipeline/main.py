@@ -235,6 +235,7 @@ params = load_parameters(param_path)
 # -------- GENERAL PARAMETERS ---------------------------- #
 params_gen = params['general']
 timeout = params_gen['timeout']
+inp_script = params_gen['inp_build']
 
 # create output dir
 root_dir = Path(params_gen["output_root"])
@@ -290,7 +291,7 @@ for sub in subs:
 
             param_path = loop_param_dir / f'{run_id}.json'
             args = [
-                InpPipeline_root / 'steps/main_inp.py',
+                InpPipeline_root / f'steps/{inp_script}',
                 root_dir,
                 param_path,
                 sub_path,
