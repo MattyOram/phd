@@ -358,6 +358,8 @@ for pose in poses:
                 "*OUTPUT, HISTORY, OP=NEW, FREQUENCY=1",
                 "*NODE OUTPUT, NSET=RP_mc1",
                 "U1, RF1",
+                "*NODE OUTPUT, NSET=RP_tpm",
+                "RF1",
                 "*CONTACT OUTPUT",
                 "CAREA",
                 "*ENERGY OUTPUT",
