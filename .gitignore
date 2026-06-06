@@ -81,8 +81,13 @@ CADmodels/*
 *.mdl
 *.sim
 *.stt
+*.log
 #*.sta # maybe keep
 *.tar.gz
+*.err
+*.out
+*.sh
+inpFiles.txt
 
 
 # random csv files
@@ -91,5 +96,7 @@ CADmodels/*
 **/notebooks/MeshPipeline/ParamOptimisation/**/outputs/*
 **/resultCSVs/*.csv
 **/syntheticData/*
+**/digitisedData/*
+**/elasticoData4abaqus/*
 # random image files
 **/AbaqusMaterialFits/*

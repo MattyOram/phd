@@ -21,6 +21,7 @@ dependencies:
   - vtk
   - networkx
   - lxml
+  - opencv
 pip:
   - nest_asyncio2
   - tvb-gdist
