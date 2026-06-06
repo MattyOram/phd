@@ -24,12 +24,12 @@ params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/35Tbes
 #params_gen['subjects'] = ['50000R', '50017L', '50034R']  # Contact area         
 params_gen['subjects'] = ['14548R']
 
-params_gen['output_root']  = 'outputs/initialFEAstuff/accuracy/study1_35T4d5_F'  # output dir for input files and meshes        # -------- *** -------- #
+params_gen['output_root']  = 'outputs/initialFEAstuff/accuracy/study3_35T4d5_Fsteps'  # output dir for input files and meshes        # -------- *** -------- #
 #params_gen['output_root']  = 'outputs/testing/ogden'
 
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
 
-params_gen['inp_build'] = 'main_inpF.py'  # which main_inp*.py scriptto use
+params_gen['inp_build'] = 'main_inpFsteps.py'  # which main_inp*.py script to use
 
 # main #
 # ABAQUS CLI INPUTS
@@ -70,17 +70,17 @@ params_inp['cartilage_element_suffix']  = ['H'] # e.g. H for C3D10H
 # BONE PROPERTIES
 params_inp['bone_material'] = {
                         "model": "elastic",
-                        "E": [1629], # MPa
-                        "nu": [0.4]
+                        "E": 1645, # MPa
+                        "nu": 0.33
                     }
-params_inp['bone_density'] = None
+params_inp['bone_density'] = [None] # 1.174e-9 from broadband ref in zotero (check if abaqus requires specific units)
 
 # CARTILAGE PROPERTIES - "currently accepts 'neo-hookean' or 'ogden'"
-params_inp['cartilage_material'] = {
-                        "model":"neo_hookean",
-                        "C10": [0.091],
-                        "D1": [0.0]     # 0.0 = incompressible          
-                    }
+#params_inp['cartilage_material'] = {
+#                        "model":"neo_hookean",
+#                        "C10": [0.091],
+#                        "D1": [0.0]     # 0.0 = incompressible          
+#                    }
 #params_inp['cartilage_material'] = {
 #                        "model":"ogden",
 #                        "n": 2,
@@ -91,8 +91,19 @@ params_inp['cartilage_material'] = {
 #                        "D1": [0.0, 1.11507],  
 #                        "D2": 0.0           
 #                    }
-params_inp['cartilage_density']  = None
-params_inp['cartilage_friction'] = [0.01] # real cartilage friction coefficient ~ 0.005 (Charnley, 1960)
+params_inp['cartilage_material'] = {
+    "model": "reduced_polynomial",
+    "n": 3, # n=3 is Yeoh
+    "C10": 8.803801176e-2,
+    "C20": -1.296223053e-3,
+    "C30": 5.420005435e-5,
+    "D1": 0.159767802,
+    "D2": 0.0,
+    "D3": 0.0
+}
+
+params_inp['cartilage_density']  = None # 1.2e-9 from datasheet (check if abaqus requires specific units)
+params_inp['cartilage_friction'] = [0.0] # real cartilage friction coefficient ~ 0.005 (Charnley, 1960)
 
 # REGION IDs
 params_inp['bone_vol_id']       = 1
@@ -120,10 +131,19 @@ params_inp['initial_increment'] = params_inp['target_dist']
 params_inp['min_increment'] = 0.001                                          
 params_inp['max_increment'] = 0.01
 # inpF - only used if using main_inpF.py
-params_inp['total_step_time_F'] = abs(params_inp['max_force']) - 5 # after 0.04 mm probs at ~ 5 N
+params_inp['total_step_time_F'] = abs(params_inp['max_force']) - 3 # after 0.04 mm probs at ~ 1-5 N
 params_inp['initial_increment_F'] = 1 # ~ N  
-params_inp['min_increment_F'] = 0.5 # ~ N                                         
+params_inp['min_increment_F'] = 0.5   # ~ N                                         
 params_inp['max_increment_F'] = 8     # ~ N 
+# inpF - only used if using main_inpFsteps.py
+#params_inp['total_step_time_F'] = abs(params_inp['max_force']) - 3 # after 0.04 mm probs at ~ 1-5 N
+params_inp['force_steps'] = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150] # ALWAYS A LIST
+params_inp['initial_increment_F1'] = 0.1 # ~ N 
+params_inp['min_increment_F1'] = 0.01   # ~ N 
+params_inp['max_increment_F1'] = 8   # ~ N 
+params_inp['initial_increment_Fn'] = 8 # ~ N  
+params_inp['min_increment_Fn'] = 0.5   # ~ N                                         
+params_inp['max_increment_Fn'] = 8     # ~ N 
 
 params_inp['step_type']   = "STATIC"
 params_inp['nlgeom']      = "YES" # non-linear geometry
