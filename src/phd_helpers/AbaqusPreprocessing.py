@@ -601,6 +601,20 @@ class AbaqusInpBuilder:
                     f.write("*HYPERELASTIC, NEO HOOKE\n")
                     f.write(f"{float(mat['props']['C10'])}, {float(mat['props']['D1'])}\n")
 
+                elif model == "reduced_polynomial":
+                    n = int(mat['props']['n'])
+                    if n < 1 or n > 3:
+                        raise ValueError(
+                            f"Reduced polynomial material '{mat_name}' only supports n=1, 2, or 3. Found n={n}."
+                        ) # just need to change to write new lines after 8 values for higher n's
+
+                    f.write(f"*HYPERELASTIC, REDUCED POLYNOMIAL, N={n}\n")
+                    for i in range(n):
+                        f.write(f"{float(mat['props'][f'C{i+1}0'])}, ")
+                    for i in range(n):
+                        end = "\n" if i == n - 1 else ", "
+                        f.write(f"{float(mat['props'][f'D{i+1}'])}{end}")
+
                 # max of 8 values on each line!!! so only works up to n=2
                 elif model == "ogden":
                     n = int(mat['props']['n'])
