@@ -307,13 +307,13 @@ for pose in poses:
     )
 
     # CONTROLS
-    b.add_control_lines(
-        step_name,
-        [
-        '*CONTROLS, PARAMETERS=TIME INCREMENTATION',
-        f',,,{equil_iters},,,{sdi_iters},{increment_attemps},,,,,'
-    ]
-    )
+    #b.add_control_lines(
+    #    step_name,
+    #    [
+    #    '*CONTROLS, PARAMETERS=TIME INCREMENTATION',
+    #    f',,,{equil_iters},,,{sdi_iters},{increment_attemps},,,,,'
+    #]
+    #)
 
     # BOUNDARY CONDITIONS
     b.set_bc(
