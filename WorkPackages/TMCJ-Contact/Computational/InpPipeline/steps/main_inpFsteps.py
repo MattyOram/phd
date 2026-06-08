@@ -116,9 +116,9 @@ stabilize = params['stabilize']
 stabilize_factor = params['stabilize_factor']
 allsdtol = params['allsdtol']
 
-equil_iters = params['equil_iters']
-sdi_iters = params['sdi_iters']
-increment_attemps = params['increment_attemps']
+#equil_iters = params['equil_iters']
+#sdi_iters = params['sdi_iters']
+#increment_attemps = params['increment_attemps']
 
 # --------------------- PARAMETERS --------------------- #
 ##########################################################
@@ -231,9 +231,6 @@ for pose in poses:
     b.create_solid_section("mc1", "mc1_CARTILAGE", "CARTILAGE")
 
     # SURFACES FOR BONE CONSTRAINTS
-    #b.add_surface_from_nodes("tpm", tpm_patch_nodes, "tpm_PATCH_NODES", "tpm_PATCH_SURF")
-    #b.add_surface_from_nodes("mc1", mc1_patch_nodes, "mc1_PATCH_NODES", "mc1_PATCH_SURF")
-    # SURFACES FOR BONE CONSTRAINTS
     b.add_surface_from_cell_data("tpm", "bc_patch", 1, "tpm_PATCH_SURF")
     b.add_surface_from_cell_data("mc1", "bc_patch", 1, "mc1_PATCH_SURF")
 
@@ -246,8 +243,6 @@ for pose in poses:
     b.add_rp_surface_coupling("CP_mc1", "RP_mc1", "mc1", "mc1_PATCH_SURF", coupling_type="KINEMATIC")
 
     # CARTILAGE SURFACES FOR CONTACT
-    #b.add_surface_from_region_id("tpm", cartilage_surf_id, "tpm_CART_SURF")
-    #b.add_surface_from_region_id("mc1", cartilage_surf_id, "mc1_CART_SURF")
     b.add_surface_from_cell_data("tpm", "region_id", cartilage_surf_id, "tpm_CART_SURF")
     b.add_surface_from_cell_data("mc1", "region_id", cartilage_surf_id, "mc1_CART_SURF")
 
@@ -307,112 +302,91 @@ for pose in poses:
         U1=mc1_disp_x, U2=0, U3=0, UR1=0, UR2=0, UR3=0
     )
 
-    # STEP 2 - switch to force controlled
-    step_name2 = f"F{force_steps[0]}"
-    total_step_time_F1 = force_steps[0] - 3 # ~ 3N at end of MOVE step
-    b.create_step(
-        step_name=step_name2,
-        step_type=step_type,
-        initial_increment_size=initial_increment_F1,
-        total_step_size=total_step_time_F1,
-        min_increment_size=min_increment_F1,
-        max_increment_size=max_increment_F1,
-        nlgeom=nlgeom,
-        convert_sdi=convert_sdi,
-        unsymm=unsymm,
-        extrapolation=extrapolation,
-        stabilize=stabilize,
-        stabilize_factor=stabilize_factor,
-        allsdtol=allsdtol,
-    )
-
-    # BOUNDARY CONDITIONS
-    b.add_bc_lines(
-        step_name2,
+    # HISTORY OUTPUTS
+    b.add_history_output_lines(
+        step_name1,
         [
-            "*BOUNDARY, OP=NEW",
-            # Keep TPM fixed
-            "RP_tpm, 1, 6, 0.",
-            # Keep MC1 constrained except U1
-            "RP_mc1, 2, 6, 0.",
+            "*OUTPUT, HISTORY, OP=NEW, FREQUENCY=1",
+            "*NODE OUTPUT, NSET=RP_mc1",
+            "U1, RF1",
+            "*NODE OUTPUT, NSET=RP_tpm",
+            "RF1",
+            "*CONTACT OUTPUT",
+            "CAREA",
+            "*ENERGY OUTPUT",
+            "ALLIE, ALLSD",
         ]
     )
 
-    b.add_step_lines(
-        step_name2,
+    # FIELD OUTPUTS
+    b.add_field_output_lines(
+        step_name1,
         [
-            "*CLOAD",
-            f"RP_mc1, 1, {np.sign(mc1_disp_x) * abs(max_force)}",
-        ]
-    )
+        "*OUTPUT, FIELD, OP=NEW",
+        "**",
+        "*NODE OUTPUT",
+        "U, COORD, VF",
+        "**",
+        "*ELEMENT OUTPUT, POSITION=INTEGRATION POINTS",
+        "S, LE, COORD",
+        "**",
+        "*CONTACT OUTPUT",
+        "CSTRESS, CDISP, CSTATUS, CNAREA"
+    ])
 
-    # ADDITIONAL FORCE STEPS
-    step_names = [step_name1, step_name2]
-    if len(force_steps) > 1:
-        for i, F in enumerate(force_steps[1:]):
-            Fstep_name = f"F{F}"
-            step_names.append(Fstep_name)
-            total_step_time_Fn = F - force_steps[i] 
-            b.create_step(
-                step_name=Fstep_name,
-                step_type=step_type,
-                initial_increment_size=initial_increment_Fn,
-                total_step_size=total_step_time_Fn,
-                min_increment_size=min_increment_Fn,
-                max_increment_size=max_increment_Fn,
-                nlgeom=nlgeom,
-                convert_sdi=convert_sdi,
-                unsymm=unsymm,
-                extrapolation=extrapolation,
-                stabilize=stabilize,
-                stabilize_factor=stabilize_factor,
-                allsdtol=allsdtol,
-            )
+    # Switch to force controlled
+    prev_F = 0.0
+    for i, F in enumerate(force_steps):
+        step_name = f"F{F}"
 
+        if i == 0:
+            total_step_time_F = F - 3  # if MOVE ends around 3 N equivalent
+            initial_increment_F = initial_increment_F1
+            min_increment_F = min_increment_F1
+            max_increment_F = max_increment_F1
+        else:
+            total_step_time_F = F - prev_F
+            initial_increment_F = initial_increment_Fn
+            min_increment_F = min_increment_Fn
+            max_increment_F = max_increment_Fn
 
-    # SHARED STEP PARAMS
-    for step_name in step_names:
-        # CONTROLS
-        b.add_control_lines(
-            step_name,
-            [
-            '*CONTROLS, PARAMETERS=TIME INCREMENTATION',
-            f',,,{equil_iters},,,{sdi_iters},{increment_attemps},,,,,'
-        ]
+        b.create_step(
+            step_name=step_name,
+            step_type=step_type,
+            initial_increment_size=initial_increment_F,
+            total_step_size=total_step_time_F,
+            min_increment_size=min_increment_F,
+            max_increment_size=max_increment_F,
+            nlgeom=nlgeom,
+            convert_sdi=convert_sdi,
+            unsymm=unsymm,
+            extrapolation=extrapolation,
+            stabilize=stabilize,
+            stabilize_factor=stabilize_factor,
+            allsdtol=allsdtol,
         )
 
+        if i == 0:
+            b.add_bc_lines(
+                step_name,
+                [
+                    "*BOUNDARY, OP=NEW",
+                    # Keep TPM fixed
+                    "RP_tpm, 1, 6, 0.",
+                    # Keep MC1 constrained except U1
+                    "RP_mc1, 2, 6, 0.",
+                ]
+            )
 
-        # HISTORY OUTPUTS
-        b.add_history_output_lines(
+        b.add_step_lines(
             step_name,
             [
-                "*OUTPUT, HISTORY, OP=NEW, FREQUENCY=1",
-                "*NODE OUTPUT, NSET=RP_mc1",
-                "U1, RF1",
-                "*NODE OUTPUT, NSET=RP_tpm",
-                "RF1",
-                "*CONTACT OUTPUT",
-                "CAREA",
-                "*ENERGY OUTPUT",
-                "ALLIE, ALLSD",
+                "*CLOAD, OP=NEW",
+                f"RP_mc1, 1, {np.sign(mc1_disp_x) * abs(F)}",
             ]
         )
 
-        # FIELD OUTPUTS
-        b.add_field_output_lines(
-            step_name,
-            [
-            "*OUTPUT, FIELD, OP=NEW",
-            "**",
-            "*NODE OUTPUT",
-            "U, COORD, VF",
-            "**",
-            "*ELEMENT OUTPUT, POSITION=INTEGRATION POINTS",
-            "S, LE, COORD",
-            "**",
-            "*CONTACT OUTPUT",
-            "CSTRESS, CDISP, CSTATUS, CNAREA"
-        ])
+        prev_F = F
 
 
 
