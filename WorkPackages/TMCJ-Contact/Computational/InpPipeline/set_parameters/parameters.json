@@ -97,9 +97,6 @@
     "extrapolation": null,
     "stabilize": false,
     "stabilize_factor": 0.1,
-    "allsdtol": 0.05,
-    "equil_iters": 16,
-    "sdi_iters": 15,
-    "increment_attemps": 5
+    "allsdtol": 0.05
   }
 }

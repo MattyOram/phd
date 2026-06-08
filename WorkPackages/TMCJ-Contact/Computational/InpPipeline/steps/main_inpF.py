@@ -109,9 +109,9 @@ stabilize = params['stabilize']
 stabilize_factor = params['stabilize_factor']
 allsdtol = params['allsdtol']
 
-equil_iters = params['equil_iters']
-sdi_iters = params['sdi_iters']
-increment_attemps = params['increment_attemps']
+#equil_iters = params['equil_iters']
+#sdi_iters = params['sdi_iters']
+#increment_attemps = params['increment_attemps']
 
 # --------------------- PARAMETERS --------------------- #
 ##########################################################
@@ -300,6 +300,38 @@ for pose in poses:
         U1=mc1_disp_x, U2=0, U3=0, UR1=0, UR2=0, UR3=0
     )
 
+    # HISTORY OUTPUTS
+    b.add_history_output_lines(
+        step_name1,
+        [
+            "*OUTPUT, HISTORY, OP=NEW, FREQUENCY=1",
+            "*NODE OUTPUT, NSET=RP_mc1",
+            "U1, RF1",
+            "*NODE OUTPUT, NSET=RP_tpm",
+            "RF1",
+            "*CONTACT OUTPUT",
+            "CAREA",
+            "*ENERGY OUTPUT",
+            "ALLIE, ALLSD",
+        ]
+    )
+
+    # FIELD OUTPUTS
+    b.add_field_output_lines(
+        step_name1,
+        [
+        "*OUTPUT, FIELD, OP=NEW",
+        "**",
+        "*NODE OUTPUT",
+        "U, COORD, VF",
+        "**",
+        "*ELEMENT OUTPUT, POSITION=INTEGRATION POINTS",
+        "S, LE, COORD",
+        "**",
+        "*CONTACT OUTPUT",
+        "CSTRESS, CDISP, CSTATUS, CNAREA"
+    ])
+
     # STEP 2 - switch to force controlled
     step_name2 = "FORCE"
     b.create_step(
@@ -337,52 +369,6 @@ for pose in poses:
             f"RP_mc1, 1, {np.sign(mc1_disp_x) * abs(max_force)}",
         ]
     )
-
-
-    # SHARED STEP PARAMS
-    for step_name in [step_name1, step_name2]:
-        # CONTROLS
-        b.add_control_lines(
-            step_name,
-            [
-            '*CONTROLS, PARAMETERS=TIME INCREMENTATION',
-            f',,,{equil_iters},,,{sdi_iters},{increment_attemps},,,,,'
-        ]
-        )
-
-
-        # HISTORY OUTPUTS
-        b.add_history_output_lines(
-            step_name,
-            [
-                "*OUTPUT, HISTORY, OP=NEW, FREQUENCY=1",
-                "*NODE OUTPUT, NSET=RP_mc1",
-                "U1, RF1",
-                "*NODE OUTPUT, NSET=RP_tpm",
-                "RF1",
-                "*CONTACT OUTPUT",
-                "CAREA",
-                "*ENERGY OUTPUT",
-                "ALLIE, ALLSD",
-            ]
-        )
-
-        # FIELD OUTPUTS
-        b.add_field_output_lines(
-            step_name,
-            [
-            "*OUTPUT, FIELD, OP=NEW",
-            "**",
-            "*NODE OUTPUT",
-            "U, COORD, VF",
-            "**",
-            "*ELEMENT OUTPUT, POSITION=INTEGRATION POINTS",
-            "S, LE, COORD",
-            "**",
-            "*CONTACT OUTPUT",
-            "CSTRESS, CDISP, CSTATUS, CNAREA"
-        ])
-
 
 
     # WRITE INPUT FILE

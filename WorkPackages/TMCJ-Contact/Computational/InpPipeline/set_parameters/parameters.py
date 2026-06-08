@@ -155,9 +155,9 @@ params_inp['stabilize'] = False # default = False (see: https://docs.software.vt
 params_inp['stabilize_factor'] = 0.1 # default = 2e-4 - STABILIZE factor is the dissipated energy fraction for the automatic damping algorithm
 params_inp['allsdtol'] = 0.05 # default = 0.05
 
-params_inp['equil_iters']       = 16 # default=16 - upper limit on the number of consecutive equilibrium iterations (without severe discontinuities) (4)
-params_inp['sdi_iters']         = 15 # deafult=12 - maximum number of severe discontinuity iterations allowed in an increment if CONVERT SDI=NO (7)
-params_inp['increment_attemps'] = 5 # default=5 - maximum number of attempts allowed for an increment (8)
+#params_inp['equil_iters']       = 16 # default=16 - upper limit on the number of consecutive equilibrium iterations (without severe discontinuities) (4)
+#params_inp['sdi_iters']         = 15 # deafult=12 - maximum number of severe discontinuity iterations allowed in an increment if CONVERT SDI=NO (7)
+#params_inp['increment_attemps'] = 5 # default=5 - maximum number of attempts allowed for an increment (8)
 
 
 

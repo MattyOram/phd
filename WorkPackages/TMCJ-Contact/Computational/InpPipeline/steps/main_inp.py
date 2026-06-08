@@ -120,9 +120,9 @@ stabilize = params['stabilize']
 stabilize_factor = params['stabilize_factor']
 allsdtol = params['allsdtol']
 
-equil_iters = params['equil_iters']
-sdi_iters = params['sdi_iters']
-increment_attemps = params['increment_attemps']
+#equil_iters = params['equil_iters']
+#sdi_iters = params['sdi_iters']
+#increment_attemps = params['increment_attemps']
 
 # --------------------- PARAMETERS --------------------- #
 ##########################################################
