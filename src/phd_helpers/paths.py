@@ -78,10 +78,10 @@ def pose2idCMC(pose):
         'flexion': '03',
         'extension': '04',
         'pinch': '05',
-        'grasp': '06',
-        'jar': '07',
-        'pinch_load': '08',
-        'grasp_load': '09',
+        'pinch_load': '06',
+        'grasp': '07',
+        'grasp_load': '08',
+        'jar': '09',
         'jar_load': '10',
         'neutral': '11'
     }
