@@ -5,9 +5,22 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_squared_error
 import sympy as sp
 
-from phd_helpers.SaddleAnalysis import get_centroid, get_norm
 from phd_helpers.CartilageGeneration import get_trimesh, get_pvmesh
 
+def get_centroid(faces, points):
+    area_sum = 0
+    centroid = np.zeros(3)
+
+    for face in faces:
+        vertices = points[face[1:]]
+        center = np.mean(vertices, axis=0)
+        area = 0.5 * np.linalg.norm(np.cross(vertices[1] - vertices[0], vertices[2] - vertices[0]))
+        centroid += area * center
+        area_sum += area
+
+    centroid /= area_sum
+
+    return centroid
 
 def get_edge_shell(mesh, n_vertices=3, d1=10, d2=2):
     """create a double pointed pyramid shell with mesh shaped edge, for cutting/isolating mesh/surfaces that lie inside of mesh edge bounds"""
@@ -58,15 +71,15 @@ def get_edge_shell(mesh, n_vertices=3, d1=10, d2=2):
 def cut_surface(surface, shell):
     """will return the surface region and point mask that is engulfed by the shell (includes cells partially engulfed)"""
     point_cloud = pv.PolyData(surface.points)
-    selected = point_cloud.select_enclosed_points(shell, tolerance=0.00, check_surface=True, )
-    mask = selected["SelectedPoints"].astype(bool)
+    selected = point_cloud.select_interior_points(shell, check_surface=True, method='cell_locator', locator_tolerance=0.0)
+    mask = selected["selected_points"].astype(bool)
     return surface.extract_points(mask), mask
 
 def cut_grid_surface(grid_surface, shell):
     """will return the surface region that is engulfed by the shell (includes cells partially engulfed)"""
     point_cloud = pv.PolyData(grid_surface.points)
-    selected = point_cloud.select_enclosed_points(shell, tolerance=0.00, check_surface=True, )
-    mask = selected["SelectedPoints"].astype(bool)
+    selected = point_cloud.select_interior_points(shell, check_surface=True, method='cell_locator', locator_tolerance=0.0)
+    mask = selected["selected_points"].astype(bool)
     return grid_surface.extract_points(mask)
 
 def get_grid(mesh_points, n_points=200, buffer=0.05):
@@ -109,15 +122,15 @@ def get_grid_surface(mesh, model, poly, grid_points):
     xy_grid = get_grid(mesh.points, n_points=grid_points, buffer=0.05)
     z_grid_pred = model.predict(poly.transform(xy_grid)).reshape((grid_points, grid_points))
     grid_surface = pv.StructuredGrid(xy_grid[:, 0].reshape(z_grid_pred.shape), xy_grid[:, 1].reshape(z_grid_pred.shape), z_grid_pred)
-    grid_surface = grid_surface.extract_surface()
+    grid_surface = grid_surface.extract_surface(algorithm=None)
     shell = get_edge_shell(mesh)
-    return cut_grid_surface(grid_surface, shell).extract_geometry()
+    return cut_grid_surface(grid_surface, shell).extract_surface(algorithm=None)
 
 def cut_grid_surface2(grid_surface, shell):
     """will return the surface region that is engulfed by the shell (only cells completely engulfed)"""
     point_cloud = pv.PolyData(grid_surface.points)
-    selected = point_cloud.select_enclosed_points(shell, tolerance=0.00, check_surface=True)
-    mask = selected["SelectedPoints"].astype(bool)
+    selected = point_cloud.select_interior_points(shell, check_surface=True, method='cell_locator', locator_tolerance=0.0)
+    mask = selected["selected_points"].astype(bool)
     
     # only get cells where all vertices are inside the shell
     cells_to_keep = []
@@ -134,10 +147,10 @@ def get_grid_surface2(mesh, model, poly, grid_points):
     
     z_grid_pred = model.predict(poly.transform(xy_flat)).reshape((nx, ny))
     grid_surface = pv.StructuredGrid(x_grid, y_grid, z_grid_pred)
-    grid_surface = grid_surface.extract_surface()
+    grid_surface = grid_surface.extract_surface(algorithm=None)
 
     shell = get_edge_shell(mesh)
-    return cut_grid_surface2(grid_surface, shell).extract_geometry()
+    return cut_grid_surface2(grid_surface, shell).extract_surface(algorithm=None)
 
 def plot_principal_curvatures(mesh, scalar='kmax', vector='kmax_dir', step=1, show_edges=True, factor=1.0):
     indices = np.arange(0, mesh.n_points, step)
