@@ -162,7 +162,14 @@ def get_relative_transform_new_basis(transforms, bone, ref_bone, origin=[0, 0, 0
     
     return R_rel, t_rel
 
-
+def build_axes_from_vector(vector):
+    """Orthonormal axes, vector is z"""
+    z = vector / np.linalg.norm(vector)
+    v = np.array([0, 0, 1]) if abs(z[2]) < 0.99 else np.array([1, 0, 0])
+    x = np.cross(v, z)
+    x /= np.linalg.norm(x)
+    y = np.cross(z, x)
+    return np.column_stack((x, y, z))
 
 def furthest_points(mesh_points):
     """Get coordinates of 2 furthest points on mesh"""
