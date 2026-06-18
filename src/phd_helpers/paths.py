@@ -453,3 +453,36 @@ def bone_pair_pose_intersection(bone_pairs, poses, intersection_path):
             no_intersection.append(path.split(os.path.sep)[-1].replace('.csv', ''))
     return pd.Series(no_intersection)
 ########################################  intersection ##########################################
+
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+def check_ss(ss, titles, filepath):
+    """pdf of screenshots (ss)"""
+    nss = len(ss)
+    nrows = 5
+    ncols = 4
+    Tplots = nrows*ncols
+    fig, ax = plt.subplots(nrows, ncols, figsize=(8, 8), dpi=300)
+    pp_edge = PdfPages(f'{filepath}')
+    rem = Tplots - (nss % Tplots)
+    for idx in range(int(nss+rem)):
+        i = (idx // ncols) % nrows
+        j = idx % ncols
+        
+        if idx % Tplots == 0 and idx > 0:
+            #plt.tight_layout()
+            pp_edge.savefig(fig)
+            plt.close(fig)
+            fig, ax = plt.subplots(nrows, ncols, figsize=(8, 8), dpi=300)
+            
+        if idx < nss:
+            ax[i, j].imshow(ss[idx])
+            
+            ax[i, j].set_title(titles[idx], fontsize=8)
+        ax[i, j].axis('off')
+
+    if nss % Tplots != 0:
+        #plt.tight_layout()
+        pp_edge.savefig(fig)
+        plt.close(fig)
+    pp_edge.close()
