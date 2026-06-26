@@ -22,6 +22,8 @@ dependencies:
   - networkx
   - lxml
   - opencv
+  - sympy
+  - seaborn
 pip:
   - nest_asyncio2
   - tvb-gdist

@@ -14,7 +14,8 @@ params = {
 params_gen = params['general']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
-params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/35Tbest' # output_root in MeshPipeline
+#params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/35Tbest' # output_root in MeshPipeline
+params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/15T3T/15T3Tbest'
 #params_gen['mesh_root']    = 'outputs/element_count'
 #params_gen['mesh_root']    = '../../../../Computational/MeshPipeline/outputs/initialFEAstuff/35T/35Tbest'
 
@@ -24,7 +25,8 @@ params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/35Tbes
 #params_gen['subjects'] = ['50000R', '50017L', '50034R']  # Contact area         
 params_gen['subjects'] = ['14548R']
 
-params_gen['output_root']  = 'outputs/initialFEAstuff/accuracy/study3_35T4d5_Fsteps'  # output dir for input files and meshes        # -------- *** -------- #
+params_gen['output_root']  = 'outputs/initialFEAstuff/accuracy/study3_15T10d6'  # output dir for input files and meshes        # -------- *** -------- #
+#params_gen['output_root']  = 'outputs/initialFEAstuff/robustness/update_35T4d5_Fsteps'
 #params_gen['output_root']  = 'outputs/testing/ogden'
 
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
@@ -64,7 +66,7 @@ params_inp['mc1_patch_params'] = ("euclidean", 6) # distance of BC patch from ca
 #params_inp['element_order'] = 'quad' # 'linear' (4 node) or 'quad' (10 node (~8x linear node count))
 
 # ELEMENT TYPES
-params_inp['element_type']      = ["C3D4"] # M-Modified ARE INCOMPATIBLE WITH THE REGULAR TETRAHEDRAL ELEMENTS IF THEY SHARE THE SAME NODES
+params_inp['element_type']      = ["C3D10"] # M-Modified ARE INCOMPATIBLE WITH THE REGULAR TETRAHEDRAL ELEMENTS IF THEY SHARE THE SAME NODES
 params_inp['cartilage_element_suffix']  = ['H'] # e.g. H for C3D10H
 
 # BONE PROPERTIES
