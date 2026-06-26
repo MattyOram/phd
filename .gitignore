@@ -24,7 +24,7 @@ data/*
 !data/.gitkeep
 
 # 3Dprints
-CADmodels/*
+**/CADmodels/*
 
 # inputs / outputs - usually full of potentially large mesh files
 **/MeshPipeline/cpp/**/inputs/*
@@ -52,9 +52,6 @@ CADmodels/*
 **/Experimental/LabData/*
 **/Experimental/**/figs/*
 
-# CAD files
-**/3Dprints/*
-
 *.json
 *.jsonl
 # mesh files
@@ -68,6 +65,7 @@ CADmodels/*
 *.msh
 *.mesh
 *.ply
+*.3mf
 # abaqus files
 *.inp
 *.com
@@ -98,5 +96,7 @@ inpFiles.txt
 **/syntheticData/*
 **/digitisedData/*
 **/elasticoData4abaqus/*
+**/moreCalibration/*
+**/TMCJ-ShapeAndMotion/**/*.csv
 # random image files
 **/AbaqusMaterialFits/*
