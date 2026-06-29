@@ -35,7 +35,7 @@ def make_manifold(shell, region_id, max_area, max_loc, name):
 
         shell['shell_point_id'] = np.arange(shell.n_points)
         shell['shell_cell_id'] = np.arange(shell.n_cells)
-        surf = shell.extract_cells(np.where(shell['region_id']==region_id)[0]).extract_geometry()
+        surf = shell.extract_cells(np.where(shell['region_id']==region_id)[0]).extract_surface(algorithm=None)
         surf_faces = surf.faces.reshape(-1, 4)[:, 1:]
 
 
@@ -45,7 +45,7 @@ def make_manifold(shell, region_id, max_area, max_loc, name):
                                                             surf['shell_point_id'], 
                                                             bad_edges['shell_point_id'])]
         bad_faces = surf['shell_cell_id'][np.isin(surf_faces, bad_points).sum(axis=1) >= 1]
-        shell_holes = shell.extract_cells(bad_faces, invert=True).extract_geometry()
+        shell_holes = shell.extract_cells(bad_faces, invert=True).extract_surface(algorithm=None)
 
 
         v = np.asarray(shell_holes.points, dtype=np.float64)
@@ -71,9 +71,9 @@ def make_manifold(shell, region_id, max_area, max_loc, name):
 
         # EVALUATE REPAIR SIZE AND LOCATION
         print('\nEvaluate repair size and proximity:')
-        repaired_cartilage_surf = repaired.extract_cells(repaired['region_id']==-2).extract_geometry()
+        repaired_cartilage_surf = repaired.extract_cells(repaired['region_id']==-2).extract_surface(algorithm=None)
         repaired_cartilage_surf['repaired_cartilage_surf_id'] = np.arange(repaired_cartilage_surf.n_points)
-        repaired_patch = repaired_cartilage_surf.extract_cells(repaired_cartilage_surf['repaired']==1).extract_geometry()
+        repaired_patch = repaired_cartilage_surf.extract_cells(repaired_cartilage_surf['repaired']==1).extract_surface(algorithm=None)
 
         # measure proximity to cartilage boundary
         repaired_cartilage_surf_edge = get_boundary(repaired_cartilage_surf)
@@ -99,9 +99,9 @@ def make_manifold(shell, region_id, max_area, max_loc, name):
 
         print('\nCHECK RESULT...\n')
         # check if it is now manifold
-        print(f'[[capture]]({name}) is manifold: {shell.is_manifold}')
-        #if not shell.is_manifold:
-            #raise KeyError(f"{region_id} is not manifold")
+        print(f'[[capture]]({name}) is manifold: {repaired.is_manifold}')
+        if not repaired.is_manifold:
+            raise KeyError(f"{name} is not manifold")
 
         print('\nComplete\n')
 
