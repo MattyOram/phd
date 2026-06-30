@@ -98,6 +98,12 @@ bone_tpm_neu = make_manifold(bone_tpm_neu, -1, max_area, max_loc, f'bone-tpm-{me
 cartilage_mc1 = make_manifold(cartilage_mc1, -2, max_area, max_loc, f'cart-mc1-{mesh_id}')
 cartilage_tpm_neu = make_manifold(cartilage_tpm_neu, -2, max_area, max_loc, f'cart-tpm-{mesh_id}')
 
+# save manifold meshes before jigs
+bone_mc1.save( savepath / f'mc1_bone_manifold-{mesh_id}.vtp' )
+cartilage_mc1.save( savepath / f'mc1_cartilage_manifold-{mesh_id}.vtp' )
+bone_tpm_neu.save( savepath / f'tpm_bone_manifold-{mesh_id}.vtp' )
+cartilage_tpm_neu.save( savepath / f'tpm_cartilage_manifold-{mesh_id}.vtp' )
+
 # This next step of orienting normals might not be needed, pymeshfix probs takes care of it
 def orient_normals(mesh):
     mesh.compute_normals(auto_orient_normals=True, inplace=True)
