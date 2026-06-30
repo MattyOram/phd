@@ -36,7 +36,7 @@ params_man['max_loc']          = 0.20 # location of repairs as proportion of way
 params_print = params['printJig']
 
 #params_print['poses'] = ['adduction','abduction','flexion','extension','pinch','grasp','jar','neutral']
-params_print['poses'] = ['flexion', 'extension', 'abduction', 'adduction', 'pinch_load']
+params_print['poses'] = ['flexion', 'extension', 'abduction', 'adduction', 'pinch_load', 'neutral']
 
 params_print['jig_path'] = '../CADmodels/instronJigs/solidWorks/Adaptor.ply'
 
