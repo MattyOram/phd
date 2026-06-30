@@ -100,3 +100,5 @@ inpFiles.txt
 **/TMCJ-ShapeAndMotion/**/*.csv
 # random image files
 **/AbaqusMaterialFits/*
+**/Logo-Package/*
+**/logo.png
