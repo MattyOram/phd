@@ -28,7 +28,7 @@ JOB_NAME="${INPUT_FILE%.inp}"                               # remove .inp from t
 
 # mpi and threads both ran within 3 mins of each other
 abaqus job=$JOB_NAME \
-       mp_mode=threads \        
+       mp_mode=threads \
        cpus=$SLURM_NTASKS \
        memory="9gb" \
        scratch=/mnt/scratch/$USER \

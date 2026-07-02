@@ -102,6 +102,7 @@ inpFiles.txt
 **/AbaqusMaterialFits/*
 **/Logo-Package/*
 **/logo.png
+**/cli_cmds/*
 
 internship/meshes/*
 internship/meshes.zip
