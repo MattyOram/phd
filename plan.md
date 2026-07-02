@@ -15,9 +15,12 @@
 
 ### Jobs
 - (finalise mesh d0)
-
-look at literature on accuracy of pressure distribution of thin layers of hyperelastic material under large deformation
+- look at literature on accuracy of pressure distribution of thin layers of hyperelastic material under large deformation
 and on accuracy of tekscan pressure distribution
+
+- twist and tilt and translation sensitivity
+    - registration errors are around 0.5 mm and 0.5 degrees
+        - should have a look at how these adjustements look and either use them or use bigger values is change is visually minimal.
 
 
 ### Random
