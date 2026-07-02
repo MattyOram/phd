@@ -130,6 +130,7 @@ allsdtol = params['allsdtol']
 print('\nLOADING MESHES...\n')
 
 poses = params['poses']
+use_neutral11 = params['use_neutral11']
 mc1_centroid, _, mc1_axes = get_bone_inertia(stl_path, 'mc1') # mc1 centroid and inertial axes for alignment
 
 # load meshes and align with mc1 inertial axes
@@ -173,6 +174,8 @@ for pose in poses:
     print('Positioning trapezium')
     pose_id = pose2idCMC(pose)
     try: # if subject has alternate neutral that will be used otherwise Exception and use default neutral
+        if pose == 'neutral' and not use_neutral11:
+            raise
         transforms = get_bone_transforms(pose_id, stl_path)
         R, t = get_relative_transform_new_basis(transforms, 'tpm', 'mc1', mc1_centroid, mc1_axes)
     except:
