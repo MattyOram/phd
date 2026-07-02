@@ -1,10 +1,10 @@
 {
   "general": {
-    "mesh_root": "../MeshPipeline/outputs/initialFEAstuff/15T3T/15T3Tbest",
+    "mesh_root": "../MeshPipeline/outputs/initialFEAstuff/35T/TwistTranslate1",
     "subjects": [
       "14548R"
     ],
-    "output_root": "outputs/initialFEAstuff/accuracy/study3_15T10d6",
+    "output_root": "outputs/initialFEAstuff/accuracy/TwistTranslate/study1",
     "timeout": 1200,
     "inp_build": "main_inpFsteps.py"
   },
@@ -13,6 +13,7 @@
     "poses": [
       "neutral"
     ],
+    "use_neutral11": false,
     "target_dist": 0.01,
     "tpm_patch_params": [
       "euclidean",
@@ -23,7 +24,7 @@
       6
     ],
     "element_type": [
-      "C3D10"
+      "C3D4"
     ],
     "cartilage_element_suffix": [
       "H"
