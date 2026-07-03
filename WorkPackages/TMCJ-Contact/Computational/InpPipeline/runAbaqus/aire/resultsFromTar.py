@@ -17,11 +17,12 @@ odb_paths = [
 # upgrade odbs
 abaqus_cmd = Path(r"C:\SIMULIA\Commands\abaqus.BAT")
 
-upgraded_odb_paths = []
+upgraded_odb_paths = []    
 for odb_path in odb_paths:
+    odb_path = odb_path.resolve()
+
     upgrade_stem = f"upgraded-{odb_path.stem}"
-    upgrade_path = odb_path.parent / upgrade_stem
-    upgraded_odb_path = upgrade_path.with_suffix(".odb")
+    upgraded_odb_path = odb_path.parent / f"{upgrade_stem}.odb"
 
     cmd = [
         "cmd",
@@ -29,24 +30,23 @@ for odb_path in odb_paths:
         str(abaqus_cmd),
         "-upgrade",
         "-job",
-        str(upgrade_path),
+        upgrade_stem,
         "-odb",
-        str(odb_path.with_suffix('')),
+        odb_path.stem,
     ]
 
-    subprocess.run(cmd, check=True)
+    subprocess.run(cmd, check=True, cwd=odb_path.parent)
 
-    # delete original ODB if upgrade worked
     if upgraded_odb_path.exists():
         odb_path.unlink()
         upgraded_odb_paths.append(upgraded_odb_path)
     else:
-        raise FileNotFoundError(f"Upgrade problem")
+        raise FileNotFoundError("Upgrade problem")
 
 
 # extract results from odbs
 file_dir = Path(__file__).resolve().parent
-postprocess_file = file_dir / "../AbaqusPostProcessing/main_odb2csv.py"
+postprocess_file = (file_dir / "../AbaqusPostProcessing/main_odb2csv.py").resolve()
 
 for odb_path in upgraded_odb_paths:
     try:
@@ -56,8 +56,8 @@ for odb_path in upgraded_odb_paths:
             str(abaqus_cmd),
             "python",
             str(postprocess_file),
-            str(odb_path),
+            str(odb_path.name),
         ]
-        subprocess.run(cmd, check=True)
-    except:
+        subprocess.run(cmd, check=True, cwd=odb_path.parent)
+    except subprocess.CalledProcessError:
         print("Failed to postprocess", odb_path.name)
