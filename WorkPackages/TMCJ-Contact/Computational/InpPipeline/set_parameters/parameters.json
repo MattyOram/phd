@@ -1,10 +1,10 @@
 {
   "general": {
-    "mesh_root": "../MeshPipeline/outputs/initialFEAstuff/35T/TwistTranslate1",
+    "mesh_root": "../MeshPipeline/outputs/initialFEAstuff/35T/TwistTranslate2",
     "subjects": [
       "14548R"
     ],
-    "output_root": "outputs/initialFEAstuff/accuracy/TwistTranslate/study1",
+    "output_root": "outputs/initialFEAstuff/accuracy/TwistTranslate/study2",
     "timeout": 1200,
     "inp_build": "main_inpFsteps.py"
   },
