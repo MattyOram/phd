@@ -14,8 +14,8 @@ params = {
 params_gen = params['general']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
-params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/TwistTranslate2' # output_root in MeshPipeline
-#params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/15T3T/15T3Tbest'
+#params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/TwistTranslate2' # output_root in MeshPipeline
+params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/35Tbest'
 #params_gen['mesh_root']    = 'outputs/element_count'
 #params_gen['mesh_root']    = '../../../../Computational/MeshPipeline/outputs/initialFEAstuff/35T/35Tbest'
 
@@ -25,7 +25,7 @@ params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/TwistT
 #params_gen['subjects'] = ['50000R', '50017L', '50034R']  # Contact area         
 params_gen['subjects'] = ['14548R']
 
-params_gen['output_root']  = 'outputs/initialFEAstuff/accuracy/TwistTranslate/study2'  # output dir for input files and meshes        # -------- *** -------- #
+params_gen['output_root']  = 'outputs/initialFEAstuff/accuracy/study3_mc1Main'  # output dir for input files and meshes        # -------- *** -------- #
 #params_gen['output_root']  = 'outputs/initialFEAstuff/robustness/update_35T4d5_Fsteps'
 #params_gen['output_root']  = 'outputs/testing/ogden'
 
@@ -115,7 +115,7 @@ params_inp['cartilage_vol_id']  = 2
 params_inp['cartilage_surf_id'] = -2
 
 # CONTACT
-params_inp['contact_type'] = ["explicit"] # "general" or "explicit"
+params_inp['contact_type'] = ["explicit", "general"] # "general" or "explicit"
 # if type == "general"
 params_inp['sliding'] = "FINITE" # "FINITE" or "SMALL" (default is finite) - can't use SMALL
 params_inp['overclosure'] = 'HARD' # 'HARD', 'LINEAR', 'EXPONENTIAL', "TABULAR"

@@ -1,10 +1,10 @@
 {
   "general": {
-    "mesh_root": "../MeshPipeline/outputs/initialFEAstuff/35T/TwistTranslate2",
+    "mesh_root": "../MeshPipeline/outputs/initialFEAstuff/35T/35Tbest",
     "subjects": [
       "14548R"
     ],
-    "output_root": "outputs/initialFEAstuff/accuracy/TwistTranslate/study2",
+    "output_root": "outputs/initialFEAstuff/accuracy/study3_mc1Main",
     "timeout": 1200,
     "inp_build": "main_inpFsteps.py"
   },
@@ -55,7 +55,8 @@
     "cartilage_vol_id": 2,
     "cartilage_surf_id": -2,
     "contact_type": [
-      "explicit"
+      "explicit",
+      "general"
     ],
     "sliding": "FINITE",
     "overclosure": "HARD",
