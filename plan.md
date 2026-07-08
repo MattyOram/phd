@@ -18,7 +18,12 @@
 - look at literature on accuracy of pressure distribution of thin layers of hyperelastic material under large deformation
 and on accuracy of tekscan pressure distribution
 
-- is the instron aligned?
+
+- run a simulation directly set up in abaqus with experimental materials data
+    - take the study3 inp file and strip everything except models surface and BCs
+
+- sort out old laptop onedrive
+- hold force until displacement stops - does it change the pressure distribution?
 
 
 ### Random
