@@ -11,7 +11,7 @@ def get_instron_data(file_path, zero_displacement=True):
     data = data.copy().iloc[1:]
     data = data.astype('float32')
     if zero_displacement:
-        data['displacement'] -= data['displacement'].min()
+        data['displacement'] -= data['displacement'].iloc[0]
     return data
 
 def get_stress_strain(data, r=5, l=20):
