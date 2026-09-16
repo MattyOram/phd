@@ -23,9 +23,9 @@ params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/35Tbes
 #params_gen['subjects']     = ['22306R', '50037L', '14874R'] # provide list of subjects or set to None for all available subjects 
                                                                 # (assumes Meshpipeline dir layout)
 #params_gen['subjects'] = ['50000R', '50017L', '50034R']  # Contact area         
-params_gen['subjects'] = ['14548R']
+params_gen['subjects'] = ['14548R', '50017L']
 
-params_gen['output_root']  = 'outputs/initialFEAstuff/accuracy/study3_mc1Main'  # output dir for input files and meshes        # -------- *** -------- #
+params_gen['output_root']  = 'outputs/initialFEAstuff/accuracy/TwistTranslate/test_integration'  # output dir for input files and meshes        # -------- *** -------- #
 #params_gen['output_root']  = 'outputs/initialFEAstuff/robustness/update_35T4d5_Fsteps'
 #params_gen['output_root']  = 'outputs/testing/ogden'
 
@@ -52,17 +52,21 @@ params_inp['overwrite'] = True
 #            ]
 
 #params_inp['poses'] = ['adduction', 'abduction', 'flexion', 'extension', 'pinch_load']
-params_inp['poses'] = ['neutral']
+params_inp['poses'] = ['neutral', 'flexion']
 
 params_inp['use_neutral11'] = False # whether to use alternate pose 11 neutral if available
 
 #params_inp['save_meshes'] = False # can parse from inp files - also will currently overwrite for each run_id
 
 # PRE-PROCESSING #
+# re-alingment to match misalignment of the instron (done after transforming trapezium into final pose)
+params_inp['misalign_t'] = [ [0, 0, 0], [0, 1, 0] ] # translation along [x, y, z] - ALWAYS A LIST
+params_inp['misalign_R'] = [ [0, 0, 0], [5, 0, 0], [0, 0, 5] ] # degrees of rotation around [Rx, Ry, Rz] - ALWAYS A LIST
+
 params_inp['target_dist'] = 0.01 # gap between cartilage at start of simulation
 
-params_inp['tpm_patch_params'] = ("euclidean", 3) # distance of BC patch from cartilage boundary
-params_inp['mc1_patch_params'] = ("euclidean", 6) # distance of BC patch from cartilage boundary
+params_inp['tpm_patch_params'] = ("euclidean", 5) # distance of BC patch from cartilage boundary
+params_inp['mc1_patch_params'] = ("euclidean", 5) # distance of BC patch from cartilage boundary
 
 # ELEMENT ORDER - now inferred from element type
 #params_inp['element_order'] = 'quad' # 'linear' (4 node) or 'quad' (10 node (~8x linear node count))
@@ -75,7 +79,7 @@ params_inp['cartilage_element_suffix']  = ['H'] # e.g. H for C3D10H
 params_inp['bone_material'] = {
                         "model": "elastic",
                         "E": 1645, # MPa
-                        "nu": 0.33
+                        "nu": 0.39 # from  (Majca-Nowak 2023)
                     }
 params_inp['bone_density'] = [None] # 1.174e-9 from broadband ref in zotero (check if abaqus requires specific units)
 
@@ -101,7 +105,7 @@ params_inp['cartilage_material'] = {
     "C10": 8.803801176e-2,
     "C20": -1.296223053e-3,
     "C30": 5.420005435e-5,
-    "D1": 0.159767802,
+    "D1": 0.0,
     "D2": 0.0,
     "D3": 0.0
 }
@@ -115,7 +119,7 @@ params_inp['cartilage_vol_id']  = 2
 params_inp['cartilage_surf_id'] = -2
 
 # CONTACT
-params_inp['contact_type'] = ["explicit", "general"] # "general" or "explicit"
+params_inp['contact_type'] = ["explicit"] # "general" or "explicit"
 # if type == "general"
 params_inp['sliding'] = "FINITE" # "FINITE" or "SMALL" (default is finite) - can't use SMALL
 params_inp['overclosure'] = 'HARD' # 'HARD', 'LINEAR', 'EXPONENTIAL', "TABULAR"
@@ -141,13 +145,13 @@ params_inp['min_increment_F'] = 0.5   # ~ N
 params_inp['max_increment_F'] = 8     # ~ N 
 # inpF - only used if using main_inpFsteps.py
 #params_inp['total_step_time_F'] = abs(params_inp['max_force']) - 3 # after 0.04 mm probs at ~ 1-5 N
-params_inp['force_steps'] = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150] # ALWAYS A LIST
+params_inp['force_steps'] = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100] # ALWAYS A LIST
 params_inp['initial_increment_F1'] = 0.1 # ~ N 
 params_inp['min_increment_F1'] = 0.01   # ~ N 
-params_inp['max_increment_F1'] = 8   # ~ N 
-params_inp['initial_increment_Fn'] = 8 # ~ N  
+params_inp['max_increment_F1'] = 10   # ~ N 
+params_inp['initial_increment_Fn'] = 10 # ~ N  
 params_inp['min_increment_Fn'] = 0.5   # ~ N                                         
-params_inp['max_increment_Fn'] = 8     # ~ N 
+params_inp['max_increment_Fn'] = 10     # ~ N 
 
 params_inp['step_type']   = "STATIC"
 params_inp['nlgeom']      = "YES" # non-linear geometry

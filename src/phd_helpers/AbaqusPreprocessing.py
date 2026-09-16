@@ -10,6 +10,21 @@ from collections import OrderedDict
 from phd_helpers.paths import get_boundary, get_intercepts, get_intercepts_multi
 from phd_helpers.MeshQuality import sample_surface
 
+#•••••••••••••••••••••••• For changing alignment of joint to match instron misalignment ••••••••••••••••••••••••#
+def rotate_mesh(mesh1, cor, Rx=0.0, Ry=0.0, Rz=0.0):
+    """Centre of Rotation (cor)"""
+    mesh = mesh1.copy()
+    mesh.rotate_x(Rx, point=cor, inplace=True, transform_all_input_vectors=True)
+    mesh.rotate_y(Ry, point=cor, inplace=True, transform_all_input_vectors=True)
+    mesh.rotate_z(Rz, point=cor, inplace=True, transform_all_input_vectors=True)
+    return mesh
+
+def translate_mesh(mesh1, tx=0.0, ty=0.0, tz=0.0):
+    mesh = mesh1.copy()
+    mesh.translate([tx, ty, tz], inplace=True, transform_all_input_vectors=True)
+    return mesh
+#•••••••••••••••••••••••• For changing alignment of joint to match instron misalignment ••••••••••••••••••••••••#
+
 def compute_x_dist(tpm, mc1, return_points=False, cartilage_id=-2, n_samples=20000):
     """Compute the minimum distance in the x direction between the trapezium and metacarpal cartilage surfaces"""
     # extract cartilage surfaces to speed up computation

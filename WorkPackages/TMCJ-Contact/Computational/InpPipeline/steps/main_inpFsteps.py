@@ -8,11 +8,12 @@ import sys
 
 from phd_helpers.paths import(
 get_subject_stl_path, get_bone_inertia, transform_mesh, get_relative_transform_new_basis, get_bone_transforms,
-pose2idCMC, linear_to_quadratic_mesh
+pose2idCMC, linear_to_quadratic_mesh, transform_points
 )
 
-from phd_helpers.AbaqusPreprocessing import position_mc1_tpm, bone_surface_patch_nodes, AbaqusInpBuilder
-
+from phd_helpers.AbaqusPreprocessing import (
+position_mc1_tpm, bone_surface_patch_nodes, AbaqusInpBuilder, rotate_mesh, translate_mesh
+)
 
 #####################################################
 # --------------------- PATHS --------------------- #
@@ -45,6 +46,9 @@ overwrite = params['overwrite']
 
 ##########################################################
 # --------------------- PARAMETERS --------------------- #
+
+misalign_t = params['misalign_t'] 
+misalign_R = params['misalign_R']
 
 target_dist = params['target_dist'] # gap between cartilage at start of simulation
 
@@ -140,6 +144,10 @@ mc1_mesh = pv.read(mc1_path)
 tpm_mesh_neu = transform_mesh(tpm_mesh_neu, mc1_axes, mc1_centroid, inverse=True)
 mc1_mesh = transform_mesh(mc1_mesh, mc1_axes, mc1_centroid, inverse=True)
 
+# for centre of rotation for re-alignment of joint to match instron misalignment
+tpm_centroid, _, _ = get_bone_inertia(stl_path, 'tpm')
+tpm_centroid_neu = transform_points(tpm_centroid, mc1_axes, mc1_centroid, inverse=True)[0]
+
 if element_order == 'quad':
     print("Converting to quadratic elements")
     tpm_mesh_neu = linear_to_quadratic_mesh(tpm_mesh_neu)
@@ -182,6 +190,12 @@ for pose in poses:
         R, t = np.eye(3), np.zeros(3)
 
     tpm_mesh = transform_mesh(tpm_mesh_neu, R, t)
+
+    # re-alignment of joint to match instron misalignment
+    # dont think order of t and R matters just need centre of rotation to be constant
+    #tpm_centroid = transform_points(tpm_centroid_neu, R, t)[0] # keep centre of rotation at tpm_centroid_neu
+    tpm_mesh = rotate_mesh(tpm_mesh, tpm_centroid_neu, misalign_R[0], misalign_R[1], misalign_R[2])
+    tpm_mesh = translate_mesh(tpm_mesh, misalign_t[0], misalign_t[1], misalign_t[2])
 
     # position tpm and metacarpal chosen distance apart (moves tpm)
     position_mc1_tpm(mc1_mesh, tpm_mesh, target_dist, raise_error=True)

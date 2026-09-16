@@ -7,6 +7,7 @@ import copy
 from pathlib import Path
 import time
 from phd_helpers.paths import PROJECT_ROOT
+import sys
 
 def to_text(x):
     if x is None:
@@ -123,7 +124,7 @@ def is_list_of_lists(x):
         and all(isinstance(item, list) for item in x)
     )
 
-always_list = ['poses', 'tpm_patch_params', 'mc1_patch_params', 'normal_data', 'force_steps']
+always_list = ['poses', 'tpm_patch_params', 'mc1_patch_params', 'normal_data', 'force_steps', 'misalign_t', 'misalign_R']
 
 def find_loops(d, path=()):
     loops = []
@@ -226,10 +227,11 @@ def write_param_files(params, output_dir):
 
 
 InpPipeline_root = PROJECT_ROOT / 'WorkPackages/TMCJ-Contact/Computational/inpPipeline'
+param_file = sys.argv[1]
 
 # LOAD PARAMETERS #
 print('\nUpdating parameters.json')
-param_path = InpPipeline_root / 'set_parameters/parameters.json'
+param_path = InpPipeline_root / f'set_parameters/{param_file}.json'
 params = load_parameters(param_path)
 
 # -------- GENERAL PARAMETERS ---------------------------- #
