@@ -17,7 +17,7 @@ def create_job_script(filepath: str, savepath: str, n: int) -> None:
     text = dst.read_text()
 
     text = re.sub(
-        r"^(#SBATCH\s+--array=1-)N(%1\s*)$",
+        r"^(#SBATCH\s+--array=1-)N(%\d+\s*)$",
         rf"\g<1>{n}\2",
         text,
         flags=re.MULTILINE,

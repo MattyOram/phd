@@ -4,7 +4,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=8
 #SBATCH --mem=10G
-#SBATCH --array=1-N%1
+#SBATCH --array=1-N%2
 #SBATCH --output=abaqus_%A_%a.out
 #SBATCH --error=abaqus_%A_%a.err
 #SBATCH --mail-type=BEGIN,END
@@ -22,9 +22,9 @@ INPUT_FILE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" inpFiles.txt) # get .inp file name
 JOB_NAME="${INPUT_FILE%.inp}"                               # remove .inp from the file name
 
 
-#echo "Abaqus job name: $JOB_NAME"
-#echo "Task ID: $SLURM_ARRAY_TASK_ID"
-#echo "Started at: $(date)"
+echo "Abaqus job name: $JOB_NAME"
+echo "Task ID: $SLURM_ARRAY_TASK_ID"
+echo "Started at: $(date)"
 
 # mpi and threads both ran within 3 mins of each other
 abaqus job=$JOB_NAME \
@@ -35,7 +35,7 @@ abaqus job=$JOB_NAME \
        ask_delete=OFF \
        interactive
 
-#echo "Finished at: $(date)"
+echo "Finished at: $(date)"
 
 # print useful info to .out file - doesn't work, no output printed for memory size
 echo ""
