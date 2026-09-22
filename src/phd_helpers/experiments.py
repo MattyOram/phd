@@ -37,7 +37,7 @@ def get_ym(data, mask1=0, mask2=None, return_XYs=False, n=1000):
     else:
         return m, c
 
-def parse_tekscan(path, sensor=None):
+def parse_tekscan(path, sensor=None, return_spf=False):
     header = {}
     frames = []
 
@@ -83,7 +83,10 @@ def parse_tekscan(path, sensor=None):
     s4 = data[:, h2:, w2:]
 
     if sensor:
-        return (s1, s2, s3, s4)[sensor-1]
+        if return_spf:
+            return (s1, s2, s3, s4)[sensor-1], float(header['SECONDS_PER_FRAME'])
+        else:
+            return (s1, s2, s3, s4)[sensor-1]
     else:
         return header, (s1, s2, s3, s4)
 
