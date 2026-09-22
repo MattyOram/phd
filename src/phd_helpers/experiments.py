@@ -121,7 +121,7 @@ def F2P(raw_frames, Forces, sensel_area=1.6129, i=11, j=11):
                                                                     # avoid divide by zero but still outputs zeros cos raw=all 0s
     return (raw * scale) / sensel_area # raw units per sensel * force per raw unit / sensel area = Pressure per sensel
 
-def get_sensor_loc(mc1_mesh, guide_wall_z=10, sensor_offset_z=-1, sensor_size=13.97):
+def get_sensor_loc(mc1_mesh, guide_wall_z=10, sensor_offset_z=-1, sensor_offset_y=0, sensor_size=13.97):
     """
     mc1_mesh: should be aligned with x-axis with cartilage toward negative end\n
     guide_wall_z: z offset of guide inner wall (was 10(mm) for skinny ledge and -6.9(mm) for big ledge)\n
@@ -132,8 +132,9 @@ def get_sensor_loc(mc1_mesh, guide_wall_z=10, sensor_offset_z=-1, sensor_size=13
 
     sign = np.sign(sensor_offset_z)
     x = mc1_mesh.points[:, 0].min()
+    y = sensor_offset_y
     z = guide_wall_z + (sign*(sensor_size/2)) + sensor_offset_z
-    return np.array([x, 0, z])
+    return np.array([x, y, z])
 
 def project_sensor(mesh: pv.PolyData, sensor: pv.Plane, sensor_vals, data_loc='cells', downscale_fea=True, return_fea_grid=False, downscale_mode='mean'):
     """
