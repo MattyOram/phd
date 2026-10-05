@@ -343,7 +343,12 @@ class AbaqusInpParser:
                             raise ValueError(
                                 f"{current_part.name}:{surface_name}: expected 'eid, Sx' for TYPE=ELEMENT surface"
                             )
-                        surf.element_faces.append((int(vals[0]), vals[1].upper()))
+                        element_ref, face = vals[0], vals[1].upper()
+                        if element_ref.isdigit():
+                            element_ids = [int(element_ref)]
+                        else:
+                            element_ids = current_part.elsets[element_ref]
+                        surf.element_faces.extend((eid, face) for eid in element_ids)
 
                     else:
                         raise ValueError(
