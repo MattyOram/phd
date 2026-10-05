@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name=abaqus_batch
-#SBATCH --time=02:00:00
+#SBATCH --time=03:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=8
-#SBATCH --mem=10G
-#SBATCH --array=1-N%2
+#SBATCH --mem=32G
+#SBATCH --array=1-N%3
 #SBATCH --output=abaqus_%A_%a.out
 #SBATCH --error=abaqus_%A_%a.err
 #SBATCH --mail-type=BEGIN,END
@@ -30,7 +30,7 @@ echo "Started at: $(date)"
 abaqus job=$JOB_NAME \
        mp_mode=threads \
        cpus=$SLURM_NTASKS \
-       memory="9gb" \
+       memory="30gb" \
        scratch=/mnt/scratch/$USER \
        ask_delete=OFF \
        interactive

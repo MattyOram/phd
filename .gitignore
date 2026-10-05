@@ -7,6 +7,7 @@ __pycache__/
 .ipynb_checkpoints/
 .venv/
 .env
+info.txt
 
 # Conda
 conda-meta/
@@ -51,6 +52,7 @@ data/*
 # lab data
 **/Experimental/LabData/*
 **/Experimental/**/figs/*
+**/MO_printParams*
 
 *.json
 *.jsonl
@@ -66,6 +68,7 @@ data/*
 *.mesh
 *.ply
 *.3mf
+*.zip
 # abaqus files
 *.inp
 *.com
@@ -92,12 +95,13 @@ inpFiles.txt
 **/metric_dfs/*
 **/Interference-smooth/*
 **/notebooks/MeshPipeline/ParamOptimisation/**/outputs/*
-**/resultCSVs/*.csv
+**/resultCSVs/*
 **/syntheticData/*
 **/digitisedData/*
 **/elasticoData4abaqus/*
 **/moreCalibration/*
 **/TMCJ-ShapeAndMotion/**/*.csv
+**/errors_backups/*
 # random image files
 **/AbaqusMaterialFits/*
 **/Logo-Package/*
@@ -105,6 +109,7 @@ inpFiles.txt
 **/cli_cmds/*
 **/FEvsCY.pdf
 **/FEvsCY.svg
+**/figs
 
 internship/meshes/*
 internship/meshes.zip

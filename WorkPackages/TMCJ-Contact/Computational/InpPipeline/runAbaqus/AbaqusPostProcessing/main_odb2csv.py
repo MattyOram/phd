@@ -31,7 +31,7 @@ if step_list is None:
 field_list = [
     #"CNAREA",
     "CPRESS",
-    #"CSTATUS",
+    "CSTATUS",
     "U",
     #"VF",
     #"S",
@@ -40,7 +40,7 @@ field_list = [
 position_list = [
     #NODAL,
     NODAL,
-    #NODAL,
+    NODAL,
     NODAL,
     #NODAL,
     #INTEGRATION_POINT,

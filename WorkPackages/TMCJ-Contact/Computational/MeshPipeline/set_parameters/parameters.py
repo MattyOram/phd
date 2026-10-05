@@ -35,7 +35,8 @@ params_glob = params['global']
 
 # root directory for outputs and save loc of params file - if relative will be relative to your current directory!
 #params_glob['output_root']     = 'outputs/ParamOptimisation/optimise_d0/study1d'             # -------- ••• -------- #
-params_glob['output_root'] = 'outputs/initialFEAstuff/35T/35Tg'
+#params_glob['output_root'] = 'outputs/initialFEAstuff/35T/35Tg'
+params_glob['output_root'] = 'outputs/smoothRemesh'
 
 params_glob['allow_overwrite'] = True # If False, ignores per step overwrite flags
 # - Will always overwite step specific param directories!
@@ -49,8 +50,8 @@ params_glob['step_timeout']    = 1200 # (s) time limit per step (3D meshing can 
 # - for now, must do all previous steps unless passing input mesh in params here
 params_glob['steps'] = {
     '2Dmesh':    True,
-    'cartilage': True,
-    '3Dmesh':    True,
+    'cartilage': False,
+    '3Dmesh':    False,
     'manifold':  False # only might be needed if planning to 3D print (haven't checked...)
 } 
 
@@ -73,7 +74,7 @@ params_sub['subject_sideL'] = ['14548R'] # subject id and wrist side
 #params_sub['subject_sideL'] = ['50037L'] # Lthick
 
 #params_sub['subject_sideL'] = ['50000R'] # smallest contact area rank
-#params_sub['subject_sideL'] = ['50017L] # middle
+params_sub['subject_sideL'] = ['50017L'] # middle
 #params_sub['subject_sideL'] = ['50034R'] # largest contact area rank
 
 #params_sub['subject_sideL'] = ['14874R', '22306R', '50037L'] # geometry

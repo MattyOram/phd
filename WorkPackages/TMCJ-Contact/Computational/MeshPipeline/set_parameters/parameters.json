@@ -1,18 +1,18 @@
 {
   "global": {
-    "output_root": "outputs/initialFEAstuff/35T/35Tg",
+    "output_root": "outputs/smoothRemesh",
     "allow_overwrite": true,
     "step_timeout": 1200,
     "steps": {
       "2Dmesh": true,
-      "cartilage": true,
-      "3Dmesh": true,
+      "cartilage": false,
+      "3Dmesh": false,
       "manifold": false
     }
   },
   "subjects": {
     "subject_sideL": [
-      "14548R"
+      "50017L"
     ],
     "bone_arbone": [
       "tpm-mc1",
