@@ -323,17 +323,21 @@ def build_fe_data(inp_file, csv_dir=None):
     if csv_dir is None:
         csv_dir = inp_file.parent / 'resultCSVs' 
 
-    force_steps = get_step_ids(csv_dir)[1:]
+    steps = get_step_ids(csv_dir)
     bone = 'tpm'
 
     frame = -1 # final frame of each step
     field_metrics = ["CPRESS", "U"]
 
-
     fe_data = {} # {F1: {'tpm':mesh1, 'mc1':mesh1}, ...} - each mesh contains all fea data
-    for step, F in zip(force_steps, Fs):
-        #meshes = meshes_orig.copy()
-        meshes = inp2pv(inp_file)
+
+    meshes_orig = inp2pv(inp_file)
+    for step in steps[1:]:
+        meshes = {
+            bone: mesh.copy(deep=True)
+            for bone, mesh in meshes_orig.items()
+        }
+        #meshes = inp2pv(inp_file)
         for bone, mesh in meshes.items():
             instance = f"{bone.upper()}_INST"
             
@@ -349,7 +353,7 @@ def build_fe_data(inp_file, csv_dir=None):
             CAREA_data = history_data[history_data['historyOutputDescription']=='Total area in contact']
             CA = CAREA_data['value'].iloc[frame]
 
-            mesh.field_data['RF'] = F
+            mesh.field_data['RF'] = Fs[step+1]
             mesh.field_data['CA'] = CA
 
             #P_avg = np.mean(mesh['CPRESS'][mesh['CPRESS']>0])
@@ -358,7 +362,7 @@ def build_fe_data(inp_file, csv_dir=None):
             mesh.field_data['P_avg'] = compute_Pavg(mesh)
             mesh.field_data['COP'] = np.array(mesh.points[np.argmax(mesh['CPRESS'])])
 
-        fe_data[F] = meshes
+        fe_data[Fs[step+1]] = meshes
     return fe_data
 
 def compute_fe_grid_data(Fs, fe_data, tek_data, bone, guide_wall_z=10, sensor_offset=-2, sensor_offset_y=0):
