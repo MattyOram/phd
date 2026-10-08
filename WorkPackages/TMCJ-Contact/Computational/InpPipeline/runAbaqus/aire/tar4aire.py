@@ -28,7 +28,7 @@ def create_job_script(filepath: str, savepath: str, n: int) -> None:
 path = Path(sys.argv[1]) # path to out_dir for .inp files
 out_dir = path / 'aire/input'
 out_dir.mkdir(parents=True, exist_ok=True)
-(out_dir.parent/'ouput').mkdir(parents=True, exist_ok=True) # also make dir for aire results
+(out_dir.parent/'output').mkdir(parents=True, exist_ok=True) # also make dir for aire results
 
 inps = sorted(list(path.glob('**/*.inp')))
 tar_names = [x.parents[2].name + '-' + x.name for x in inps] # append sub to filename 
