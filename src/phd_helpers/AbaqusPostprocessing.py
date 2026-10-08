@@ -501,7 +501,7 @@ def part_to_pyvista(part: PartDef) -> pv.UnstructuredGrid:
 def inp2pv(inp_path: str | Path) -> Dict[str, pv.UnstructuredGrid]:
     parser = AbaqusInpParser(inp_path)
     parts = parser.parse()
-    return {part_name: part_to_pyvista(part_def) for part_name, part_def in parts.items()}
+    return {part_name.lower(): part_to_pyvista(part_def) for part_name, part_def in parts.items()}
 
 def build_tri_tet_mesh(mesh, bone):
     """Convert output of inp1pv back into mesh3D format"""
