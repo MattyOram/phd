@@ -14,14 +14,11 @@
 
 
 ### Jobs
-- (finalise mesh d0)
-- look at literature on accuracy of pressure distribution of thin layers of hyperelastic material under large deformation
-and on accuracy of tekscan pressure distribution
+- (finalise mesh d0) - DO THIS NOW
 
-- run a simulation directly set up in abaqus with experimental materials data
-    - take the study3 inp file and strip everything except models surface and BCs
-
+THEN THIS
 - redo sensitivity with known compressive and tensile behaviour and just look at stiffening vs soffening behaviour
+    - refit yeoh model to evenly distributed points
     - DO ALL WITH 50017L ? - in loaded pinch (if possible do other two subs in ext and abd to offer range of poses)
     - also do it for all forces...
     - also do more twist translation combinations
@@ -29,17 +26,20 @@ and on accuracy of tekscan pressure distribution
         - first show patch makes no difference then show rigid bone/removal of bone makes no difference.   
             - Show speed up due to removal and that results are identical with rigid vs removed.
         - can just do softest possible vero vs rigid 
+THEN THIS
+- redo robustness to see if they all run 3 CA subs 5 poses
+    - take ones that don't reach 150, and check if contact setup, compressibility, friction, rigid bone, help
 
-- tie bone and cartilage together see if it matters
-
+THEN MAYBE THIS
 - try removing constraints and adding tensioned springs (to reflect compliance of parts) to see what it changes about fe results
 
-
-- plot yeoh elastico fit against input data just to verify
+- plot yeoh elastico fit against input data to verify
 
 ### Random
 - MAYBE DO PROPER TESTS WITH MULTIPLE SENSORS TO SEE IF IT EFFECTS RESULTS AND MIGHT HELP JUSTIFY NOT equilibrating
     - each repeat with a different sensor
+
+- run a simulation directly set up in abaqus with experimental materials data
 
 - 15006 has dodgy jar_load transforms
 
@@ -47,6 +47,8 @@ and on accuracy of tekscan pressure distribution
 
 - what effect does compliance have on the compression tests?
     - did the standards mention this?
+
+- tie bone and cartilage together see if it matters
 
 
 ### FE DOWNSACLING
