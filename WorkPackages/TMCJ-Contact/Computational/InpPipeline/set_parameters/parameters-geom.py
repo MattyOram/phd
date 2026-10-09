@@ -23,11 +23,11 @@ params_gen['mesh_root']    = '../MeshPipeline/outputs/initialFEAstuff/35T/35Tbes
 #params_gen['subjects']  = ['22306R', '50037L', '14874R'] # provide list of subjects or set to None for all available subjects 
                                                                 # (assumes Meshpipeline dir layout)
 #params_gen['subjects'] = ['50000R', '50017L', '50034R']  # Contact area         
-params_gen['subjects'] = ['50017L', '14548R']
+params_gen['subjects'] = ['50017L']
 
-#params_gen['output_root']  = 'outputs/initialFEAstuff/accuracy/study3_50017L_fle'  # output dir for input files and meshes        # -------- *** -------- #
+params_gen['output_root']  = 'outputs/initialFEAstuff/accuracy/study3_50017L_ext'  # output dir for input files and meshes        # -------- *** -------- #
 #params_gen['output_root']  = 'outputs/initialFEAstuff/robustness/update_35T4d5_Fsteps'
-params_gen['output_root']  = 'outputs/testing/inpGeom3'
+#params_gen['output_root']  = 'outputs/testing/inpGeom3'
 
 params_gen['timeout'] = 1200 # (s) per inp time limit just in case
 
@@ -52,7 +52,7 @@ params_inp['overwrite'] = True
 #            ]
 
 #params_inp['poses'] = ['adduction', 'abduction', 'flexion', 'extension', 'pinch_load']
-params_inp['poses'] = ['flexion']
+params_inp['poses'] = ['extension']
 
 params_inp['use_neutral11'] = True # whether to use alternate pose 11 neutral if available
 
@@ -135,7 +135,7 @@ params_inp['initial_increment'] = params_inp['target_dist']
 params_inp['min_increment'] = 0.001                                          
 params_inp['max_increment'] = 0.01
 # force steps
-params_inp['force_steps'] = [10, 20, 50]#, 30, 40, 50, 60, 70, 80, 90, 100] # ALWAYS A LIST
+params_inp['force_steps'] = [10, 20, 50, 30, 40, 50, 60, 70, 80, 90, 100, 120] # ALWAYS A LIST
 params_inp['initial_increment_F1'] = 0.1 # ~ N 
 params_inp['min_increment_F1'] = 0.01   # ~ N 
 params_inp['max_increment_F1'] = 5   # ~ N 
