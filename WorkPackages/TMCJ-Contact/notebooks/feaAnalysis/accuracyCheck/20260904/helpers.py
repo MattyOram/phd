@@ -332,7 +332,7 @@ def build_fe_data(inp_file, csv_dir=None):
     fe_data = {} # {F1: {'tpm':mesh1, 'mc1':mesh1}, ...} - each mesh contains all fea data
 
     meshes_orig = inp2pv(inp_file)
-    for step in steps[1:]:
+    for i, step in enumerate(steps[1:]):
         meshes = {
             bone: mesh.copy(deep=True)
             for bone, mesh in meshes_orig.items()
@@ -353,7 +353,7 @@ def build_fe_data(inp_file, csv_dir=None):
             CAREA_data = history_data[history_data['historyOutputDescription']=='Total area in contact']
             CA = CAREA_data['value'].iloc[frame]
 
-            mesh.field_data['RF'] = Fs[step+1]
+            mesh.field_data['RF'] = Fs[i]
             mesh.field_data['CA'] = CA
 
             #P_avg = np.mean(mesh['CPRESS'][mesh['CPRESS']>0])
@@ -362,7 +362,7 @@ def build_fe_data(inp_file, csv_dir=None):
             mesh.field_data['P_avg'] = compute_Pavg(mesh)
             mesh.field_data['COP'] = np.array(mesh.points[np.argmax(mesh['CPRESS'])])
 
-        fe_data[Fs[step+1]] = meshes
+        fe_data[Fs[i]] = meshes
     return fe_data
 
 def compute_fe_grid_data(Fs, fe_data, tek_data, bone, guide_wall_z=10, sensor_offset=-2, sensor_offset_y=0):
