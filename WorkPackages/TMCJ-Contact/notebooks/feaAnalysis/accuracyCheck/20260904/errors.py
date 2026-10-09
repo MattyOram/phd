@@ -35,7 +35,8 @@ class Errors():
             fit_type=('power_law', True), # (power_law/poly, weight_by_patch_size, poly_degree, poly_zero_intercept)
 
             print_raw_warning=True,
-            use_F2=False,
+            use_F2_test=False,
+            use_F2_cal=False,
             sensor_offset_y=0
         ):
 
@@ -57,7 +58,7 @@ class Errors():
         #•••••••••••••••• CALIBRATION ••••••••••••••••#
 
         cal_Fs = sorted([x for x in cal_1_Fs if x>=cal_F_range[0] and x<=cal_F_range[1]])
-        cal_frames = avg_frames_from_paths(cal_1_paths, cal_Fs, sensor_id, hold_time, cal_start_time, avg_window, custom_masks, raw_mask, use_F2)
+        cal_frames = avg_frames_from_paths(cal_1_paths, cal_Fs, sensor_id, hold_time, cal_start_time, avg_window, custom_masks, raw_mask, use_F2_cal)
         if print_raw_warning:
             check_max_raw(cal_frames[max(cal_Fs)], 'calibration')
         if fit_type[0] == 'power_law':
@@ -82,7 +83,7 @@ class Errors():
         #•••••••••••••••• TESTING ••••••••••••••••#
 
         test_Fs = sorted(test_1_Fs)
-        test_frames = avg_frames_from_paths(test_1_paths, test_Fs, sensor_id, hold_time, test_start_time, avg_window, custom_masks, raw_mask, use_F2)
+        test_frames = avg_frames_from_paths(test_1_paths, test_Fs, sensor_id, hold_time, test_start_time, avg_window, custom_masks, raw_mask, use_F2_test)
         if print_raw_warning:
             check_max_raw(test_frames[max(test_Fs)], 'test')
         test_frames_mpa = apply_fit(coeffs, fit_type[0], test_frames)
